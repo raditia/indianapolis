@@ -3,6 +3,8 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/indianapolis-parent.iml" filepath="$PROJECT_DIR$/indianapolis-parent.iml" />
+      <module fileurl="file://$PROJECT_DIR$/indianapolis-service/indianapolis-service.iml" filepath="$PROJECT_DIR$/indianapolis-service/indianapolis-service.iml" />
+      <module fileurl="file://$PROJECT_DIR$/indianapolis-web/indianapolis-web.iml" filepath="$PROJECT_DIR$/indianapolis-web/indianapolis-web.iml" />
     </modules>
   </component>
 </project>
