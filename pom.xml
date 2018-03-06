@@ -6,7 +6,10 @@
 	<groupId>com.gdn</groupId>
 	<artifactId>indianapolis</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<packaging>pom</packaging>
+    <modules>
+        <module>indianapolis-model</module>
+    </modules>
+    <packaging>pom</packaging>
 
 	<name>indianapolis</name>
 	<description>Fulfilment service project</description>
