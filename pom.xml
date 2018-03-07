@@ -9,6 +9,7 @@
     <modules>
         <module>indianapolis-service</module>
 		<module>indianapolis-web</module>
+		<module>indianapolis-model</module>
 	</modules>
     <packaging>pom</packaging>
 
