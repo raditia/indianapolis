@@ -15,9 +15,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-@SpringBootApplication(scanBasePackages = {"batch", "controller", "beans"})
-@EnableScheduling
-@EnableBatchProcessing
 public class SpringBootMainApplication {
     public static void main(String[] args) {
         SpringApplication.run(SpringBootMainApplication.class, args);
