@@ -1,0 +1,7 @@
+batch/LogPersonWriter.class
+batch/JsonPersonReader.class
+batch/LogPersonProcessor.class
+batch/JsonPersonBatchJobLauncher.class
+dummymodel/Person.class
+beans/PersonBatchBeans.class
+batch/JsonPersonBatchConfig.class
