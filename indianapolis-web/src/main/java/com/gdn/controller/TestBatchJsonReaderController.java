@@ -36,6 +36,7 @@ public class TestBatchJsonReaderController {
     private JobParameters newExecution;
 
     @RequestMapping(
+            value = "/dummy",
             method = RequestMethod.GET,
             produces = MediaType.APPLICATION_JSON_VALUE
     )

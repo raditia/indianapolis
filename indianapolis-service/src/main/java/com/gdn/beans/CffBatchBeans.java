@@ -11,7 +11,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Configuration
-public class PersonBatchBeans {
+public class CffBatchBeans {
     @Bean
     RestTemplate restTemplate() {
         return new RestTemplate();
