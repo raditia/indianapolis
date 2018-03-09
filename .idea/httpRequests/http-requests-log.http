@@ -1,0 +1,40 @@
+GET http://localhost:8080/api/batch/oke
+Accept: */*
+Cache-Control: no-cache
+
+<> 2018-03-09T121011.200.json
+
+###
+
+GET http://localhost:8080/api/batch/oke
+Accept: */*
+Cache-Control: no-cache
+
+<> 2018-03-09T120948.200.json
+
+###
+
+GET http://localhost:8080/api/batch/dummy
+Accept: */*
+Cache-Control: no-cache
+
+<> 2018-03-09T120942.200.json
+
+###
+
+GET http://localhost:8080/api/batch/oke
+Accept: */*
+Cache-Control: no-cache
+
+<> 2018-03-09T120829.200.json
+
+###
+
+GET http://localhost:8080/api/batch/oke
+Accept: */*
+Cache-Control: no-cache
+
+<> 2018-03-09T120808.200.json
+
+###
+
