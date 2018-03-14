@@ -3,6 +3,9 @@ package com.gdn.controller;
 import com.gdn.Category;
 import com.gdn.Cff;
 import com.gdn.HeaderCff;
+import com.gdn.category.CategoryService;
+import com.gdn.cff.CffService;
+import com.gdn.header.cff.HeaderCffService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.batch.core.Job;
@@ -26,14 +29,13 @@ import java.util.*;
 public class TestBatchJsonReaderController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(TestBatchJsonReaderController.class);
+    @Autowired
+    private CategoryService categoryService;
+    @Autowired
+    HeaderCffService headerCffService;
 
     @Autowired
-    @Qualifier("jsonCffJob")
-    private Job jsobCffJob;
-    @Autowired
-    private JobLauncher jobLauncher;
-    @Autowired
-    private JobParameters newExecution;
+    private CffService cffService;
 
     @RequestMapping(
             value = "/dummy",
@@ -41,21 +43,27 @@ public class TestBatchJsonReaderController {
             produces = MediaType.APPLICATION_JSON_VALUE
     )
     public List<Cff> getUploadedCffData(){
+        Date date = new Date();
+        HeaderCff headerCff = HeaderCff.builder()
+                .id("id_"+UUID.randomUUID().toString())
+                .dateUploaded(date)
+                .tpName("namaMu")
+                .build();
+        Category category = Category.builder()
+                .id("id_"+UUID.randomUUID().toString())
+                .name("namaKetegorini")
+                .build();
+        headerCffService.save(headerCff);
+        categoryService.save(category);
+
         Cff cff1 = Cff.builder()
                 .id("id_" + UUID.randomUUID().toString())
                 .sku("sku_" + UUID.randomUUID().toString())
                 .productName("Sempak Superman")
                 .cbm(new Random().nextFloat())
                 .quantity(new Random().nextInt())
-                .category(Category.builder()
-                        .id("category_id_" + UUID.randomUUID().toString())
-                        .name("Celana dalam")
-                        .build())
-                .headerCff(HeaderCff.builder()
-                        .id("header_cff_id_" + UUID.randomUUID().toString())
-                        .dateUploaded(new Date())
-                        .tpName("Komang")
-                        .build())
+                .category(category)
+                .headerCff(headerCff)
                 .build();
         Cff cff2 = Cff.builder()
                 .id("id_" + UUID.randomUUID().toString())
@@ -63,15 +71,8 @@ public class TestBatchJsonReaderController {
                 .productName("Sempak Batman")
                 .cbm(new Random().nextFloat())
                 .quantity(new Random().nextInt())
-                .category(Category.builder()
-                        .id("category_id_" + UUID.randomUUID().toString())
-                        .name("Celana dalam")
-                        .build())
-                .headerCff(HeaderCff.builder()
-                        .id("header_cff_id_" + UUID.randomUUID().toString())
-                        .dateUploaded(new Date())
-                        .tpName("Radit")
-                        .build())
+                .category(category)
+                .headerCff(headerCff)
                 .build();
         Cff cff3 = Cff.builder()
                 .id("id_" + UUID.randomUUID().toString())
@@ -79,15 +80,8 @@ public class TestBatchJsonReaderController {
                 .productName("Sempak Spiderman")
                 .cbm(new Random().nextFloat())
                 .quantity(new Random().nextInt())
-                .category(Category.builder()
-                        .id("category_id_" + UUID.randomUUID().toString())
-                        .name("Celana dalam")
-                        .build())
-                .headerCff(HeaderCff.builder()
-                        .id("header_cff_id_" + UUID.randomUUID().toString())
-                        .dateUploaded(new Date())
-                        .tpName("Axell")
-                        .build())
+                .category(category)
+                .headerCff(headerCff)
                 .build();
         List<Cff> cffList = new ArrayList<>();
         cffList.add(cff1); cffList.add(cff2); cffList.add(cff3);
@@ -100,10 +94,16 @@ public class TestBatchJsonReaderController {
             produces = MediaType.APPLICATION_JSON_VALUE
     )
     public Map testJobLauncher() throws JobParametersInvalidException, JobExecutionAlreadyRunningException, JobRestartException, JobInstanceAlreadyCompleteException {
-        LOGGER.info("Job jsobCffJob started!");
-        jobLauncher.run(jsobCffJob, newExecution);
-        LOGGER.info("Job jsobCffJob stopped!");
-        return Collections.singletonMap("nggo ndog??", "raolehhh!!!");
+        return cffService.executeBatch();
+    }
+
+    @RequestMapping(
+            value = "/real",
+            method = RequestMethod.GET,
+            produces = MediaType.APPLICATION_JSON_VALUE
+    )
+    public List<Cff> getAllCff(){
+        return cffService.getAllCff();
     }
 
 }
