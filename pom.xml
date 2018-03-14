@@ -10,7 +10,8 @@
 		<module>indianapolis-model</module>
         <module>indianapolis-service</module>
 		<module>indianapolis-web</module>
-	</modules>
+        <module>indianapolis-repository</module>
+    </modules>
     <packaging>pom</packaging>
 
 	<name>indianapolis</name>
@@ -84,6 +85,11 @@
 				<groupId>org.projectlombok</groupId>
 				<artifactId>lombok</artifactId>
 				<version>1.16.20</version>
+			</dependency>
+			<dependency>
+				<groupId>com.gdn</groupId>
+				<artifactId>indianapolis-repository</artifactId>
+				<version>0.0.1-SNAPSHOT</version>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
