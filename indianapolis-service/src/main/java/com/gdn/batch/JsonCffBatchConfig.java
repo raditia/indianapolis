@@ -1,6 +1,7 @@
 package com.gdn.batch;
 
-import com.gdn.Cff;
+import com.gdn.entity.Cff;
+import com.gdn.upload_cff.UploadCffResponse;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;
@@ -20,30 +21,30 @@ public class JsonCffBatchConfig {
     private static final String PROPERTY_REST_API_URL = "api.url";
 
     @Bean
-    ItemReader<Cff> jsonCffReader(Environment environment, RestTemplate restTemplate){
+    ItemReader<UploadCffResponse> jsonCffReader(Environment environment, RestTemplate restTemplate){
         return new JsonCffReader(environment.getRequiredProperty(PROPERTY_REST_API_URL), restTemplate);
     }
 
     @Bean
-    ItemProcessor<Cff, Cff> logCffProcessor(){
-        return new LogCffProcessor();
+    ItemProcessor<UploadCffResponse, UploadCffResponse> cffProcessor(){
+        return new CffProcessor();
     }
 
     @Bean
-    ItemWriter<Cff> logCffWriter(){
-        return new LogCffWriter();
+    ItemWriter<UploadCffResponse> jpaCffWriter(){
+        return new JpaCffWriter();
     }
 
     @Bean
-    Step jsonCffStep(ItemReader<Cff> jsonCffReader,
-                     ItemProcessor<Cff, Cff> logCffProcessor,
-                     ItemWriter<Cff> logCffWriter,
+    Step jsonCffStep(ItemReader<UploadCffResponse> jsonCffReader,
+                     ItemProcessor<UploadCffResponse, UploadCffResponse> cffProcessor,
+                     ItemWriter<UploadCffResponse> jpaCffWriter,
                      StepBuilderFactory stepBuilderFactory){
         return stepBuilderFactory.get("jsonCffStep")
-                .<Cff, Cff>chunk(10)
+                .<UploadCffResponse, UploadCffResponse>chunk(10)
                 .reader(jsonCffReader)
-                .processor(logCffProcessor)
-                .writer(logCffWriter)
+                .processor(cffProcessor)
+                .writer(jpaCffWriter)
                 .build();
     }
 

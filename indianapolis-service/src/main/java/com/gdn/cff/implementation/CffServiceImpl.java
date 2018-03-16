@@ -1,6 +1,6 @@
 package com.gdn.cff.implementation;
 
-import com.gdn.Cff;
+import com.gdn.entity.Cff;
 import com.gdn.cff.CffService;
 import com.gdn.repository.CffRepository;
 import org.springframework.batch.core.Job;
