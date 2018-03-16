@@ -17,7 +17,7 @@ public class CffGood {
 
     @Id
     @Column(name = "id")
-    private String id;
+    private String goods_id;
 
     @ManyToOne
     @JoinColumn(name = "cff_id")

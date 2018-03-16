@@ -32,16 +32,16 @@ public class JpaCffWriter implements ItemWriter<UploadCffResponse> {
              ) {
             LOGGER.info("Writing header cff to database...\n" +
                     "ID : " + response.getRequestor().getId() + "\n" +
-                    "Requestor name : " + response.getRequestor().getTpName() + "\n" +
-                    "Date uploaded : " + response.getRequestor().getDateUploaded() + "\n");
+                    "Requestor name : " + response.getRequestor().getName() + "\n" +
+                    "Date uploaded : " + response.getRequestor().getDate() + "\n");
             headerCffService.save(response.getRequestor());
 
             LOGGER.info("Writing cff to database...\n" +
-                    "Category ID : " + response.getCategoryId() + "\n" +
-                    "Warehouse ID : " + response.getWarehouseId() + "\n" +
+                    "Category ID : " + response.getCategory() + "\n" +
+                    "Warehouse ID : " + response.getWarehouse() + "\n" +
                     "Header CFF ID : " + response.getRequestor().getId() + "\n");
             Category category = Category.builder()
-                    .id(response.getCategoryId())
+                    .id(response.getCategory())
                     .build();
             Cff cff = Cff.builder()
                     .id(response.getRequestor().getId())
@@ -57,7 +57,7 @@ public class JpaCffWriter implements ItemWriter<UploadCffResponse> {
                         "CBM : " + good.getCbm() + "\n" +
                         "Quantity : " + good.getQuantity() + "\n");
                 CffGood cffGood = CffGood.builder()
-                        .id(good.getId())
+                        .goods_id(good.getGoods_id())
                         .cff(cff)
                         .sku(good.getSku())
                         .cbm(good.getCbm())

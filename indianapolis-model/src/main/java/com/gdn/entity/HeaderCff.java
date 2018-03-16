@@ -24,9 +24,9 @@ public class HeaderCff {
     private String id;
 
     @Column(name = "date_uploaded")
-    private Date dateUploaded;
+    private Date date;
 
     @Column(name = "tp_name")
-    private String tpName;
+    private String name;
 
 }
