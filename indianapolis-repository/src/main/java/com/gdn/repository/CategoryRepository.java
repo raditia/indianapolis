@@ -1,6 +1,6 @@
 package com.gdn.repository;
 
-import com.gdn.Category;
+import com.gdn.entity.Category;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

@@ -1,6 +1,7 @@
 package com.gdn.batch;
 
-import com.gdn.Cff;
+import com.gdn.entity.Cff;
+import com.gdn.upload_cff.UploadCffResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.batch.item.ItemReader;
@@ -13,11 +14,11 @@ import org.springframework.web.client.RestTemplate;
 import java.util.Arrays;
 import java.util.List;
 
-public class JsonCffReader implements ItemReader<Cff> {
+public class JsonCffReader implements ItemReader<UploadCffResponse> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(JsonCffReader.class);
 
-    private List<Cff> cffList;
+    private List<UploadCffResponse> cffList;
     private int nextCffIndex;
     private String url;
     private RestTemplate restTemplate;
@@ -29,12 +30,12 @@ public class JsonCffReader implements ItemReader<Cff> {
     }
 
     @Override
-    public Cff read() throws Exception, UnexpectedInputException, ParseException, NonTransientResourceException {
+    public UploadCffResponse read() throws Exception, UnexpectedInputException, ParseException, NonTransientResourceException {
         if (personDataIsNotInitialized()) {
             cffList = fetchCffDataFromApi();
         }
 
-        Cff nextCff = null;
+        UploadCffResponse nextCff = null;
 
         if (nextCffIndex < cffList.size()) {
             nextCff = cffList.get(nextCffIndex);
@@ -48,12 +49,12 @@ public class JsonCffReader implements ItemReader<Cff> {
         return this.cffList == null;
     }
 
-    private List<Cff> fetchCffDataFromApi() {
-        ResponseEntity<Cff[]> response = restTemplate.getForEntity(
+    private List<UploadCffResponse> fetchCffDataFromApi() {
+        ResponseEntity<UploadCffResponse[]> response = restTemplate.getForEntity(
                 url,
-                Cff[].class
+                UploadCffResponse[].class
         );
-        Cff[] cffData = response.getBody();
+        UploadCffResponse[] cffData = response.getBody();
         return Arrays.asList(cffData);
     }
 
