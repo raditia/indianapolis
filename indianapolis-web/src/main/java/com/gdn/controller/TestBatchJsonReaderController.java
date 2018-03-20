@@ -18,6 +18,7 @@ import org.springframework.batch.core.repository.JobInstanceAlreadyCompleteExcep
 import org.springframework.batch.core.repository.JobRestartException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
@@ -25,7 +26,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.*;
 
 @RestController
-@RequestMapping(value = "/api/batch")
+@RequestMapping(value = "/api")
 public class TestBatchJsonReaderController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(TestBatchJsonReaderController.class);
@@ -44,23 +45,33 @@ public class TestBatchJsonReaderController {
     private DummyCffService dummyCffService;
 
     @RequestMapping(
-            value = "/dummy",
+            value = "/first",
             method = RequestMethod.GET,
             produces = MediaType.APPLICATION_JSON_VALUE
     )
-    public List<UploadCffResponse> getUploadedCffData(){
+    public List<UploadCffResponse> first(){
         categoryService.saveDefaultCategory();
         warehouseService.addDefaultWarehouseInformation();
         return dummyCffService.getDummyUploadCffResponse();
     }
 
     @RequestMapping(
-            value = "/oke",
+            value = "/cffresponse",
             method = RequestMethod.GET,
             produces = MediaType.APPLICATION_JSON_VALUE
     )
-    public Map testJobLauncher() throws JobParametersInvalidException, JobExecutionAlreadyRunningException, JobRestartException, JobInstanceAlreadyCompleteException {
-        return cffService.executeBatch();
+    public List<UploadCffResponse> getUploadedCffData(){
+        return cffService.getUploadCffResponse();
+    }
+
+    @RequestMapping(
+            value = "/cff",
+            method = RequestMethod.POST,
+            produces = MediaType.APPLICATION_JSON_VALUE,
+            consumes = MediaType.APPLICATION_JSON_VALUE
+    )
+    public Map testJobLauncher(@RequestBody UploadCffResponse uploadCffResponse) throws JobParametersInvalidException, JobExecutionAlreadyRunningException, JobRestartException, JobInstanceAlreadyCompleteException {
+        return cffService.executeBatch(uploadCffResponse);
     }
 
     @RequestMapping(
