@@ -1,6 +1,5 @@
 package com.gdn.controller;
 
-import com.gdn.category.CategoryService;
 import com.gdn.cff.dummy.DummyCffService;
 import com.gdn.cff.good.CffGoodService;
 import com.gdn.entity.Cff;
@@ -9,7 +8,6 @@ import com.gdn.entity.CffGood;
 import com.gdn.entity.HeaderCff;
 import com.gdn.header.cff.HeaderCffService;
 import com.gdn.upload_cff.UploadCffResponse;
-import com.gdn.warehouse.WarehouseService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.batch.core.JobParametersInvalidException;
@@ -32,10 +30,6 @@ public class TestBatchJsonReaderController {
     private static final Logger LOGGER = LoggerFactory.getLogger(TestBatchJsonReaderController.class);
 
     @Autowired
-    private CategoryService categoryService;
-    @Autowired
-    private WarehouseService warehouseService;
-    @Autowired
     private CffService cffService;
     @Autowired
     private HeaderCffService headerCffService;
@@ -50,8 +44,6 @@ public class TestBatchJsonReaderController {
             produces = MediaType.APPLICATION_JSON_VALUE
     )
     public List<UploadCffResponse> first(){
-        categoryService.saveDefaultCategory();
-        warehouseService.addDefaultWarehouseInformation();
         return dummyCffService.getDummyUploadCffResponse();
     }
 
