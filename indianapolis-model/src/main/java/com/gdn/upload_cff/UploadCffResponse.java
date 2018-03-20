@@ -16,8 +16,8 @@ import java.util.List;
 public class UploadCffResponse {
 
     private HeaderCff requestor;
-    private String categoryId;
-    private String warehouseId;
+    private String category;
+    private String warehouse;
     private List<CffGood> goods;
 
 }
