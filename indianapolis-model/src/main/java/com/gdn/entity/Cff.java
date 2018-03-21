@@ -19,7 +19,7 @@ public class Cff {
     @Column(name = "id")
     private String id;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "header_cff_id")
     private HeaderCff headerCff;
 

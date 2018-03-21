@@ -6,12 +6,14 @@ import com.gdn.entity.Cff;
 import com.gdn.cff.CffService;
 import com.gdn.entity.CffGood;
 import com.gdn.header.cff.HeaderCffService;
+import com.gdn.upload_cff.UploadCffGood;
 import com.gdn.upload_cff.UploadCffResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.batch.item.ItemWriter;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import javax.persistence.EntityManager;
 import java.util.List;
 
 public class JpaCffWriter implements ItemWriter<UploadCffResponse> {
@@ -24,6 +26,8 @@ public class JpaCffWriter implements ItemWriter<UploadCffResponse> {
     private CffService cffService;
     @Autowired
     private CffGoodService cffGoodService;
+    @Autowired
+    private EntityManager entityManager;
 
 
     @Override
@@ -34,7 +38,7 @@ public class JpaCffWriter implements ItemWriter<UploadCffResponse> {
                     "ID : " + response.getRequestor().getId() + "\n" +
                     "Requestor name : " + response.getRequestor().getName() + "\n" +
                     "Date uploaded : " + response.getRequestor().getDate() + "\n");
-            headerCffService.save(response.getRequestor());
+//            headerCffService.save(response.getRequestor());
 
             LOGGER.info("Writing cff to database...\n" +
                     "Category ID : " + response.getCategory() + "\n" +
@@ -48,8 +52,9 @@ public class JpaCffWriter implements ItemWriter<UploadCffResponse> {
                     .headerCff(response.getRequestor())
                     .category(category)
                     .build();
-            cffService.saveCff(cff);
-            for (CffGood good:response.getGoods()
+            entityManager.persist(cff);
+//            cffService.saveCff(cff);
+            for (UploadCffGood good:response.getGoods()
                  ) {
                 LOGGER.info("writing cff goods to database...\n" +
                         "CFF ID : " + response.getRequestor().getId() + "\n" +
@@ -57,13 +62,13 @@ public class JpaCffWriter implements ItemWriter<UploadCffResponse> {
                         "CBM : " + good.getCbm() + "\n" +
                         "Quantity : " + good.getQuantity() + "\n");
                 CffGood cffGood = CffGood.builder()
-                        .goods_id(good.getGoods_id())
                         .cff(cff)
                         .sku(good.getSku())
                         .cbm(good.getCbm())
                         .quantity(good.getQuantity())
                         .build();
-                cffGoodService.save(cffGood);
+                entityManager.persist(cffGood);
+//                cffGoodService.save(cffGood);
             }
         }
     }

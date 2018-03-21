@@ -3,6 +3,7 @@ package com.gdn.cff.dummy.implementation;
 import com.gdn.cff.dummy.DummyCffService;
 import com.gdn.entity.CffGood;
 import com.gdn.entity.HeaderCff;
+import com.gdn.upload_cff.UploadCffGood;
 import com.gdn.upload_cff.UploadCffResponse;
 import org.springframework.stereotype.Service;
 
@@ -25,15 +26,13 @@ public class DummyCffServiceImpl implements DummyCffService {
 
     @Override
     public List<UploadCffResponse> getDummyUploadCffResponse() {
-        List<CffGood> cffGoodList = new ArrayList<>();
-        CffGood camera1 = CffGood.builder()
-                .goods_id(UUID.randomUUID().toString())
+        List<UploadCffGood> cffGoodList = new ArrayList<>();
+        UploadCffGood camera1 = UploadCffGood.builder()
                 .sku("Glenz GFDS-87508 Standalone 5MP DVR XMEYE - Black Black")
                 .cbm(3)
                 .quantity(2)
                 .build();
-        CffGood camera2 = CffGood.builder()
-                .goods_id(UUID.randomUUID().toString())
+        UploadCffGood camera2 = UploadCffGood.builder()
                 .sku("Glenz GFCA-29540 Indoor 5.0MP Camera AHD Sony Starvis - White White")
                 .cbm(3)
                 .quantity(5)
@@ -42,7 +41,7 @@ public class DummyCffServiceImpl implements DummyCffService {
         UploadCffResponse uploadCffResponse = createOneDummyUploadCffResponse(UploadCffResponse.builder()
                 .requestor(HeaderCff.builder()
                         .id(UUID.randomUUID().toString())
-                        .date(new Date())
+                        .date("21/03/2018")
                         .name("Komang")
                         .build())
                 .category("category_camera")

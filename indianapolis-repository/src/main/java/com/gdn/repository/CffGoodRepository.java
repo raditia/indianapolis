@@ -5,5 +5,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface CffGoodRepository extends JpaRepository<CffGood, String> {
+public interface CffGoodRepository extends JpaRepository<CffGood, Long> {
 }

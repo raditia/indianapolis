@@ -18,6 +18,6 @@ public class UploadCffResponse {
     private HeaderCff requestor;
     private String category;
     private String warehouse;
-    private List<CffGood> goods;
+    private List<UploadCffGood> goods;
 
 }
