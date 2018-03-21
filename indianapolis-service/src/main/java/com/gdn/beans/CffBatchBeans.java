@@ -21,7 +21,7 @@ public class CffBatchBeans {
     JobParameters newExecution(){
         Map<String, JobParameter> parameters = new HashMap<>();
 
-        JobParameter parameter = new JobParameter(new Date());
+        JobParameter parameter = new JobParameter(System.currentTimeMillis());
         parameters.put("currentTime", parameter);
 
         return new JobParameters(parameters);
