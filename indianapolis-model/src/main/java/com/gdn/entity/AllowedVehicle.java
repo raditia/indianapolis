@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
 
@@ -22,7 +23,7 @@ public class AllowedVehicle {
     @Column(name = "vehicle_name")
     private String vehicleName;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "pickup_point_id")
     private PickupPoint pickupPoint;
 

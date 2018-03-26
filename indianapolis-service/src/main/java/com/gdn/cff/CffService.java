@@ -14,6 +14,5 @@ import java.util.Map;
 public interface CffService {
     Map executeBatch(UploadCffResponse uploadCffResponse) throws JobParametersInvalidException, JobExecutionAlreadyRunningException, JobStartException, JobInstanceAlreadyCompleteException;
     List<UploadCffResponse> getUploadCffResponse();
-    Cff saveCff(Cff cff);
     List<Cff> getAllCff();
 }
