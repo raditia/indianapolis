@@ -23,10 +23,10 @@ public class Fleet {
     private String name;
 
     @Column(name = "price")
-    private Float price;
+    private Double price;
 
     @Column(name = "cbm_capacity")
-    private Float cbmCapacity;
+    private Double cbmCapacity;
 
     @ManyToOne
     @JoinColumn(name = "logisctic_vendor_id")

@@ -5,6 +5,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
 
@@ -17,9 +18,8 @@ import javax.persistence.*;
 public class CffGood {
 
     @Id
-    @GeneratedValue
     @Column(name = "id")
-    private Long goods_id;
+    private String id;
 
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "cff_id")

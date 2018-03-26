@@ -25,13 +25,10 @@ public class CffServiceImpl implements CffService {
 
     @Autowired
     private CffRepository cffRepository;
-
     @Autowired
     private JobLauncher jobLauncher;
-
     @Autowired
     private Job jsonCffJob;
-
     @Autowired
     private JobParameters cffJobParameters;
 
@@ -53,11 +50,6 @@ public class CffServiceImpl implements CffService {
     @Override
     public List<UploadCffResponse> getUploadCffResponse() {
         return this.uploadCffResponseList;
-    }
-
-    @Override
-    public Cff saveCff(Cff cff) {
-        return cffRepository.save(cff);
     }
 
     @Override

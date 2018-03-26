@@ -13,13 +13,8 @@ import javax.persistence.*;
 @NoArgsConstructor
 public class UploadCffGood {
 
-    @Column(name = "sku")
     private String sku;
-
-    @Column(name = "cbm")
     private double cbm;
-
-    @Column(name = "quantity")
     private int quantity;
 
 }
