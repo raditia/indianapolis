@@ -1,6 +1,5 @@
-package com.gdn.batch;
+package com.gdn.batch.upload_cff;
 
-import com.gdn.entity.Cff;
 import com.gdn.upload_cff.UploadCffResponse;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
@@ -14,8 +13,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
 import org.springframework.web.client.RestTemplate;
-
-import java.util.List;
 
 @Configuration
 public class JsonCffBatchConfig {

@@ -24,4 +24,9 @@ public class CffGoodServiceImpl implements CffGoodService {
         return cffGoodRepository.findAll();
     }
 
+    @Override
+    public int getSkuAmount() {
+        return (int) cffGoodRepository.count();
+    }
+
 }

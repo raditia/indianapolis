@@ -1,9 +1,6 @@
-package com.gdn.batch;
+package com.gdn.batch.upload_cff;
 
-import com.gdn.cff.good.CffGoodService;
 import com.gdn.entity.*;
-import com.gdn.cff.CffService;
-import com.gdn.header.cff.HeaderCffService;
 import com.gdn.upload_cff.UploadCffAllowedVehicle;
 import com.gdn.upload_cff.UploadCffGood;
 import com.gdn.upload_cff.UploadCffResponse;

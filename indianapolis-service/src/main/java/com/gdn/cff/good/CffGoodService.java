@@ -7,4 +7,5 @@ import java.util.List;
 public interface CffGoodService {
     CffGood save(CffGood cffGood);
     List<CffGood> findAll();
+    int getSkuAmount();
 }

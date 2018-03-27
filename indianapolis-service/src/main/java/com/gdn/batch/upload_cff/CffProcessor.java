@@ -1,4 +1,4 @@
-package com.gdn.batch;
+package com.gdn.batch.upload_cff;
 
 import com.gdn.upload_cff.UploadCffResponse;
 import org.slf4j.Logger;

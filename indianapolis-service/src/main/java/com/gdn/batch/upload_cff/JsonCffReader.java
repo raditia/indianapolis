@@ -1,6 +1,5 @@
-package com.gdn.batch;
+package com.gdn.batch.upload_cff;
 
-import com.gdn.entity.Cff;
 import com.gdn.upload_cff.UploadCffResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

@@ -1,4 +1,4 @@
-package com.gdn.beans;
+package com.gdn.batch.beans;
 
 import org.springframework.batch.core.JobParameter;
 import org.springframework.batch.core.JobParameters;
@@ -17,8 +17,18 @@ public class CffBatchBeans {
         return new RestTemplate();
     }
 
-    @Bean
-    JobParameters newExecution(){
+    @Bean(name = "cffJobParameters")
+    JobParameters cffJobParameters(){
+        Map<String, JobParameter> parameters = new HashMap<>();
+
+        JobParameter parameter = new JobParameter(System.currentTimeMillis());
+        parameters.put("currentTime", parameter);
+
+        return new JobParameters(parameters);
+    }
+
+    @Bean(name = "fleetRecommendationJobParameters")
+    JobParameters fleetRecommendationJobParameters(){
         Map<String, JobParameter> parameters = new HashMap<>();
 
         JobParameter parameter = new JobParameter(System.currentTimeMillis());
