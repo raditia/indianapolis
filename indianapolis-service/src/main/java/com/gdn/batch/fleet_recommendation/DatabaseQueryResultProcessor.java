@@ -12,7 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-public class DatabaseQueryResultProcessor implements ItemProcessor<DatabaseQueryResult, List<DatabaseQueryResult>> {
+public class DatabaseQueryResultProcessor implements ItemProcessor<DatabaseQueryResult, List<Pickup>> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DatabaseQueryResultProcessor.class);
     private List<DatabaseQueryResult> resultList = new ArrayList<>();
@@ -23,9 +23,10 @@ public class DatabaseQueryResultProcessor implements ItemProcessor<DatabaseQuery
     private FleetService fleetService;
 
     private int rowCount = 0;
+    private List<Pickup> pickupList = new ArrayList<>();
 
     @Override
-    public List<DatabaseQueryResult> process(DatabaseQueryResult databaseQueryResult) throws Exception {
+    public List<Pickup> process(DatabaseQueryResult databaseQueryResult) throws Exception {
         rowCount = recommendationService.getResultRowCount();
         resultList.add(databaseQueryResult);
         if(allItemsHaveBeenRetrieved()){
@@ -36,10 +37,10 @@ public class DatabaseQueryResultProcessor implements ItemProcessor<DatabaseQuery
             List<BestFitFleet> bestFitFleetList = getBestFitFleetList(fleetOnDbList, totalCbm);
             logBestFleets(bestFitFleetList);
 
-            List<Pickup> pickupList = getAssignedFleetsForPickupList(skuList, bestFitFleetList);
+            pickupList = getAssignedFleetsForPickupList(skuList, bestFitFleetList);
             logAssignedFleetsForPickup(pickupList);
         }
-        return resultList;
+        return pickupList;
     }
 
     private boolean allItemsHaveBeenRetrieved(){
