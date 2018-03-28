@@ -6,6 +6,7 @@ import com.gdn.repository.CffRepository;
 import com.gdn.upload_cff.UploadCffResponse;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.JobParameters;
+import org.springframework.batch.core.JobParametersBuilder;
 import org.springframework.batch.core.JobParametersInvalidException;
 import org.springframework.batch.core.launch.JobLauncher;
 import org.springframework.batch.core.repository.JobExecutionAlreadyRunningException;
@@ -29,8 +30,6 @@ public class CffServiceImpl implements CffService {
     private JobLauncher jobLauncher;
     @Autowired
     private Job jsonCffJob;
-    @Autowired
-    private JobParameters cffJobParameters;
 
     private List<UploadCffResponse> uploadCffResponseList;
 
@@ -39,6 +38,8 @@ public class CffServiceImpl implements CffService {
         List<UploadCffResponse> uploadCffResponseList = Arrays.asList(uploadCffResponse);
         this.uploadCffResponseList = uploadCffResponseList;
         try {
+            JobParameters cffJobParameters = new JobParametersBuilder()
+                    .addLong("time",System.currentTimeMillis()).toJobParameters();
             jobLauncher.run(jsonCffJob, cffJobParameters);
         } catch (JobRestartException e) {
             e.printStackTrace();

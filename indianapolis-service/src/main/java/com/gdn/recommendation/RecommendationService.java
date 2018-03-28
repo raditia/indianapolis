@@ -1,5 +1,9 @@
 package com.gdn.recommendation;
 
+import java.util.List;
+
 public interface RecommendationService {
-    void executeBatch();
+    List<DatabaseQueryResult> executeBatch();
+    List<DatabaseQueryResult> setPickupList(List<DatabaseQueryResult> pickupList);
+    int getResultRowCount();
 }

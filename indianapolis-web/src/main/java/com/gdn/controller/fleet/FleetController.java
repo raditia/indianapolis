@@ -23,7 +23,7 @@ public class FleetController {
             produces = MediaType.APPLICATION_JSON_VALUE
     )
     public List<Fleet> findAll(){
-        return fleetService.findAll();
+        return fleetService.findAllByOrderByCbmCapacityDesc();
     }
 
 }

@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class MinimumFleet {
+public class BestFitFleet {
     private Fleet fleet;
     private int amount;
 }

@@ -16,8 +16,13 @@ public class FleetServiceImpl implements FleetService {
     private FleetRepository fleetRepository;
 
     @Override
-    public List<Fleet> findAll() {
+    public List<Fleet> findAllByOrderByCbmCapacityDesc() {
         return fleetRepository.findAllByOrderByCbmCapacityDesc();
+    }
+
+    @Override
+    public List<Fleet> findDistinctByNameOrderByCbmCapacityDesc() {
+        return fleetRepository.findDistinctByNameOrderByCbmCapacityDesc();
     }
 
 }

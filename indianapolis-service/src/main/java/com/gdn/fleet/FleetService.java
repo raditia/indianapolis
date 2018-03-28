@@ -5,5 +5,6 @@ import com.gdn.entity.Fleet;
 import java.util.List;
 
 public interface FleetService {
-    List<Fleet> findAll();
+    List<Fleet> findAllByOrderByCbmCapacityDesc();
+    List<Fleet> findDistinctByNameOrderByCbmCapacityDesc();
 }

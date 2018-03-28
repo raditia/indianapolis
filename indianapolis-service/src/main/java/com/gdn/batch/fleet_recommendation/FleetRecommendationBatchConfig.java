@@ -1,19 +1,14 @@
 package com.gdn.batch.fleet_recommendation;
 
-import com.gdn.cff.good.CffGoodService;
 import com.gdn.recommendation.DatabaseQueryResult;
-import com.gdn.recommendation.Sku;
-import com.gdn.upload_cff.UploadCffResponse;
+import com.gdn.recommendation.Pickup;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;
 import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
-import org.springframework.batch.core.launch.JobLauncher;
 import org.springframework.batch.core.launch.support.RunIdIncrementer;
-import org.springframework.batch.core.step.builder.JobStepBuilder;
-import org.springframework.batch.core.step.job.JobStep;
 import org.springframework.batch.item.ItemProcessor;
 import org.springframework.batch.item.ItemReader;
 import org.springframework.batch.item.ItemWriter;
@@ -25,6 +20,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import javax.sql.DataSource;
+import java.util.List;
 
 @Configuration
 public class FleetRecommendationBatchConfig {
@@ -49,22 +45,22 @@ public class FleetRecommendationBatchConfig {
     }
 
     @Bean
-    public ItemProcessor<DatabaseQueryResult, DatabaseQueryResult> dbQueryResultProcessor(){
+    public ItemProcessor<DatabaseQueryResult, List<Pickup>> dbQueryResultProcessor(){
         return new DatabaseQueryResultProcessor();
     }
 
     @Bean
-    public ItemWriter<DatabaseQueryResult> jsonWriter(){
+    public ItemWriter<List<Pickup>> jsonWriter(){
         return new JsonWriter();
     }
 
     @Bean
     public Step fleetRecommendationStep(ItemReader<DatabaseQueryResult> dbReader,
-                                        ItemProcessor<DatabaseQueryResult, DatabaseQueryResult> dbQueryResultProcessor,
-                                        ItemWriter<DatabaseQueryResult> jsonWriter,
+                                        ItemProcessor<DatabaseQueryResult, List<Pickup>> dbQueryResultProcessor,
+                                        ItemWriter<List<Pickup>> jsonWriter,
                                         StepBuilderFactory stepBuilderFactory){
         return stepBuilderFactory.get("fleetRecommendationStep")
-                .<DatabaseQueryResult, DatabaseQueryResult>chunk(100)
+                .<DatabaseQueryResult, List<Pickup>>chunk(5)
                 .reader(dbReader)
                 .processor(dbQueryResultProcessor)
                 .writer(jsonWriter)

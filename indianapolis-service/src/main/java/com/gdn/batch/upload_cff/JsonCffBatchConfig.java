@@ -20,7 +20,8 @@ public class JsonCffBatchConfig {
     private static final String PROPERTY_REST_API_URL = "api.url";
 
     @Bean
-    ItemReader<UploadCffResponse> jsonCffReader(Environment environment, RestTemplate restTemplate){
+    ItemReader<UploadCffResponse> jsonCffReader(Environment environment){
+        RestTemplate restTemplate = new RestTemplate();
         return new JsonCffReader(environment.getRequiredProperty(PROPERTY_REST_API_URL), restTemplate);
     }
 
