@@ -39,6 +39,7 @@ public class DatabaseQueryResultProcessor implements ItemProcessor<DatabaseQuery
 
             pickupList = getAssignedFleetsForPickupList(skuList, bestFitFleetList);
             logAssignedFleetsForPickup(pickupList);
+            resultList.clear();
         }
         return pickupList;
     }

@@ -30,17 +30,8 @@ public class UploadCffController {
             produces = MediaType.APPLICATION_JSON_VALUE,
             consumes = MediaType.APPLICATION_JSON_VALUE
     )
-    public Map testJobLauncher(@RequestBody UploadCffResponse uploadCffResponse) throws JobParametersInvalidException, JobExecutionAlreadyRunningException, JobRestartException, JobInstanceAlreadyCompleteException {
-        return cffService.executeBatch(uploadCffResponse);
-    }
-
-    @RequestMapping(
-            value = "/cffresponse",
-            method = RequestMethod.GET,
-            produces = MediaType.APPLICATION_JSON_VALUE
-    )
-    public List<UploadCffResponse> getUploadedCffData(){
-        return cffService.getUploadCffResponse();
+    public UploadCffResponse saveCff(@RequestBody UploadCffResponse uploadCffResponse) {
+        return cffService.saveCff(uploadCffResponse);
     }
 
     @RequestMapping(
