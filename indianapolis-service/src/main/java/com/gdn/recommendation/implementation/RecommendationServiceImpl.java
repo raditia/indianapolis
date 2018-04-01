@@ -27,12 +27,10 @@ public class RecommendationServiceImpl implements RecommendationService {
     @Autowired
     private RecommendationRepository recommendationRepository;
     private List<DatabaseQueryResult> pickupList = new ArrayList<>();
-    private int resultRowCount=0;
 
     @Override
     public List<DatabaseQueryResult> executeBatch() {
         try {
-            resultRowCount = recommendationRepository.getRowCount();
             JobParameters fleetRecommendationJobParameters = new JobParametersBuilder()
                     .addLong("time",System.currentTimeMillis()).toJobParameters();
             jobLauncher.run(fleetRecommendationJob, fleetRecommendationJobParameters);
@@ -49,6 +47,6 @@ public class RecommendationServiceImpl implements RecommendationService {
 
     @Override
     public int getResultRowCount() {
-        return this.resultRowCount;
+        return recommendationRepository.getRowCount();
     }
 }

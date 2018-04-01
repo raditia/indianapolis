@@ -91,5 +91,6 @@
     <orderEntry type="library" name="Maven: org.springframework.batch:spring-batch-infrastructure:4.0.0.RELEASE" level="project" />
     <orderEntry type="library" name="Maven: org.springframework.retry:spring-retry:1.2.2.RELEASE" level="project" />
     <orderEntry type="library" name="Maven: org.springframework:spring-tx:5.0.4.RELEASE" level="project" />
+    <orderEntry type="library" name="Maven: joda-time:joda-time:2.9.9" level="project" />
   </component>
 </module>
