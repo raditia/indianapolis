@@ -1,6 +1,8 @@
 package com.gdn.cff.implementation;
 
-import com.gdn.entity.Cff;
+import com.gdn.allowed_vehicle.AllowedVehicleService;
+import com.gdn.cff.good.CffGoodService;
+import com.gdn.entity.*;
 import com.gdn.cff.CffService;
 import com.gdn.repository.CffRepository;
 import com.gdn.upload_cff.UploadCffResponse;
@@ -14,47 +16,69 @@ import org.springframework.batch.core.repository.JobInstanceAlreadyCompleteExcep
 import org.springframework.batch.core.repository.JobRestartException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.batch.operations.JobStartException;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Service
+@Transactional
 public class CffServiceImpl implements CffService {
 
     @Autowired
+    private CffGoodService cffGoodService;
+    @Autowired
+    private AllowedVehicleService allowedVehicleService;
+    @Autowired
     private CffRepository cffRepository;
-    @Autowired
-    private JobLauncher jobLauncher;
-    @Autowired
-    private Job jsonCffJob;
-
-    private List<UploadCffResponse> uploadCffResponseList;
 
     @Override
-    public Map executeBatch(UploadCffResponse uploadCffResponse) throws JobParametersInvalidException, JobExecutionAlreadyRunningException, JobStartException, JobInstanceAlreadyCompleteException {
-        List<UploadCffResponse> uploadCffResponseList = Arrays.asList(uploadCffResponse);
-        this.uploadCffResponseList = uploadCffResponseList;
-        try {
-            JobParameters cffJobParameters = new JobParametersBuilder()
-                    .addLong("time",System.currentTimeMillis()).toJobParameters();
-            jobLauncher.run(jsonCffJob, cffJobParameters);
-        } catch (JobRestartException e) {
-            e.printStackTrace();
-        }
-
-        return Collections.singletonMap("SPRING BATCH", "OKE");
-    }
-
-    @Override
-    public List<UploadCffResponse> getUploadCffResponse() {
-        return this.uploadCffResponseList;
-    }
-
-    @Override
+    @Transactional(readOnly = true)
     public List<Cff> getAllCff() {
         return cffRepository.findAll();
     }
+
+    @Override
+    public UploadCffResponse saveCff(UploadCffResponse uploadCffResponse) {
+        Cff cff = buildCff(uploadCffResponse);
+        cffRepository.save(cff);
+        cffGoodService.save(cff, uploadCffResponse);
+        allowedVehicleService.save(buildPickupPoint(uploadCffResponse), uploadCffResponse);
+        return uploadCffResponse;
+    }
+
+    private Cff buildCff(UploadCffResponse response){
+        return Cff.builder()
+                .id(response.getRequestor().getId())
+                .headerCff(response.getRequestor())
+                .category(buildCategory(response))
+                .build();
+    }
+
+    private Category buildCategory(UploadCffResponse response){
+        return Category.builder()
+                .id(response.getCategory())
+                .build();
+    }
+
+    private PickupPoint buildPickupPoint(UploadCffResponse response){
+        return PickupPoint.builder()
+                .id(UUID.randomUUID().toString())
+                .headerCff(response.getRequestor())
+                .pickupAddress(response.getPickupPoint().getPickupAddress())
+                .latitude(response.getPickupPoint().getLatitude())
+                .longitude(response.getPickupPoint().getLongitude())
+                .merchant(buildMerchant(response))
+                .build();
+    }
+
+    private Merchant buildMerchant(UploadCffResponse response){
+        return Merchant.builder()
+                .id(UUID.randomUUID().toString())
+                .name(response.getMerchant().getName())
+                .emailAddress(response.getMerchant().getEmailAddress())
+                .phoneNumber(response.getMerchant().getPhoneNumber())
+                .build();
+    }
+
 }
