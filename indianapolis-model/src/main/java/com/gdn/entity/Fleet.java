@@ -28,6 +28,9 @@ public class Fleet {
     @Column(name = "cbm_capacity")
     private Double cbmCapacity;
 
+    @Column(name = "min_cbm_capacity")
+    private Double minCbm;
+
     @ManyToOne
     @JoinColumn(name = "logisctic_vendor_id")
     private LogisticVendor logisticVendor;
