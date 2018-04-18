@@ -2,6 +2,7 @@ package com.gdn.batch.fleet_recommendation;
 
 import com.gdn.recommendation.DatabaseQueryResult;
 import com.gdn.recommendation.Pickup;
+import com.gdn.recommendation.Recommendation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.batch.core.Job;
@@ -45,22 +46,22 @@ public class FleetRecommendationBatchConfig {
     }
 
     @Bean
-    public ItemProcessor<DatabaseQueryResult, List<Pickup>> dbQueryResultProcessor(){
+    public ItemProcessor<DatabaseQueryResult, List<Recommendation>> dbQueryResultProcessor(){
         return new DatabaseQueryResultProcessor();
     }
 
     @Bean
-    public ItemWriter<List<Pickup>> jsonWriter(){
+    public ItemWriter<List<Recommendation>> jsonWriter(){
         return new JsonWriter();
     }
 
     @Bean
     public Step fleetRecommendationStep(ItemReader<DatabaseQueryResult> dbReader,
-                                        ItemProcessor<DatabaseQueryResult, List<Pickup>> dbQueryResultProcessor,
-                                        ItemWriter<List<Pickup>> jsonWriter,
+                                        ItemProcessor<DatabaseQueryResult, List<Recommendation>> dbQueryResultProcessor,
+                                        ItemWriter<List<Recommendation>> jsonWriter,
                                         StepBuilderFactory stepBuilderFactory){
         return stepBuilderFactory.get("fleetRecommendationStep")
-                .<DatabaseQueryResult, List<Pickup>>chunk(5)
+                .<DatabaseQueryResult, List<Recommendation>>chunk(5)
                 .reader(dbReader)
                 .processor(dbQueryResultProcessor)
                 .writer(jsonWriter)

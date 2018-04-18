@@ -12,7 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-public class DatabaseQueryResultProcessor implements ItemProcessor<DatabaseQueryResult, List<Pickup>> {
+public class DatabaseQueryResultProcessor implements ItemProcessor<DatabaseQueryResult, List<Recommendation>> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DatabaseQueryResultProcessor.class);
     private List<DatabaseQueryResult> resultList = new ArrayList<>();
@@ -26,17 +26,18 @@ public class DatabaseQueryResultProcessor implements ItemProcessor<DatabaseQuery
     private List<Pickup> pickupList = new ArrayList<>();
 
     @Override
-    public List<Pickup> process(DatabaseQueryResult databaseQueryResult) throws Exception {
+    public List<Recommendation> process(DatabaseQueryResult databaseQueryResult) throws Exception {
         rowCount = recommendationService.getResultRowCount();
         resultList.add(databaseQueryResult);
+        List<Recommendation> rekomendasiList = new ArrayList<>();
         if(allItemsHaveBeenRetrieved()){
-            List<Recommendation> rekomendasiList = get3Recommendation();
+            rekomendasiList = get3Recommendation();
 
             for(Recommendation rekomendasi : rekomendasiList){
                 System.out.println(rekomendasi.getId()+"///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////");
                 int itung=0;
                 for(Pickup pengangkutan : rekomendasi.getPickupList()){
-                    System.out.println("Hitungan Ke : "+itung+"-"+pengangkutan.getFleet().getName()+" Id Kendaraan: "+pengangkutan.getFleetIdNumber()+" Jumlah Angkut "+pengangkutan.getPickupTotalAmount());
+                    System.out.println("Hitungan Ke : "+itung+"-"+pengangkutan.getFleet().getName()+" Id Kendaraan: "+pengangkutan.getFleetIdNumber()+" Jumlah Angkut "+pengangkutan.getPickupTotalAmount() + " CBM Angkut " + pengangkutan.getPickupTotalCbm());
                     itung+=1;
                 }
                 System.out.println("CBM Total : "+rekomendasi.getCbmTotal());
@@ -44,7 +45,7 @@ public class DatabaseQueryResultProcessor implements ItemProcessor<DatabaseQuery
             }
             resultList.clear();
         }
-        return pickupList;
+        return rekomendasiList;
     }
 
     private List<Recommendation> get3Recommendation(){

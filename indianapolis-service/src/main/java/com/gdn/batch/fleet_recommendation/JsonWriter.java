@@ -12,13 +12,21 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-public class JsonWriter implements ItemWriter<List<Pickup>> {
+public class JsonWriter implements ItemWriter<List<Recommendation>> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(JsonWriter.class);
 
-    @Override
-    public void write(List<? extends List<Pickup>> items) throws Exception {
+    private static final String TAG = JsonWriter.class.getSimpleName();
 
+    @Override
+    public void write(List<? extends List<Recommendation>> items) throws Exception {
+        for (List<Recommendation> recommendationList:items
+             ) {
+            for (Recommendation recommendation:recommendationList
+                 ) {
+                LOGGER.info("Writing : " + recommendation.getId() + " | " + recommendation.getSkuAmount() + " | " + recommendation.getCbmTotal());
+            }
+        }
     }
 
 }
