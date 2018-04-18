@@ -52,6 +52,13 @@ public class CffServiceImpl implements CffService {
                 .id(response.getRequestor().getId())
                 .headerCff(response.getRequestor())
                 .category(buildCategory(response))
+                .warehouse(buildWarehouse(response))
+                .build();
+    }
+
+    private Warehouse buildWarehouse(UploadCffResponse response){
+        return Warehouse.builder()
+                .id(response.getWarehouse())
                 .build();
     }
 
