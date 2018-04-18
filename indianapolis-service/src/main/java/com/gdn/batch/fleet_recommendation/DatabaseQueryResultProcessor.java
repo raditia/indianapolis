@@ -49,116 +49,112 @@ public class DatabaseQueryResultProcessor implements ItemProcessor<DatabaseQuery
 
     private List<Recommendation> get3Recommendation(){
         List<Recommendation> recommendationList = new ArrayList<>();
-        List<Fleet> kendaraanList3 = get3MaxVehicle();
-        Integer jumlahRekomendasi = 3;
-        for(Fleet kendaraan : kendaraanList3){
-            if(jumlahRekomendasi <= 0){
+        List<Fleet> fleetList = get3MaxFleets();
+        Integer recommendationAmount = 3;
+        for(Fleet fleet : fleetList){
+            if(recommendationAmount <= 0){
                 break;
             }
-            Recommendation rekomendasi = new Recommendation();
-            rekomendasi = getRecommendation(kendaraan);
-            rekomendasi.setId(UUID.randomUUID().toString());
-            recommendationList.add(rekomendasi);
+            Recommendation recommendation = getRecommendation(fleet);
+            recommendation.setId(UUID.randomUUID().toString());
+            recommendationList.add(recommendation);
 
-            jumlahRekomendasi-=1;
+            recommendationAmount-=1;
         }
         return recommendationList;
     }
 
-    private List<Fleet> get3MaxVehicle(){
+    private List<Fleet> get3MaxFleets(){
         List<Fleet> fleetOnDbList = fleetService.findAllByOrderByCbmCapacityDesc();
-        List<Fleet> vehicleList3 = new ArrayList<>();
+        List<Fleet> fleetList = new ArrayList<>();
         List<Sku> skuList = migrateIntoSkuList(resultList);
-        Fleet maxFleet = getMaxKendaraan(skuList);
-        Integer jumlahMaxKendaraan = 3;
-        for(Fleet kendaraan : fleetOnDbList){
-            if(jumlahMaxKendaraan<=0){
+        Fleet maxFleet = getMaxFleet(skuList);
+        Integer maxFleetAmount = 3;
+        for(Fleet fleet : fleetOnDbList){
+            if(maxFleetAmount<=0){
                 break;
             }
-            if(kendaraan.getCbmCapacity() <= maxFleet.getCbmCapacity()){
-                vehicleList3.add(kendaraan);
-                maxFleet = kendaraan;
+            if(fleet.getCbmCapacity() <= maxFleet.getCbmCapacity()){
+                fleetList.add(fleet);
+                maxFleet = fleet;
             }
-            jumlahMaxKendaraan-=1;
+            maxFleetAmount-=1;
         }
-        return vehicleList3;
+        return fleetList;
     }
 
-    private Fleet getMaxKendaraan(List<Sku> skuList){
-        List<Fleet> kendaraanList = fleetService.findAllByOrderByCbmCapacityDesc();
-        Fleet tempKendaraan = new Fleet();
+    private Fleet getMaxFleet(List<Sku> skuList){
+        List<Fleet> fleetList = fleetService.findAllByOrderByCbmCapacityDesc();
+        Fleet tempFleet;
         Double tempCbm;
 
-        for(Fleet kendaraan : kendaraanList){
+        for(Fleet fleet : fleetList){
             tempCbm = 0.0;
             for(Sku sku : skuList){
                 for(Vehicle vehicle : sku.getVehicleList()){
-                    if(vehicle.getCbmCapacity()>=kendaraan.getCbmCapacity() && kendaraan.getCbmCapacity()>=sku.getCbm()){
+                    if(vehicle.getCbmCapacity()>=fleet.getCbmCapacity() && fleet.getCbmCapacity()>=sku.getCbm()){
                         tempCbm+=sku.getCbm()*sku.getQuantity();
                         break;
                     }
                 }
             }
-            if(tempCbm>=kendaraan.getMinCbm()){
-                tempKendaraan = kendaraan;
-                return tempKendaraan;
+            if(tempCbm>=fleet.getMinCbm()){
+                tempFleet = fleet;
+                return tempFleet;
             }
         }
         return null;
     }
 
     private Recommendation getRecommendation(Fleet maxFleet){
-        Recommendation rekomendasi = new Recommendation();
-        List<Pickup> pengangkutanList = new ArrayList<>();
-        List<Sku> skuList = new ArrayList<>();
+        Recommendation recommendation = new Recommendation();
+        List<Pickup> pickupList = new ArrayList<>();
+        List<Sku> skuList;
         skuList = migrateIntoSkuList(resultList);
         double cbmTotal = 0.0f;
-        Integer jumlahSku = 0;
+        int skuAmount = 0;
         while(!cekHabis(skuList)){
-            Pickup pengangkutan = new Pickup();
-            pengangkutan = this.getPengangkutan(skuList,maxFleet);
-            pengangkutanList.add(pengangkutan);
-            cbmTotal=cbmTotal+pengangkutan.getPickupTotalCbm();
-            jumlahSku+=pengangkutan.getPickupTotalAmount();
+            Pickup pickup = getPickup(skuList,maxFleet);
+            pickupList.add(pickup);
+            cbmTotal=cbmTotal+pickup.getPickupTotalCbm();
+            skuAmount+=pickup.getPickupTotalAmount();
         }
-        rekomendasi.setPickupList(pengangkutanList);
-        rekomendasi.setCbmTotal(cbmTotal);
-        rekomendasi.setSkuAmount(jumlahSku);
-        return rekomendasi;
+        recommendation.setPickupList(pickupList);
+        recommendation.setCbmTotal(cbmTotal);
+        recommendation.setSkuAmount(skuAmount);
+        return recommendation;
     }
 
-    private Pickup getPengangkutan(List<Sku> skuList, Fleet maxKendaraan) {
-        Pickup pengangkutan = new Pickup();
-        pengangkutan = initPengangkutan(pengangkutan);
-        Fleet kendaraan = getNextKendaraan(skuList, maxKendaraan);
+    private Pickup getPickup(List<Sku> skuList, Fleet maxFleet) {
+        Pickup pickup = new Pickup();
+        pickup = initPickup(pickup);
+        Fleet fleet = getNextFleet(skuList, maxFleet);
 
-        if(kendaraan != null){
-            pengangkutan.setFleetIdNumber(kendaraan.getId());
-            pengangkutan.setFleet(kendaraan);
-            List<Detail> detailList = new ArrayList<>();
-            detailList = getDetailList(skuList,kendaraan);
+        if(fleet != null){
+            pickup.setFleetIdNumber(fleet.getId());
+            pickup.setFleet(fleet);
+            List<Detail> detailList = getDetailList(skuList,fleet);
             if(detailList != null){
-                skuList = updateSkuList(skuList, detailList);
-                pengangkutan.setPickupTotalCbm(getCbmTotalAngkut(detailList));
-                pengangkutan.setPickupTotalAmount(getJumlahTotalPengangkutan(detailList));
-                pengangkutan.setDetailList(detailList);
+                pickup.setPickupTotalCbm(getCbmPickupTotal(detailList));
+                pickup.setPickupTotalAmount(getPickupAmountTotal(detailList));
+                pickup.setDetailList(detailList);
             }
         }
-        return pengangkutan;
+        return pickup;
     }
 
-    private double getCbmTotalAngkut(List<Detail> detailList) {
+    private double getCbmPickupTotal(List<Detail> detailList) {
         double total = 0.0f;
         for(Detail detail : detailList){
             total=total+detail.getCbmPickup();
         }return total;
     }
 
-    private Integer getJumlahTotalPengangkutan(List<Detail> detailList) {
-        Integer jumlah=0;
+    private int getPickupAmountTotal(List<Detail> detailList) {
+        int amount=0;
         for(Detail detail : detailList){
-            jumlah+=detail.getPickupAmount();
-        }return jumlah;
+            amount+=detail.getPickupAmount();
+        }return amount;
     }
 
     private List<Sku> updateSkuList(List<Sku> skuList, List<Detail> detailList) {
@@ -174,41 +170,40 @@ public class DatabaseQueryResultProcessor implements ItemProcessor<DatabaseQuery
 
     private List<Detail> getDetailList(List<Sku> skuList, Fleet kendaraan) {
         List<Detail> detailList = new ArrayList<>();
-        Integer counter = 0;
-        Integer jumlahSku = 0;
+        int counter = 0;
+        int skuAmount = 0;
         double cbm = 0.0f;
         boolean statusBreak = false;
         for(Sku sku : skuList){
             if(sku.getQuantity() >0){
-                jumlahSku = 0;
+                skuAmount = 0;
                 Detail detail = new Detail();
-                detail.setSku(new Sku(sku.getId(), sku.getName(), jumlahSku, sku.getCbm(), sku.getVehicleList()));
+                detail.setSku(new Sku(sku.getId(), sku.getName(), skuAmount, sku.getCbm(), sku.getVehicleList()));
                 counter = sku.getQuantity();
-                for(Vehicle kendaraan2 : sku.getVehicleList()){
-                    if(kendaraan2.getCbmCapacity()>=kendaraan.getCbmCapacity()){
+                for(Vehicle vehicle : sku.getVehicleList()){
+                    if(vehicle.getCbmCapacity()>=kendaraan.getCbmCapacity()){
                         while(cbm<kendaraan.getCbmCapacity() && counter>0){
-//                            System.out.println("CBM GAN-----------------------------------------"+this.formatNormalFloat(cbm+sku.getCbm())+ " Banding: "+(cbm+sku.getCbm())+" cbm: "+kendaraan.getCbm());
                             if((cbm+sku.getCbm()) > kendaraan.getCbmCapacity()){
                                 statusBreak = true;
                                 break;
                             }else{
                                 cbm = cbm+sku.getCbm();
-                                jumlahSku+=1;
+                                skuAmount+=1;
                             }
                             counter--;
                         }
                         break;
                     }
-                    if(statusBreak == true){
+                    if(statusBreak){
                         break;
                     }
                 }
-                detail.setCbmPickup(jumlahSku * sku.getCbm());
-                detail.setPickupAmount(jumlahSku);
-                if(jumlahSku >0){
+                detail.setCbmPickup(skuAmount * sku.getCbm());
+                detail.setPickupAmount(skuAmount);
+                if(skuAmount >0){
                     detailList.add(detail);
                 }
-                if(statusBreak == true){
+                if(statusBreak){
                     break;
                 }
             }
@@ -216,36 +211,36 @@ public class DatabaseQueryResultProcessor implements ItemProcessor<DatabaseQuery
         return detailList;
     }
 
-    public Fleet getNextKendaraan(List<Sku> skuList, Fleet maxKendaraan){
+    private Fleet getNextFleet(List<Sku> skuList, Fleet maxFleet){
         List<Fleet> kendaraanList = fleetService.findAllByOrderByCbmCapacityDesc();
-        Fleet tempKendaraan = new Fleet();
+        Fleet tempFleet = new Fleet();
         Double tempCbm;
 
-        for(Fleet kendaraan : kendaraanList){
-            if(kendaraan.getCbmCapacity() <= maxKendaraan.getCbmCapacity()){
+        for(Fleet fleet : kendaraanList){
+            if(fleet.getCbmCapacity() <= maxFleet.getCbmCapacity()){
                 tempCbm = 0.0;
                 for(Sku sku : skuList){
                     for(Vehicle kendaraan2 : sku.getVehicleList()){
-                        if(kendaraan2.getCbmCapacity()>=kendaraan.getCbmCapacity()){
+                        if(kendaraan2.getCbmCapacity()>=fleet.getCbmCapacity()){
                             tempCbm+=sku.getCbm()*sku.getQuantity();
                             break;
                         }
                     }
                 }
-                if(tempCbm>=kendaraan.getMinCbm()){
-                    tempKendaraan = kendaraan;
-                    return tempKendaraan;
+                if(tempCbm>=fleet.getMinCbm()){
+                    tempFleet = fleet;
+                    return tempFleet;
                 }
             }
         }
         return null;
     }
 
-    private Pickup initPengangkutan(Pickup pengangkutan) {
-        pengangkutan.setPickupTotalCbm(0.0f);
-        pengangkutan.setFleetIdNumber("0");
-        pengangkutan.setPickupTotalAmount(0);
-        return pengangkutan;
+    private Pickup initPickup(Pickup pickup) {
+        pickup.setPickupTotalCbm(0.0f);
+        pickup.setFleetIdNumber("0");
+        pickup.setPickupTotalAmount(0);
+        return pickup;
     }
 
     private boolean cekHabis(List<Sku> skuList) {
@@ -294,6 +289,17 @@ public class DatabaseQueryResultProcessor implements ItemProcessor<DatabaseQuery
         return skuList;
     }
 
+    private Fleet getMinimumBestFitFleetType(List<Fleet> fleetList){
+        return fleetList.get(fleetList.size() - 1);
+    }
+
+    private Boolean cekSkuListEmpty(List<Sku> skuList){
+        for(Sku sku : skuList){
+            if(sku.getQuantity() != 0)
+                return false;
+        }
+        return true;
+    }
     private Double getTotalCbm(List<Sku> skuList){
         Double totalCbm = 0.0;
         for(Sku sku : skuList){
@@ -301,7 +307,6 @@ public class DatabaseQueryResultProcessor implements ItemProcessor<DatabaseQuery
         }
         return totalCbm;
     }
-
     private List<BestFitFleet> getBestFitFleetList(List<Fleet> fleetList, Double totalCbm){
         List<BestFitFleet> maxAmountVehicleList = new ArrayList<>();
         Double maxFleet = 0.0;
@@ -340,18 +345,12 @@ public class DatabaseQueryResultProcessor implements ItemProcessor<DatabaseQuery
 
         return maxAmountVehicleList;
     }
-
-    private Fleet getMinimumBestFitFleetType(List<Fleet> fleetList){
-        return fleetList.get(fleetList.size() - 1);
-    }
-
     private void logBestFleets(List<BestFitFleet> bestFitFleetList){
         for (BestFitFleet bestFitFleet : bestFitFleetList){
             System.out.println("Type : " + bestFitFleet.getFleet().getName() + " , " + bestFitFleet.getFleet().getCbmCapacity() + " cbm capacity each");
             System.out.println("Amount : " + bestFitFleet.getAmount());
         }
     }
-
     public List<Pickup> getAssignedFleetsForPickupList(List<Sku> skuList, List<BestFitFleet> bestFitFleetList){
         List<Pickup> pickupList = new ArrayList<>();
         int i = 0;
@@ -407,15 +406,6 @@ public class DatabaseQueryResultProcessor implements ItemProcessor<DatabaseQuery
 
         return pickupList;
     }
-
-    private Boolean cekSkuListEmpty(List<Sku> skuList){
-        for(Sku sku : skuList){
-            if(sku.getQuantity() != 0)
-                return false;
-        }
-        return true;
-    }
-
     private void logAssignedFleetsForPickup(List<Pickup> pickupList){
         for (Pickup pickup : pickupList){
             System.out.println("################################################");
