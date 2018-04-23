@@ -1,7 +1,6 @@
 package com.gdn.batch.fleet_recommendation;
 
 import com.gdn.recommendation.DatabaseQueryResult;
-import com.gdn.recommendation.Pickup;
 import com.gdn.recommendation.Recommendation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,6 +37,7 @@ public class FleetRecommendationBatchConfig {
 
     @Bean
     public ItemReader<DatabaseQueryResult> dbReader(){
+        LOGGER.info("Reading...");
         JdbcCursorItemReader<DatabaseQueryResult> reader = new JdbcCursorItemReader<>();
         reader.setDataSource(dataSource);
         reader.setSql(databaseQuery);
@@ -52,7 +52,7 @@ public class FleetRecommendationBatchConfig {
 
     @Bean
     public ItemWriter<List<Recommendation>> jsonWriter(){
-        return new JsonWriter();
+        return new RecommendationResultWriter();
     }
 
     @Bean

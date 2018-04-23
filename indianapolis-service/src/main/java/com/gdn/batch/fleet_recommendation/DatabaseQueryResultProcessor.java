@@ -23,7 +23,6 @@ public class DatabaseQueryResultProcessor implements ItemProcessor<DatabaseQuery
     private FleetService fleetService;
 
     private int rowCount = 0;
-    private List<Pickup> pickupList = new ArrayList<>();
 
     @Override
     public List<Recommendation> process(DatabaseQueryResult databaseQueryResult) throws Exception {
@@ -31,18 +30,8 @@ public class DatabaseQueryResultProcessor implements ItemProcessor<DatabaseQuery
         resultList.add(databaseQueryResult);
         List<Recommendation> rekomendasiList = new ArrayList<>();
         if(allItemsHaveBeenRetrieved()){
+            LOGGER.info("Processing...");
             rekomendasiList = get3Recommendation();
-
-            for(Recommendation rekomendasi : rekomendasiList){
-                System.out.println(rekomendasi.getId()+"///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////");
-                int itung=0;
-                for(Pickup pengangkutan : rekomendasi.getPickupList()){
-                    System.out.println("Hitungan Ke : "+itung+"-"+pengangkutan.getFleet().getName()+" Id Kendaraan: "+pengangkutan.getFleetIdNumber()+" Jumlah Angkut "+pengangkutan.getPickupTotalAmount() + " CBM Angkut " + pengangkutan.getPickupTotalCbm());
-                    itung+=1;
-                }
-                System.out.println("CBM Total : "+rekomendasi.getCbmTotal());
-                System.out.println("Total SKU : "+rekomendasi.getSkuAmount());
-            }
             resultList.clear();
         }
         return rekomendasiList;
