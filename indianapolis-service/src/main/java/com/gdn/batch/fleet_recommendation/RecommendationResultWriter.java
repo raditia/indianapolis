@@ -27,7 +27,6 @@ public class RecommendationResultWriter implements ItemWriter<List<Recommendatio
                         "TOTAL SKU : " + recommendation.getSkuAmount() + "\n" +
                         "TOTAL CBM : " + recommendation.getCbmTotal() + "\n" +
                         "DATE PICKUP : " + tomorrow() + "\n" +
-                        "WAREHOUSE : " + "BELUM ADA!" + "\n" +
                         "STATUS : " + Status.PENDING);
                 for (Pickup pickup:recommendation.getPickupList()
                      ) {
@@ -39,7 +38,9 @@ public class RecommendationResultWriter implements ItemWriter<List<Recommendatio
                          ) {
                         System.out.println("SKU DETAIL : " + detail.getSku().getName() + "\n" +
                                 "SKU PICKUP : " + detail.getPickupAmount() + "\n" +
-                                "CBM PICKUP : " + detail.getCbmPickup());
+                                "CBM PICKUP : " + detail.getCbmPickup() + "\n" +
+                                "WAREHOUSE TUJUAN : " + detail.getSku().getWarehouseId() + "\n" +
+                                "MERCHANT ID : " + detail.getSku().getMerchantId());
                     }
                 }
             }

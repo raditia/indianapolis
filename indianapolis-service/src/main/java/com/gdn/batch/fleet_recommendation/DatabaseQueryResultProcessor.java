@@ -172,7 +172,14 @@ public class DatabaseQueryResultProcessor implements ItemProcessor<DatabaseQuery
             if(sku.getQuantity() >0){
                 jumlahSku = 0;
                 Detail detail = new Detail();
-                detail.setSku(new Sku(sku.getId(), sku.getName(), jumlahSku, sku.getCbm(), sku.getVehicleList()));
+                detail.setSku(new Sku(
+                        sku.getId(),
+                        sku.getName(),
+                        jumlahSku,
+                        sku.getCbm(),
+                        sku.getVehicleList(),
+                        sku.getWarehouseId(),
+                        sku.getMerchantId()));
                 counter = sku.getQuantity();
                 for(Vehicle kendaraan2 : sku.getVehicleList()){
                     if(kendaraan2.getCbmCapacity()>=kendaraan.getCbmCapacity()){
@@ -277,6 +284,8 @@ public class DatabaseQueryResultProcessor implements ItemProcessor<DatabaseQuery
                         .cbm(result.getCffGoods().getCbm())
                         .quantity(result.getCffGoods().getQuantity())
                         .vehicleList(vehicleList)
+                        .warehouseId(result.getWarehouseId())
+                        .merchantId(result.getMerchantId())
                         .build();
                 skuList.add(sku);
             }

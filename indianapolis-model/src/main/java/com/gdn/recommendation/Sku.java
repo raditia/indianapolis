@@ -16,4 +16,5 @@ public class Sku {
     private int quantity;
     private double cbm;
     private List<Vehicle> vehicleList;
+    private String warehouseId, merchantId;
 }

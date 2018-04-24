@@ -12,4 +12,6 @@ import lombok.NoArgsConstructor;
 public class DatabaseQueryResult {
     private DatabaseQueryCffGoods cffGoods;
     private DatabaseQueryAllowedVehicles allowedVehicles;
+    private String warehouseId;
+    private String merchantId;
 }
