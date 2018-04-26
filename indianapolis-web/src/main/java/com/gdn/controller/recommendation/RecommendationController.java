@@ -1,5 +1,6 @@
 package com.gdn.controller.recommendation;
 
+import com.gdn.entity.RecommendationFleet;
 import com.gdn.recommendation.DatabaseQueryResult;
 import com.gdn.recommendation.Pickup;
 import com.gdn.recommendation.RecommendationService;
@@ -12,19 +13,27 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 @RestController
-@RequestMapping(value = "/api")
+@RequestMapping(value = "/api/recommendation")
 public class RecommendationController {
 
     @Autowired
     private RecommendationService recommendationService;
 
     @RequestMapping(
-            value = "/recommendation",
             method = RequestMethod.GET,
             produces = MediaType.APPLICATION_JSON_VALUE
     )
-    public List<DatabaseQueryResult> recommendation(){
+    public boolean recommendation(){
         return recommendationService.executeBatch();
+    }
+
+    @RequestMapping(
+            value = "/result",
+            method = RequestMethod.GET,
+            produces = MediaType.APPLICATION_JSON_VALUE
+    )
+    public List<RecommendationFleet> getAllRecommendationFleetResult(){
+        return recommendationService.findAllRecommendationFleetResult();
     }
 
 }

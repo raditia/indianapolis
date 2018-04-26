@@ -19,13 +19,13 @@ public class RecommendationFleet {
     @Column(name = "recommendation_fleet")
     private String id;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne
     @JoinColumn(name = "recommendation_result_id")
     private RecommendationResult recommendationResult;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne
     @JoinColumn(name = "fleet_id")
-    private Fleet fleetId;
+    private Fleet fleet;
 
     @Column(name = "fleet_sku_pickup_qty")
     private int fleetSkuPickupQty;

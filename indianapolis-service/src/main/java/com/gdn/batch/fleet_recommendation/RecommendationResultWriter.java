@@ -101,7 +101,7 @@ public class RecommendationResultWriter implements ItemWriter<List<Recommendatio
         return RecommendationFleet.builder()
                 .id(UUID.randomUUID().toString())
                 .recommendationResult(recommendationResult)
-                .fleetId(pickup.getFleet())
+                .fleet(pickup.getFleet())
                 .fleetSkuPickupQty(pickup.getPickupTotalAmount())
                 .fleetCbmPickupAmount(pickup.getPickupTotalCbm())
                 .build();

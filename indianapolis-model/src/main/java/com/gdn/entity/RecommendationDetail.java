@@ -19,7 +19,7 @@ public class RecommendationDetail {
     @Column(name = "id")
     private String id;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne
     @JoinColumn(name = "recommendation_fleet_id")
     private RecommendationFleet recommendationFleet;
 

@@ -7,10 +7,10 @@ import com.gdn.entity.RecommendationResult;
 import java.util.List;
 
 public interface RecommendationService {
-    List<DatabaseQueryResult> executeBatch();
-    List<DatabaseQueryResult> setPickupList(List<DatabaseQueryResult> pickupList);
+    boolean executeBatch();
     int getResultRowCount();
     RecommendationResult saveRecommendationResult(RecommendationResult recommendationResult);
     RecommendationFleet saveRecommendationFleet(RecommendationFleet recommendationFleet);
     RecommendationDetail saveRecommendationDetail(RecommendationDetail recommendationDetail);
+    List<RecommendationFleet> findAllRecommendationFleetResult();
 }

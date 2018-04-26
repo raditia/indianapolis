@@ -1,18 +1,19 @@
 package com.gdn.recommendation.implementation;
 
+import com.gdn.entity.Fleet;
 import com.gdn.entity.RecommendationDetail;
 import com.gdn.entity.RecommendationFleet;
 import com.gdn.entity.RecommendationResult;
 import com.gdn.recommendation.DatabaseQueryResult;
+import com.gdn.recommendation.RecommendationFleetResult;
 import com.gdn.recommendation.RecommendationService;
 import com.gdn.repository.RecommendationDetailRepository;
 import com.gdn.repository.RecommendationFleetRepository;
 import com.gdn.repository.RecommendationRepository;
 import com.gdn.repository.RecommendationResultRepository;
-import org.springframework.batch.core.Job;
-import org.springframework.batch.core.JobParameters;
-import org.springframework.batch.core.JobParametersBuilder;
-import org.springframework.batch.core.JobParametersInvalidException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.batch.core.*;
 import org.springframework.batch.core.launch.JobLauncher;
 import org.springframework.batch.core.repository.JobExecutionAlreadyRunningException;
 import org.springframework.batch.core.repository.JobInstanceAlreadyCompleteException;
@@ -25,6 +26,8 @@ import java.util.List;
 
 @Service
 public class RecommendationServiceImpl implements RecommendationService {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(RecommendationServiceImpl.class);
 
     @Autowired
     private JobLauncher jobLauncher;
@@ -39,23 +42,18 @@ public class RecommendationServiceImpl implements RecommendationService {
     @Autowired
     private RecommendationDetailRepository recommendationDetailRepository;
 
-    private List<DatabaseQueryResult> pickupList = new ArrayList<>();
-
     @Override
-    public List<DatabaseQueryResult> executeBatch() {
+    public boolean executeBatch() {
+        boolean batchExecutionSuccessStatus=false;
         try {
             JobParameters fleetRecommendationJobParameters = new JobParametersBuilder()
                     .addLong("time",System.currentTimeMillis()).toJobParameters();
-            jobLauncher.run(fleetRecommendationJob, fleetRecommendationJobParameters);
+            JobExecution jobExecution = jobLauncher.run(fleetRecommendationJob, fleetRecommendationJobParameters);
+            batchExecutionSuccessStatus = !jobExecution.getStatus().isUnsuccessful();
         } catch (JobExecutionAlreadyRunningException | JobRestartException | JobInstanceAlreadyCompleteException | JobParametersInvalidException e) {
             e.printStackTrace();
         }
-        return this.pickupList;
-    }
-
-    @Override
-    public List<DatabaseQueryResult> setPickupList(List<DatabaseQueryResult> pickupList) {
-        return this.pickupList = pickupList;
+        return batchExecutionSuccessStatus;
     }
 
     @Override
@@ -77,4 +75,10 @@ public class RecommendationServiceImpl implements RecommendationService {
     public RecommendationDetail saveRecommendationDetail(RecommendationDetail recommendationDetail) {
         return recommendationDetailRepository.save(recommendationDetail);
     }
+
+    @Override
+    public List<RecommendationFleet> findAllRecommendationFleetResult() {
+        return recommendationFleetRepository.findAll();
+    }
+
 }
