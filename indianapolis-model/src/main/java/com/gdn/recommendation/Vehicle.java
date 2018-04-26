@@ -12,4 +12,5 @@ import lombok.NoArgsConstructor;
 public class Vehicle {
     private String name;
     private double cbmCapacity;
+    private double minCbm;
 }

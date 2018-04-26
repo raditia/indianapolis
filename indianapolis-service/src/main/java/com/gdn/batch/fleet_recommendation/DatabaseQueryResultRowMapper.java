@@ -18,7 +18,7 @@ public class DatabaseQueryResultRowMapper implements RowMapper<DatabaseQueryResu
     public DatabaseQueryResult mapRow(ResultSet resultSet, int i) throws SQLException {
         return DatabaseQueryResult.builder()
                 .cffGoods(DatabaseQueryCffGoods.builder()
-                        .id(resultSet.getString("id"))
+                        .id(resultSet.getString("cff_good_id"))
                         .sku(resultSet.getString("sku"))
                         .cbm(resultSet.getDouble("cbm"))
                         .quantity(resultSet.getInt("quantity"))
@@ -27,6 +27,8 @@ public class DatabaseQueryResultRowMapper implements RowMapper<DatabaseQueryResu
                         .vehicleName(resultSet.getString("vehicle_name"))
                         .cbmCapacity(resultSet.getDouble("cbm_capacity"))
                         .build())
+                .warehouseId(resultSet.getString("warehouse_id"))
+                .merchantId(resultSet.getString("merchant_id"))
                 .build();
     }
 }
