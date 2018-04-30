@@ -28,14 +28,10 @@ public class RecommendationResultWriter implements ItemWriter<List<Recommendatio
         RecommendationDetail recommendationDetail;
         for (List<Recommendation> recommendationList:items
              ) {
-            System.out.println("Recommendation list size : " + recommendationList.size());
             for (Recommendation recommendation:recommendationList){
                 recommendationResult = buildRecommendationResult(recommendation);
                 recommendationService.saveRecommendationResult(recommendationResult);
-                System.out.println("Rekomendasi ID : " + recommendation.getId());
-                System.out.println("Pickup List size : " + recommendation.getPickupList().size());
                 for (Pickup pickup:recommendation.getPickupList()){
-                    System.out.println("Fleet : " + pickup.getFleet().getName());
                     recommendationFleet = buildRecommendationFleet(recommendationResult, pickup);
                     recommendationService.saveRecommendationFleet(recommendationFleet);
                     for (Detail detail:pickup.getDetailList()){
