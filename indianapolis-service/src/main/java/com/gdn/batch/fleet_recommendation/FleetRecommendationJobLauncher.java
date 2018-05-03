@@ -20,7 +20,7 @@ public class FleetRecommendationJobLauncher {
     @Autowired
     private Job fleetRecommendationJob;
 
-    @Scheduled(cron = "${recommendation.cron}")
+//    @Scheduled(cron = "${recommendation.cron}")
     public void launchFleetRecommendationJob() throws JobParametersInvalidException, JobExecutionAlreadyRunningException, JobRestartException, JobInstanceAlreadyCompleteException {
         jobLauncher.run(fleetRecommendationJob, jobParameters());
     }

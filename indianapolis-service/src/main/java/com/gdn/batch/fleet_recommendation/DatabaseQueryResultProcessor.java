@@ -23,13 +23,19 @@ public class DatabaseQueryResultProcessor implements ItemProcessor<DatabaseQuery
     private FleetService fleetService;
 
     private int rowCount = 0;
+    private String warehouseId;
+
+    public DatabaseQueryResultProcessor(String warehouseId) {
+        this.warehouseId=warehouseId;
+    }
 
     @Override
     public List<Recommendation> process(DatabaseQueryResult databaseQueryResult) throws Exception {
-        rowCount = recommendationService.getResultRowCount();
+        rowCount = recommendationService.getResultRowCount(warehouseId);
         resultList.add(databaseQueryResult);
         List<Recommendation> rekomendasiList = new ArrayList<>();
         if(allItemsHaveBeenRetrieved()){
+            LOGGER.info("Row count : " + rowCount);
             LOGGER.info("Processing...");
             rekomendasiList = get3Recommendation();
             resultList.clear();

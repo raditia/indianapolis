@@ -7,8 +7,8 @@ import com.gdn.entity.RecommendationResult;
 import java.util.List;
 
 public interface RecommendationService {
-    boolean executeBatch();
-    int getResultRowCount();
+    boolean executeBatch(String warehouseId);
+    int getResultRowCount(String warehouseId);
     RecommendationResult saveRecommendationResult(RecommendationResult recommendationResult);
     RecommendationFleet saveRecommendationFleet(RecommendationFleet recommendationFleet);
     RecommendationDetail saveRecommendationDetail(RecommendationDetail recommendationDetail);

@@ -1,9 +1,6 @@
 package com.gdn.recommendation.implementation;
 
-import com.gdn.entity.Fleet;
-import com.gdn.entity.RecommendationDetail;
-import com.gdn.entity.RecommendationFleet;
-import com.gdn.entity.RecommendationResult;
+import com.gdn.entity.*;
 import com.gdn.recommendation.DatabaseQueryResult;
 import com.gdn.recommendation.RecommendationFleetResult;
 import com.gdn.recommendation.RecommendationService;
@@ -23,6 +20,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 @Service
 public class RecommendationServiceImpl implements RecommendationService {
@@ -43,11 +41,13 @@ public class RecommendationServiceImpl implements RecommendationService {
     private RecommendationDetailRepository recommendationDetailRepository;
 
     @Override
-    public boolean executeBatch() {
+    public boolean executeBatch(String warehouseId) {
         boolean batchExecutionSuccessStatus=false;
         try {
             JobParameters fleetRecommendationJobParameters = new JobParametersBuilder()
-                    .addLong("time",System.currentTimeMillis()).toJobParameters();
+                    .addLong(UUID.randomUUID().toString(),System.currentTimeMillis())
+                    .addString("warehouse", warehouseId)
+                    .toJobParameters();
             JobExecution jobExecution = jobLauncher.run(fleetRecommendationJob, fleetRecommendationJobParameters);
             batchExecutionSuccessStatus = !jobExecution.getStatus().isUnsuccessful();
         } catch (JobExecutionAlreadyRunningException | JobRestartException | JobInstanceAlreadyCompleteException | JobParametersInvalidException e) {
@@ -57,8 +57,10 @@ public class RecommendationServiceImpl implements RecommendationService {
     }
 
     @Override
-    public int getResultRowCount() {
-        return recommendationRepository.getRowCount();
+    public int getResultRowCount(String warehouseId) {
+        return recommendationRepository.getRowCount(Warehouse.builder()
+                .id(warehouseId)
+                .build());
     }
 
     @Override

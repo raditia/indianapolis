@@ -49,7 +49,7 @@ public class CffServiceImpl implements CffService {
 
     private Cff buildCff(UploadCffResponse response){
         return Cff.builder()
-                .id(response.getRequestor().getId())
+                .id(UUID.randomUUID().toString())
                 .headerCff(response.getRequestor())
                 .category(buildCategory(response))
                 .warehouse(buildWarehouse(response))
