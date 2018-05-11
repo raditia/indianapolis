@@ -30,6 +30,10 @@ import org.springframework.jdbc.core.PreparedStatementSetter;
 import javax.sql.DataSource;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.sql.Timestamp;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.List;
 
 @Configuration
@@ -62,7 +66,7 @@ public class FleetRecommendationBatchConfig {
             "allowed_vehicle.vehicle_name=fleet.name AND " +
             "header_cff.id=pickup_point.header_cff_id AND " +
             "pickup_point.merchant_id=merchant.id AND " +
-            "cff.warehouse_id=?";
+            "cff.warehouse_id=? AND header_cff.date_uploaded=?";
 
     @Qualifier("dataSource")
     @Autowired
@@ -85,11 +89,22 @@ public class FleetRecommendationBatchConfig {
         reader.setPreparedStatementSetter(new PreparedStatementSetter() {
             public void setValues(PreparedStatement ps) throws SQLException {
                 ps.setString(1, finalWarehouseId);
+                ps.setTimestamp(2, new Timestamp(tomorrow().getTime()));
             }
         });
         reader.setRowMapper(databaseQueryResultRowMapper);
         return reader;
     }
+
+        private java.util.Date tomorrow(){
+            Calendar calendar = Calendar.getInstance();
+            calendar.set(Calendar.HOUR_OF_DAY, 7);
+            calendar.set(Calendar.MINUTE, 0);
+            calendar.set(Calendar.SECOND, 0);
+            calendar.set(Calendar.MILLISECOND, 0);
+            calendar.add(Calendar.DAY_OF_MONTH, 1);
+            return calendar.getTime();
+        }
 
     @Bean(destroyMethod = "")
     @StepScope
