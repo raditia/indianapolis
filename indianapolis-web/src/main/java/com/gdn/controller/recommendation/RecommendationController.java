@@ -1,5 +1,6 @@
 package com.gdn.controller.recommendation;
 
+import com.gdn.entity.RecommendationDetail;
 import com.gdn.entity.RecommendationFleet;
 import com.gdn.recommendation.DatabaseQueryResult;
 import com.gdn.recommendation.Pickup;
@@ -30,8 +31,8 @@ public class RecommendationController {
             method = RequestMethod.GET,
             produces = MediaType.APPLICATION_JSON_VALUE
     )
-    public List<RecommendationFleet> getAllRecommendationFleetResult(){
-        return recommendationService.findAllRecommendationFleetResult();
+    public List<RecommendationDetail> getAllRecommendationFleetResult(){
+        return recommendationService.findAllRecommendationDetailResult();
     }
 
 }

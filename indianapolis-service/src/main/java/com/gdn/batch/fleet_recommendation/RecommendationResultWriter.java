@@ -1,6 +1,5 @@
 package com.gdn.batch.fleet_recommendation;
 
-import com.gdn.Status;
 import com.gdn.entity.*;
 import com.gdn.recommendation.*;
 import com.gdn.recommendation.Pickup;
@@ -9,9 +8,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.batch.item.ItemWriter;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import javax.persistence.EntityManager;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.*;
 
 public class RecommendationResultWriter implements ItemWriter<List<Recommendation>> {
@@ -56,30 +52,30 @@ public class RecommendationResultWriter implements ItemWriter<List<Recommendatio
 //                    }
 //                }
 //            }
-            for (Recommendation recommendation:recommendationList
-                 ) {
-                System.out.println("\n" + "HASIL REKOMENDASI!");
-                System.out.println("ID : " + recommendation.getId() + "\n" +
-                        "TOTAL SKU : " + recommendation.getSkuAmount() + "\n" +
-                        "TOTAL CBM : " + recommendation.getCbmTotal() + "\n" +
-                        "DATE PICKUP : " + tomorrowString() + "\n" +
-                        "STATUS : " + Status.PENDING);
-                for (Pickup pickup:recommendation.getPickupList()
-                     ) {
-                    System.out.println("\n" +
-                            "FLEET : " + pickup.getFleet().getName() + "\n" +
-                            "FLEET SKU PICKUP : " + pickup.getPickupTotalAmount() + "\n" +
-                            "FLEET CBM PICKUP : " + pickup.getPickupTotalCbm());
-                    for (Detail detail:pickup.getDetailList()
-                         ) {
-                        System.out.println("SKU DETAIL : " + detail.getSku().getName() + "\n" +
-                                "SKU PICKUP : " + detail.getPickupAmount() + "\n" +
-                                "CBM PICKUP : " + detail.getCbmPickup() + "\n" +
-                                "WAREHOUSE TUJUAN : " + detail.getSku().getWarehouseId() + "\n" +
-                                "MERCHANT ID : " + detail.getSku().getMerchantId() + "\n");
-                    }
-                }
-            }
+//            for (Recommendation recommendation:recommendationList
+//                 ) {
+//                System.out.println("\n" + "HASIL REKOMENDASI!");
+//                System.out.println("ID : " + recommendation.getId() + "\n" +
+//                        "TOTAL SKU : " + recommendation.getSkuAmount() + "\n" +
+//                        "TOTAL CBM : " + recommendation.getCbmTotal() + "\n" +
+//                        "DATE PICKUP : " + tomorrowString() + "\n" +
+//                        "STATUS : " + Status.PENDING);
+//                for (Pickup pickup:recommendation.getPickupList()
+//                     ) {
+//                    System.out.println("\n" +
+//                            "FLEET : " + pickup.getFleet().getName() + "\n" +
+//                            "FLEET SKU PICKUP : " + pickup.getPickupTotalAmount() + "\n" +
+//                            "FLEET CBM PICKUP : " + pickup.getPickupTotalCbm());
+//                    for (Detail detail:pickup.getDetailList()
+//                         ) {
+//                        System.out.println("SKU DETAIL : " + detail.getSku().getName() + "\n" +
+//                                "SKU PICKUP : " + detail.getPickupAmount() + "\n" +
+//                                "CBM PICKUP : " + detail.getCbmPickup() + "\n" +
+//                                "WAREHOUSE TUJUAN : " + detail.getSku().getWarehouseId() + "\n" +
+//                                "MERCHANT ID : " + detail.getSku().getMerchantId() + "\n");
+//                    }
+//                }
+//            }
         }
     }
 
@@ -124,14 +120,6 @@ public class RecommendationResultWriter implements ItemWriter<List<Recommendatio
         Calendar calendar = Calendar.getInstance();
         calendar.add(Calendar.DAY_OF_YEAR, 1);
         return calendar.getTime();
-    }
-
-    private String tomorrowString(){
-        Calendar calendar = Calendar.getInstance();
-        calendar.add(Calendar.DAY_OF_YEAR, 1);
-        Date tomorrow = calendar.getTime();
-        DateFormat dateFormat = new SimpleDateFormat("dd-MMM-yyyy");
-        return dateFormat.format(tomorrow);
     }
 
 }

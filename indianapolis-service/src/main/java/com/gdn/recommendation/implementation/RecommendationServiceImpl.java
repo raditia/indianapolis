@@ -83,4 +83,9 @@ public class RecommendationServiceImpl implements RecommendationService {
         return recommendationFleetRepository.findAll();
     }
 
+    @Override
+    public List<RecommendationDetail> findAllRecommendationDetailResult() {
+        return recommendationDetailRepository.findAll();
+    }
+
 }

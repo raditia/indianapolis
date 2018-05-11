@@ -13,4 +13,5 @@ public interface RecommendationService {
     RecommendationFleet saveRecommendationFleet(RecommendationFleet recommendationFleet);
     RecommendationDetail saveRecommendationDetail(RecommendationDetail recommendationDetail);
     List<RecommendationFleet> findAllRecommendationFleetResult();
+    List<RecommendationDetail> findAllRecommendationDetailResult();
 }

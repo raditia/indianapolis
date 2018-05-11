@@ -5,16 +5,12 @@ import com.gdn.recommendation.Recommendation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.batch.core.Job;
-import org.springframework.batch.core.JobParameters;
 import org.springframework.batch.core.Step;
-import org.springframework.batch.core.StepExecution;
-import org.springframework.batch.core.annotation.BeforeStep;
 import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;
 import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
 import org.springframework.batch.core.configuration.annotation.StepScope;
 import org.springframework.batch.core.launch.support.RunIdIncrementer;
 import org.springframework.batch.item.ItemProcessor;
-import org.springframework.batch.item.ItemReader;
 import org.springframework.batch.item.ItemStreamReader;
 import org.springframework.batch.item.ItemWriter;
 import org.springframework.batch.item.database.JdbcCursorItemReader;
@@ -23,16 +19,12 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Scope;
-import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.jdbc.core.PreparedStatementSetter;
 
 import javax.sql.DataSource;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Timestamp;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.List;
 
@@ -73,8 +65,6 @@ public class FleetRecommendationBatchConfig {
     private DataSource dataSource;
     @Autowired
     private DatabaseQueryResultRowMapper databaseQueryResultRowMapper;
-//    @Value("${recommendation.database.query}")
-//    private String databaseQuery;
 
     @Bean(destroyMethod = "")
     @StepScope
@@ -85,7 +75,6 @@ public class FleetRecommendationBatchConfig {
         reader.setSql(query);
         warehouseId = warehouseId.replace("\'", "");
         String finalWarehouseId = warehouseId;
-//        LOGGER.info("finalWarehouseId : " + finalWarehouseId);
         reader.setPreparedStatementSetter(new PreparedStatementSetter() {
             public void setValues(PreparedStatement ps) throws SQLException {
                 ps.setString(1, finalWarehouseId);
