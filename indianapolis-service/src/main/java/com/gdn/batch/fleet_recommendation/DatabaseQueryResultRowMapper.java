@@ -29,6 +29,7 @@ public class DatabaseQueryResultRowMapper implements RowMapper<DatabaseQueryResu
                         .build())
                 .warehouseId(resultSet.getString("warehouse_id"))
                 .merchantId(resultSet.getString("merchant_id"))
+                .pickupPointId(resultSet.getString("pickup_point_id"))
                 .build();
     }
 }

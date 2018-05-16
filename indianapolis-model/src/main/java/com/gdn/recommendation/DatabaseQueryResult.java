@@ -14,4 +14,5 @@ public class DatabaseQueryResult {
     private DatabaseQueryAllowedVehicles allowedVehicles;
     private String warehouseId;
     private String merchantId;
+    private String pickupPointId;
 }

@@ -40,4 +40,8 @@ public class RecommendationDetail {
     @JoinColumn(name = "merchant_id")
     private Merchant merchant;
 
+    @ManyToOne
+    @JoinColumn(name = "pickup_point_id")
+    private PickupPoint pickupPoint;
+
 }

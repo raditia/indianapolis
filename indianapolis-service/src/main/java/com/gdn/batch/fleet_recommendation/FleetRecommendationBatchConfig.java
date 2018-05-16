@@ -41,7 +41,8 @@ public class FleetRecommendationBatchConfig {
             "allowed_vehicle.vehicle_name," +
             "fleet.cbm_capacity," +
             "cff.warehouse_id AS warehouse_id," +
-            "merchant.id AS merchant_id " +
+            "merchant.id AS merchant_id, " +
+            "pickup_point.id AS pickup_point_id " +
             "from " +
             "cff_good," +
             "allowed_vehicle," +

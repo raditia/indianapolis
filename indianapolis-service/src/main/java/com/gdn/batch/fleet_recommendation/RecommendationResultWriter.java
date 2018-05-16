@@ -52,30 +52,29 @@ public class RecommendationResultWriter implements ItemWriter<List<Recommendatio
 //                    }
 //                }
 //            }
-//            for (Recommendation recommendation:recommendationList
-//                 ) {
-//                System.out.println("\n" + "HASIL REKOMENDASI!");
-//                System.out.println("ID : " + recommendation.getId() + "\n" +
-//                        "TOTAL SKU : " + recommendation.getSkuAmount() + "\n" +
-//                        "TOTAL CBM : " + recommendation.getCbmTotal() + "\n" +
-//                        "DATE PICKUP : " + tomorrowString() + "\n" +
-//                        "STATUS : " + Status.PENDING);
-//                for (Pickup pickup:recommendation.getPickupList()
-//                     ) {
-//                    System.out.println("\n" +
-//                            "FLEET : " + pickup.getFleet().getName() + "\n" +
-//                            "FLEET SKU PICKUP : " + pickup.getPickupTotalAmount() + "\n" +
-//                            "FLEET CBM PICKUP : " + pickup.getPickupTotalCbm());
-//                    for (Detail detail:pickup.getDetailList()
-//                         ) {
-//                        System.out.println("SKU DETAIL : " + detail.getSku().getName() + "\n" +
-//                                "SKU PICKUP : " + detail.getPickupAmount() + "\n" +
-//                                "CBM PICKUP : " + detail.getCbmPickup() + "\n" +
-//                                "WAREHOUSE TUJUAN : " + detail.getSku().getWarehouseId() + "\n" +
-//                                "MERCHANT ID : " + detail.getSku().getMerchantId() + "\n");
-//                    }
-//                }
-//            }
+            for (Recommendation recommendation:recommendationList
+                 ) {
+                System.out.println("\n" + "HASIL REKOMENDASI!");
+                System.out.println("ID : " + recommendation.getId() + "\n" +
+                        "TOTAL SKU : " + recommendation.getSkuAmount() + "\n" +
+                        "TOTAL CBM : " + recommendation.getCbmTotal());
+                for (Pickup pickup:recommendation.getPickupList()
+                     ) {
+                    System.out.println("\n" +
+                            "FLEET : " + pickup.getFleet().getName() + "\n" +
+                            "FLEET SKU PICKUP : " + pickup.getPickupTotalAmount() + "\n" +
+                            "FLEET CBM PICKUP : " + pickup.getPickupTotalCbm());
+                    for (Detail detail:pickup.getDetailList()
+                         ) {
+                        System.out.println("SKU DETAIL : " + detail.getSku().getName() + "\n" +
+                                "SKU PICKUP : " + detail.getPickupAmount() + "\n" +
+                                "CBM PICKUP : " + detail.getCbmPickup() + "\n" +
+                                "WAREHOUSE TUJUAN : " + detail.getSku().getWarehouseId() + "\n" +
+                                "MERCHANT ID : " + detail.getSku().getMerchantId() + "\n" +
+                                "PICKUP POINT ID : " + detail.getSku().getPickupPointId());
+                    }
+                }
+            }
         }
     }
 
@@ -112,6 +111,9 @@ public class RecommendationResultWriter implements ItemWriter<List<Recommendatio
                         .build())
                 .merchant(Merchant.builder()
                         .id(detail.getSku().getMerchantId())
+                        .build())
+                .pickupPoint(PickupPoint.builder()
+                        .id(detail.getSku().getPickupPointId())
                         .build())
                 .build();
     }
