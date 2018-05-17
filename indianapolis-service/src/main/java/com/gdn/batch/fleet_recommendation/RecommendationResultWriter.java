@@ -110,10 +110,10 @@ public class RecommendationResultWriter implements ItemWriter<List<Recommendatio
                         .id(detail.getSku().getWarehouseId())
                         .build())
                 .merchant(Merchant.builder()
-                        .id(detail.getSku().getMerchantId())
+//                        .id(detail.getSku().getMerchantId())
                         .build())
                 .pickupPoint(PickupPoint.builder()
-                        .id(detail.getSku().getPickupPointId())
+//                        .id(detail.getSku().getPickupPointId())
                         .build())
                 .build();
     }

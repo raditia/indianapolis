@@ -23,8 +23,8 @@ public class AllowedVehicle {
     @Column(name = "vehicle_name")
     private String vehicleName;
 
-    @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "pickup_point_id")
-    private PickupPoint pickupPoint;
+//    @ManyToOne(cascade = CascadeType.ALL)
+//    @JoinColumn(name = "pickup_point_id")
+//    private PickupPoint pickupPoint;
 
 }

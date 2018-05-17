@@ -6,6 +6,9 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 @Entity
 @Table(name = "cff")
@@ -19,13 +22,32 @@ public class Cff {
     @Column(name = "id")
     private String id;
 
+    @Column(name = "pickup_date")
+    private Date pickupDate;
+
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinColumn(name = "cff_id")
+    private List<CffGood> cffGoodList = new ArrayList<>();
+
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinColumn(name = "cff_id")
+    private List<PickupPoint> pickupPointList = new ArrayList<>();
+
     @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "header_cff_id")
-    private HeaderCff headerCff;
+    @JoinColumn(name = "merchant_id")
+    private Merchant merchant;
 
     @ManyToOne
-    @JoinColumn(name = "category_id")
-    private Category category;
+    @JoinColumn(name = "tp_id")
+    private User tp;
+
+//    @ManyToOne(cascade = CascadeType.ALL)
+//    @JoinColumn(name = "header_cff_id")
+//    private HeaderCff headerCff;
+
+//    @ManyToOne
+//    @JoinColumn(name = "category_id")
+//    private Category category;
 
     @ManyToOne
     @JoinColumn(name = "warehouse_id")

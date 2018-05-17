@@ -2,11 +2,6 @@ package com.gdn.controller.upload_cff;
 
 import com.gdn.cff.CffService;
 import com.gdn.entity.Cff;
-import com.gdn.upload_cff.UploadCffResponse;
-import org.springframework.batch.core.JobParametersInvalidException;
-import org.springframework.batch.core.repository.JobExecutionAlreadyRunningException;
-import org.springframework.batch.core.repository.JobInstanceAlreadyCompleteException;
-import org.springframework.batch.core.repository.JobRestartException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -15,7 +10,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
-import java.util.Map;
 
 @RestController
 @RequestMapping(value = "/api")
@@ -30,8 +24,8 @@ public class UploadCffController {
             produces = MediaType.APPLICATION_JSON_VALUE,
             consumes = MediaType.APPLICATION_JSON_VALUE
     )
-    public UploadCffResponse saveCff(@RequestBody UploadCffResponse uploadCffResponse) {
-        return cffService.saveCff(uploadCffResponse);
+    public Cff saveCff(@RequestBody Cff cff) {
+        return cffService.saveCff(cff);
     }
 
     @RequestMapping(

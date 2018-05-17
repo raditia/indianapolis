@@ -7,6 +7,9 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
 
 @Entity
 @Table(name = "pickup_point")
@@ -29,11 +32,15 @@ public class PickupPoint {
     @Column(name = "longitude")
     private Double longitude;
 
-    @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "header_cff_id")
-    private HeaderCff headerCff;
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinColumn
+    private List<AllowedVehicle> allowedVehicleList = new ArrayList<>();
 
-    @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "merchant_id")
-    private Merchant merchant;
+//    @ManyToOne(cascade = CascadeType.ALL)
+//    @JoinColumn(name = "header_cff_id")
+//    private HeaderCff headerCff;
+//
+//    @ManyToOne(cascade = CascadeType.ALL)
+//    @JoinColumn(name = "merchant_id")
+//    private Merchant merchant;
 }

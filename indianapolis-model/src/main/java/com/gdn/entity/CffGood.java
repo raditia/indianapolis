@@ -21,9 +21,9 @@ public class CffGood {
     @Column(name = "id")
     private String id;
 
-    @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "cff_id")
-    private Cff cff;
+//    @ManyToOne(cascade = CascadeType.ALL)
+//    @JoinColumn(name = "cff_id")
+//    private Cff cff;
 
     @Column(name = "sku")
     private String sku;

@@ -58,9 +58,7 @@ public class RecommendationServiceImpl implements RecommendationService {
 
     @Override
     public int getResultRowCount(String warehouseId) {
-        return recommendationRepository.getRowCount(Warehouse.builder()
-                .id(warehouseId)
-                .build());
+        return recommendationRepository.getRowCount();
     }
 
     @Override
