@@ -19,8 +19,15 @@ public class RecommendationFleet {
     @Column(name = "recommendation_fleet")
     private String id;
 
+//    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+//    @JoinColumn(name = "recommendation_fleet_id")
+//    @Builder.Default
+//    @JsonManagedReference
+//    private List<RecommendationDetail> recommendationDetailList = new ArrayList<>();
+
     @ManyToOne
     @JoinColumn(name = "recommendation_result_id")
+//    @JsonBackReference
     private RecommendationResult recommendationResult;
 
     @ManyToOne

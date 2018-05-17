@@ -16,4 +16,5 @@ public class Recommendation {
     private List<Pickup> pickupList;
     private Double cbmTotal;
     private Integer skuAmount;
+    private String warehouseId;
 }

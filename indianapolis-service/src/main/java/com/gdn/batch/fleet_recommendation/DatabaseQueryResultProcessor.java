@@ -60,7 +60,8 @@ public class DatabaseQueryResultProcessor implements ItemProcessor<DatabaseQuery
             }
             Recommendation rekomendasi = new Recommendation();
             rekomendasi = getRecommendation(kendaraan);
-            rekomendasi.setId(UUID.randomUUID().toString());
+            rekomendasi.setId("recommendation_result_" + UUID.randomUUID().toString());
+            rekomendasi.setWarehouseId(warehouseId);
             recommendationList.add(rekomendasi);
 
             jumlahRekomendasi-=1;
@@ -191,7 +192,6 @@ public class DatabaseQueryResultProcessor implements ItemProcessor<DatabaseQuery
                         jumlahSku,
                         sku.getCbm(),
                         sku.getVehicleList(),
-                        sku.getWarehouseId(),
                         sku.getMerchantId(),
                         sku.getPickupPointId()));
                 counter = sku.getQuantity();
@@ -298,7 +298,6 @@ public class DatabaseQueryResultProcessor implements ItemProcessor<DatabaseQuery
                         .cbm(result.getCffGoods().getCbm())
                         .quantity(result.getCffGoods().getQuantity())
                         .vehicleList(vehicleList)
-                        .warehouseId(result.getWarehouseId())
                         .merchantId(result.getMerchantId())
                         .pickupPointId(result.getPickupPointId())
                         .build();

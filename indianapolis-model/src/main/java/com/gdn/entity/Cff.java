@@ -1,5 +1,6 @@
 package com.gdn.entity;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.gdn.SchedulingStatus;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -29,6 +30,7 @@ public class Cff {
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "cff_id")
     @Builder.Default
+    @JsonManagedReference
     private List<CffGood> cffGoodList = new ArrayList<>();
 
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)

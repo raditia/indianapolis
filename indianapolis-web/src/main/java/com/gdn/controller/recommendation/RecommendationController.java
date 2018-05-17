@@ -31,8 +31,8 @@ public class RecommendationController {
             method = RequestMethod.GET,
             produces = MediaType.APPLICATION_JSON_VALUE
     )
-    public List<RecommendationDetail> getAllRecommendationFleetResult(){
-        return recommendationService.findAllRecommendationDetailResult();
+    public List<RecommendationFleet> getAllRecommendationFleetResult(){
+        return recommendationService.findAllRecommendationFleetResult();
     }
 
 }

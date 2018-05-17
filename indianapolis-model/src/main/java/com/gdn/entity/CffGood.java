@@ -1,5 +1,6 @@
 package com.gdn.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -28,8 +29,9 @@ public class CffGood {
     @Column(name = "quantity")
     private int quantity;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "cff_id")
+    @JsonBackReference
     private Cff cff;
 
 }
