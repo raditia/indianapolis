@@ -6,4 +6,6 @@ import java.util.List;
 public interface CffService {
     List<Cff> getAllCff();
     Cff saveCff(Cff cff);
+    Cff findById(String id);
+    Cff updateSchedulingStatus(String id);
 }

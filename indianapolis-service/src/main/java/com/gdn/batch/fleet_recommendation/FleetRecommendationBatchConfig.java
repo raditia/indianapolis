@@ -1,5 +1,6 @@
 package com.gdn.batch.fleet_recommendation;
 
+import com.gdn.SchedulingStatus;
 import com.gdn.recommendation.DatabaseQueryResult;
 import com.gdn.recommendation.Recommendation;
 import org.slf4j.Logger;
@@ -34,6 +35,7 @@ public class FleetRecommendationBatchConfig {
     private static final Logger LOGGER = LoggerFactory.getLogger(FleetRecommendationBatchConfig.class);
 
     private static final String query = "SELECT \n" +
+            "cff.id AS cff_id, \n" +
             "cff_good.id AS cff_good_id, \n" +
             "cff_good.sku, \n" +
             "cff_good.cbm, \n" +
@@ -55,7 +57,7 @@ public class FleetRecommendationBatchConfig {
             "allowed_vehicle.pickup_point_id=pickup_point.id AND \n" +
             "allowed_vehicle.vehicle_name=fleet.name AND\n" +
             "cff.id=pickup_point.cff_id AND \n" +
-            "cff.warehouse_id=? AND cff.pickup_date=?";
+            "cff.warehouse_id=? AND cff.pickup_date=? AND cff.status=?";
 
     @Qualifier("dataSource")
     @Autowired
@@ -76,6 +78,7 @@ public class FleetRecommendationBatchConfig {
             public void setValues(PreparedStatement ps) throws SQLException {
                 ps.setString(1, finalWarehouseId);
                 ps.setTimestamp(2, new Timestamp(tomorrow().getTime()));
+                ps.setString(3, SchedulingStatus.PENDING);
             }
         });
         reader.setRowMapper(databaseQueryResultRowMapper);

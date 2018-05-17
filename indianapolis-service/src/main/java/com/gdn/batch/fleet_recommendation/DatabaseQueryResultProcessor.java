@@ -1,5 +1,6 @@
 package com.gdn.batch.fleet_recommendation;
 
+import com.gdn.cff.CffService;
 import com.gdn.entity.Fleet;
 import com.gdn.fleet.FleetService;
 import com.gdn.recommendation.*;
@@ -21,6 +22,8 @@ public class DatabaseQueryResultProcessor implements ItemProcessor<DatabaseQuery
     private RecommendationService recommendationService;
     @Autowired
     private FleetService fleetService;
+    @Autowired
+    private CffService cffService;
 
     private int rowCount = 0;
     private String warehouseId;
@@ -38,6 +41,10 @@ public class DatabaseQueryResultProcessor implements ItemProcessor<DatabaseQuery
             LOGGER.info("Row count : " + rowCount);
             LOGGER.info("Processing...");
             rekomendasiList = get3Recommendation();
+            for (DatabaseQueryResult item:resultList
+                 ) {
+                cffService.updateSchedulingStatus(item.getCffId());
+            }
             resultList.clear();
         }
         return rekomendasiList;

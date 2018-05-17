@@ -17,6 +17,7 @@ public class DatabaseQueryResultRowMapper implements RowMapper<DatabaseQueryResu
     @Override
     public DatabaseQueryResult mapRow(ResultSet resultSet, int i) throws SQLException {
         return DatabaseQueryResult.builder()
+                .cffId(resultSet.getString("cff_id"))
                 .cffGoods(DatabaseQueryCffGoods.builder()
                         .id(resultSet.getString("cff_good_id"))
                         .sku(resultSet.getString("sku"))

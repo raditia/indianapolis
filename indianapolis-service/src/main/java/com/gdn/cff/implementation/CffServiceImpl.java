@@ -1,5 +1,6 @@
 package com.gdn.cff.implementation;
 
+import com.gdn.SchedulingStatus;
 import com.gdn.entity.*;
 import com.gdn.cff.CffService;
 import com.gdn.repository.CffRepository;
@@ -26,10 +27,10 @@ public class CffServiceImpl implements CffService {
     public Cff saveCff(Cff cff) {
         cff.setId("cff_" + UUID.randomUUID().toString());
         cff.getMerchant().setId("merchant_" + UUID.randomUUID().toString());
+        cff.setSchedulingStatus(SchedulingStatus.PENDING);
         for (CffGood cffGood:cff.getCffGoodList()
              ) {
             cffGood.setId("sku_" + UUID.randomUUID().toString());
-            cffGood.setCff(cff);
         }
         for (PickupPoint pickupPoint:cff.getPickupPointList()
              ) {
@@ -40,6 +41,22 @@ public class CffServiceImpl implements CffService {
             }
         }
         return cffRepository.save(cff);
+    }
+
+    @Override
+    public Cff findById(String id) {
+        return cffRepository.getOne(id);
+    }
+
+    @Override
+    public Cff updateSchedulingStatus(String id) {
+        Cff cff = cffRepository.getOne(id);
+        if(cff!=null){
+            cff.setSchedulingStatus(SchedulingStatus.DONE);
+            return cffRepository.save(cff);
+        } else{
+            return cff;
+        }
     }
 
 }

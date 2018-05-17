@@ -1,5 +1,6 @@
 package com.gdn.entity;
 
+import com.gdn.SchedulingStatus;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -46,5 +47,8 @@ public class Cff {
     @ManyToOne
     @JoinColumn(name = "warehouse_id")
     private Warehouse warehouse;
+
+    @Column(name = "status")
+    private String schedulingStatus;
 
 }
