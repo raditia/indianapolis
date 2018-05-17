@@ -20,9 +20,4 @@ public class FleetServiceImpl implements FleetService {
         return fleetRepository.findAllByOrderByCbmCapacityDesc();
     }
 
-    @Override
-    public List<Fleet> findDistinctByNameOrderByCbmCapacityDesc() {
-        return fleetRepository.findDistinctByNameOrderByCbmCapacityDesc();
-    }
-
 }
