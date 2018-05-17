@@ -4,8 +4,6 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.Cascade;
-import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
 
@@ -21,10 +19,6 @@ public class CffGood {
     @Column(name = "id")
     private String id;
 
-//    @ManyToOne(cascade = CascadeType.ALL)
-//    @JoinColumn(name = "cff_id")
-//    private Cff cff;
-
     @Column(name = "sku")
     private String sku;
 
@@ -33,5 +27,9 @@ public class CffGood {
 
     @Column(name = "quantity")
     private int quantity;
+
+    @ManyToOne
+    @JoinColumn(name = "cff_id")
+    private Cff cff;
 
 }

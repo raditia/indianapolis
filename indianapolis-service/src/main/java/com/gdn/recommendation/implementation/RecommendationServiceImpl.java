@@ -1,8 +1,6 @@
 package com.gdn.recommendation.implementation;
 
 import com.gdn.entity.*;
-import com.gdn.recommendation.DatabaseQueryResult;
-import com.gdn.recommendation.RecommendationFleetResult;
 import com.gdn.recommendation.RecommendationService;
 import com.gdn.repository.RecommendationDetailRepository;
 import com.gdn.repository.RecommendationFleetRepository;
@@ -18,7 +16,6 @@ import org.springframework.batch.core.repository.JobRestartException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -58,7 +55,9 @@ public class RecommendationServiceImpl implements RecommendationService {
 
     @Override
     public int getResultRowCount(String warehouseId) {
-        return recommendationRepository.getRowCount();
+        return recommendationRepository.getRowCount(Warehouse.builder()
+                .id(warehouseId)
+                .build());
     }
 
     @Override

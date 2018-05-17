@@ -33,33 +33,29 @@ public class FleetRecommendationBatchConfig {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(FleetRecommendationBatchConfig.class);
 
-    private static final String query = "SELECT " +
-            "cff_good.id AS cff_good_id," +
-            "cff_good.sku," +
-            "cff_good.cbm," +
-            "cff_good.quantity," +
-            "allowed_vehicle.vehicle_name," +
-            "fleet.cbm_capacity," +
-            "cff.warehouse_id AS warehouse_id," +
-            "merchant.id AS merchant_id, " +
-            "pickup_point.id AS pickup_point_id " +
-            "from " +
-            "cff_good," +
-            "allowed_vehicle," +
-            "cff," +
-            "header_cff," +
-            "pickup_point," +
-            "fleet," +
-            "merchant " +
-            "WHERE " +
-            "cff_good.cff_id=cff.id AND " +
-            "cff.header_cff_id=header_cff.id AND " +
-            "pickup_point.header_cff_id=header_cff.id AND " +
-            "allowed_vehicle.pickup_point_id=pickup_point.id AND " +
-            "allowed_vehicle.vehicle_name=fleet.name AND " +
-            "header_cff.id=pickup_point.header_cff_id AND " +
-            "pickup_point.merchant_id=merchant.id AND " +
-            "cff.warehouse_id=? AND header_cff.date_uploaded=?";
+    private static final String query = "SELECT \n" +
+            "cff_good.id AS cff_good_id, \n" +
+            "cff_good.sku, \n" +
+            "cff_good.cbm, \n" +
+            "cff_good.quantity, \n" +
+            "allowed_vehicle.vehicle_name, \n" +
+            "fleet.cbm_capacity,\n" +
+            "cff.warehouse_id AS warehouse_id,\n" +
+            "cff.merchant_id AS merchant_id,\n" +
+            "pickup_point.id AS pickup_point_id \n" +
+            "from \n" +
+            "cff_good, \n" +
+            "allowed_vehicle, \n" +
+            "cff, \n" +
+            "pickup_point, \n" +
+            "fleet,\n" +
+            "merchant\n" +
+            "WHERE \n" +
+            "cff_good.cff_id=cff.id AND \n" +
+            "allowed_vehicle.pickup_point_id=pickup_point.id AND \n" +
+            "allowed_vehicle.vehicle_name=fleet.name AND\n" +
+            "cff.id=pickup_point.cff_id AND \n" +
+            "cff.warehouse_id=? AND cff.pickup_date=?";
 
     @Qualifier("dataSource")
     @Autowired
@@ -86,7 +82,7 @@ public class FleetRecommendationBatchConfig {
         return reader;
     }
 
-        private java.util.Date tomorrow(){
+    private java.util.Date tomorrow(){
             Calendar calendar = Calendar.getInstance();
             calendar.set(Calendar.HOUR_OF_DAY, 7);
             calendar.set(Calendar.MINUTE, 0);

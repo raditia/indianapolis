@@ -9,6 +9,6 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface RecommendationRepository extends JpaRepository<CffGood, String> {
-    @Query("SELECT COUNT (cg.id) from CffGood cg")
-    int getRowCount();
+    @Query("select count(cg.id) as row_count from CffGood cg, Cff c, AllowedVehicle av, Warehouse w where cg.cff=c.id AND c.warehouse=:warehouseId")
+    int getRowCount(@Param("warehouseId") Warehouse warehouse);
 }

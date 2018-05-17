@@ -24,31 +24,15 @@ public class RecommendationResultWriter implements ItemWriter<List<Recommendatio
         RecommendationDetail recommendationDetail;
         for (List<Recommendation> recommendationList:items
              ) {
-            for (Recommendation recommendation:recommendationList){
-                recommendationResult = buildRecommendationResult(recommendation);
-                recommendationService.saveRecommendationResult(recommendationResult);
-                for (Pickup pickup:recommendation.getPickupList()){
-                    recommendationFleet = buildRecommendationFleet(recommendationResult, pickup);
-                    recommendationService.saveRecommendationFleet(recommendationFleet);
-                    for (Detail detail:pickup.getDetailList()){
-                        recommendationDetail = buildRecommendationDetail(recommendationFleet, detail);
-                        recommendationService.saveRecommendationDetail(recommendationDetail);
-                    }
-                }
-            }
 //            for (Recommendation recommendation:recommendationList){
-//                System.out.println("Rekomendasi ID : " + recommendation.getId());
-//                System.out.println("Pickup List size : " + recommendation.getPickupList().size());
+//                recommendationResult = buildRecommendationResult(recommendation);
+//                recommendationService.saveRecommendationResult(recommendationResult);
 //                for (Pickup pickup:recommendation.getPickupList()){
-//                    System.out.println("Fleet : " + pickup.getFleet().getName());
-//                    recommendationService.saveRecommendationFleet(buildRecommendationFleet(recommendation, pickup));
-//                }
-//            }
-//            for (Recommendation recommendation:recommendationList){
-//                for (Pickup pickup:recommendation.getPickupList()){
+//                    recommendationFleet = buildRecommendationFleet(recommendationResult, pickup);
+//                    recommendationService.saveRecommendationFleet(recommendationFleet);
 //                    for (Detail detail:pickup.getDetailList()){
-//                        recommendationService.saveRecommendationDetail(
-//                                buildRecommendationDetail(recommendation, pickup, detail));
+//                        recommendationDetail = buildRecommendationDetail(recommendationFleet, detail);
+//                        recommendationService.saveRecommendationDetail(recommendationDetail);
 //                    }
 //                }
 //            }

@@ -29,6 +29,7 @@ public class CffServiceImpl implements CffService {
         for (CffGood cffGood:cff.getCffGoodList()
              ) {
             cffGood.setId("sku_" + UUID.randomUUID().toString());
+            cffGood.setCff(cff);
         }
         for (PickupPoint pickupPoint:cff.getPickupPointList()
              ) {

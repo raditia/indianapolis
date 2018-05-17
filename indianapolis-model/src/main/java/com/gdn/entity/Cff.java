@@ -27,10 +27,12 @@ public class Cff {
 
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "cff_id")
+    @Builder.Default
     private List<CffGood> cffGoodList = new ArrayList<>();
 
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "cff_id")
+    @Builder.Default
     private List<PickupPoint> pickupPointList = new ArrayList<>();
 
     @ManyToOne(cascade = CascadeType.ALL)
@@ -40,14 +42,6 @@ public class Cff {
     @ManyToOne
     @JoinColumn(name = "tp_id")
     private User tp;
-
-//    @ManyToOne(cascade = CascadeType.ALL)
-//    @JoinColumn(name = "header_cff_id")
-//    private HeaderCff headerCff;
-
-//    @ManyToOne
-//    @JoinColumn(name = "category_id")
-//    private Category category;
 
     @ManyToOne
     @JoinColumn(name = "warehouse_id")

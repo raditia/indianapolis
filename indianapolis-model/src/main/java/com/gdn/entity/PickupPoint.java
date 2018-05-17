@@ -33,14 +33,8 @@ public class PickupPoint {
     private Double longitude;
 
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @JoinColumn
+    @JoinColumn(name = "pickup_point_id")
+    @Builder.Default
     private List<AllowedVehicle> allowedVehicleList = new ArrayList<>();
 
-//    @ManyToOne(cascade = CascadeType.ALL)
-//    @JoinColumn(name = "header_cff_id")
-//    private HeaderCff headerCff;
-//
-//    @ManyToOne(cascade = CascadeType.ALL)
-//    @JoinColumn(name = "merchant_id")
-//    private Merchant merchant;
 }
