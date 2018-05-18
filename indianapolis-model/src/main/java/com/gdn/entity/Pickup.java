@@ -9,28 +9,22 @@ import javax.persistence.*;
 import java.util.Date;
 
 @Entity
-@Table(name = "pickup_schedule")
+@Table(name = "pickup")
 @Data
 @Builder
-@NoArgsConstructor
 @AllArgsConstructor
-public class PickupSchedule {
+@NoArgsConstructor
+public class Pickup {
 
     @Id
     @Column(name = "id")
     private String id;
 
-    @Column(name = "pickup_date_time")
-    private Date pickupDateTime;
-
-    @Column(name = "status")
-    private String status;
-
-    @OneToOne
-    @JoinColumn(name = "warehouse_id")
-    private Warehouse warehouse;
+    @Column(name = "pickup_date")
+    private Date pickupDate;
 
     @ManyToOne
     @JoinColumn(name = "fleet_id")
     private Fleet fleet;
+
 }

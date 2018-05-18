@@ -23,6 +23,18 @@ public class CffGood {
     @Column(name = "sku")
     private String sku;
 
+    @Column(name = "length")
+    private double length;
+
+    @Column(name = "width")
+    private double width;
+
+    @Column(name = "height")
+    private double height;
+
+    @Column(name = "weight")
+    private double weight;
+
     @Column(name = "cbm")
     private double cbm;
 

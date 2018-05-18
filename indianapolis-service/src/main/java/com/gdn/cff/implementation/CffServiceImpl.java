@@ -3,6 +3,7 @@ package com.gdn.cff.implementation;
 import com.gdn.SchedulingStatus;
 import com.gdn.entity.*;
 import com.gdn.cff.CffService;
+import com.gdn.merchant.MerchantService;
 import com.gdn.repository.CffRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -16,6 +17,8 @@ public class CffServiceImpl implements CffService {
 
     @Autowired
     private CffRepository cffRepository;
+    @Autowired
+    private MerchantService merchantService;
 
     @Override
     @Transactional(readOnly = true)
@@ -26,7 +29,11 @@ public class CffServiceImpl implements CffService {
     @Override
     public Cff saveCff(Cff cff) {
         cff.setId("cff_" + UUID.randomUUID().toString());
-        cff.getMerchant().setId("merchant_" + UUID.randomUUID().toString());
+        Merchant merchant = merchantService.getOne(cff.getMerchant().getEmailAddress());
+        if(merchant!=null)
+            cff.getMerchant().setId(merchant.getId());
+        else
+            cff.getMerchant().setId("merchant_" + UUID.randomUUID().toString());
         cff.setSchedulingStatus(SchedulingStatus.PENDING);
         for (CffGood cffGood:cff.getCffGoodList()
              ) {

@@ -4,6 +4,7 @@ import com.gdn.entity.RecommendationDetail;
 import com.gdn.entity.RecommendationFleet;
 import com.gdn.entity.RecommendationResult;
 
+import java.util.Date;
 import java.util.List;
 
 public interface RecommendationService {
@@ -13,5 +14,5 @@ public interface RecommendationService {
     RecommendationFleet saveRecommendationFleet(RecommendationFleet recommendationFleet);
     RecommendationDetail saveRecommendationDetail(RecommendationDetail recommendationDetail);
     List<RecommendationFleet> findAllRecommendationFleetResult();
-    List<RecommendationDetail> findAllRecommendationDetailResult();
+    void choosePickupAndSendEmail(String recommendationFleetId, Date pickupDate);
 }
