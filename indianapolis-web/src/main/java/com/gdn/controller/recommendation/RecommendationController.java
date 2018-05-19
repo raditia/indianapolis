@@ -1,11 +1,10 @@
 package com.gdn.controller.recommendation;
 
-import com.gdn.entity.RecommendationDetail;
-import com.gdn.entity.RecommendationFleet;
-import com.gdn.entity.RecommendationResult;
-import com.gdn.recommendation.DatabaseQueryResult;
-import com.gdn.recommendation.Pickup;
 import com.gdn.recommendation.RecommendationService;
+import com.gdn.response.FleetRecommendationResponse;
+import com.gdn.response.RecommendationResponse;
+import com.gdn.response.SchedulingResponse;
+import com.gdn.response.WebResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.MediaType;
@@ -25,7 +24,7 @@ public class RecommendationController {
             method = RequestMethod.GET,
             produces = MediaType.APPLICATION_JSON_VALUE
     )
-    public boolean recommendation(@RequestParam("warehouseId") String warehouseId){
+    public WebResponse<SchedulingResponse> recommendation(@RequestParam("warehouseId") String warehouseId){
         return recommendationService.executeBatch(warehouseId);
     }
 
@@ -34,7 +33,7 @@ public class RecommendationController {
             method = RequestMethod.GET,
             produces = MediaType.APPLICATION_JSON_VALUE
     )
-    public List<RecommendationResult> getAllRecommendationFleetResult(){
+    public WebResponse<RecommendationResponse> getAllRecommendationFleetResult(){
         return recommendationService.findAllRecommendationFleetResult();
     }
 
@@ -43,7 +42,7 @@ public class RecommendationController {
             method = RequestMethod.GET,
             produces = MediaType.APPLICATION_JSON_VALUE
     )
-    public void chooseRecommendationAndInsertToDatabase(@RequestParam("recommendationResultId") String recommendationResultId,
+    public void chooseRecommendationAndInsertToDatabase(@RequestParam("id") String recommendationResultId,
                                                         @RequestParam("pickupDate") @DateTimeFormat(pattern = "yyyy-MM-dd") Date pickupDate){
         recommendationService.choosePickupAndSendEmail(recommendationResultId, pickupDate);
     }

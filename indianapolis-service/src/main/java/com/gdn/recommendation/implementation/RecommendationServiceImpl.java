@@ -3,6 +3,11 @@ package com.gdn.recommendation.implementation;
 import com.gdn.entity.*;
 import com.gdn.recommendation.RecommendationService;
 import com.gdn.repository.*;
+import com.gdn.response.RecommendationResponse;
+import com.gdn.response.SchedulingResponse;
+import com.gdn.response.WebResponse;
+import mapper.FleetRecommendationResponseMapper;
+import mapper.RecommendationResponseMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.batch.core.*;
@@ -12,7 +17,6 @@ import org.springframework.batch.core.repository.JobInstanceAlreadyCompleteExcep
 import org.springframework.batch.core.repository.JobRestartException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
 import java.util.List;
@@ -41,8 +45,8 @@ public class RecommendationServiceImpl implements RecommendationService {
     private PickupDetailRepository pickupDetailRepository;
 
     @Override
-    public boolean executeBatch(String warehouseId) {
-        boolean batchExecutionSuccessStatus=false;
+    public WebResponse<SchedulingResponse> executeBatch(String warehouseId) {
+        boolean batchExecutionSuccessStatus;
         try {
             JobParameters fleetRecommendationJobParameters = new JobParametersBuilder()
                     .addLong(UUID.randomUUID().toString(),System.currentTimeMillis())
@@ -50,10 +54,19 @@ public class RecommendationServiceImpl implements RecommendationService {
                     .toJobParameters();
             JobExecution jobExecution = jobLauncher.run(fleetRecommendationJob, fleetRecommendationJobParameters);
             batchExecutionSuccessStatus = !jobExecution.getStatus().isUnsuccessful();
+            if(batchExecutionSuccessStatus){
+                return WebResponse.OK(SchedulingResponse.builder()
+                        .startTime(jobExecution.getStartTime())
+                        .endTime(jobExecution.getEndTime())
+                        .duration(jobExecution.getEndTime().getTime()-jobExecution.getStartTime().getTime())
+                        .build());
+            } else{
+                return WebResponse.ERROR(jobExecution.getStatus().getBatchStatus().toString());
+            }
         } catch (JobExecutionAlreadyRunningException | JobRestartException | JobInstanceAlreadyCompleteException | JobParametersInvalidException e) {
             e.printStackTrace();
+            return WebResponse.ERROR(e.getMessage());
         }
-        return batchExecutionSuccessStatus;
     }
 
     @Override
@@ -79,8 +92,8 @@ public class RecommendationServiceImpl implements RecommendationService {
     }
 
     @Override
-    public List<RecommendationResult> findAllRecommendationFleetResult() {
-        return recommendationResultRepository.findAll();
+    public WebResponse<RecommendationResponse> findAllRecommendationFleetResult() {
+        return WebResponse.OK(RecommendationResponseMapper.toRecommendationResponse(recommendationResultRepository.findAll()));
     }
 
     @Override
@@ -112,27 +125,6 @@ public class RecommendationServiceImpl implements RecommendationService {
                         .build());
             }
         }
-//        List<RecommendationDetail> recommendationDetailList = recommendationDetailRepository.findAllByRecommendationFleetId(recommendationFleetId);
-//        for (RecommendationDetail recommendationDetail:recommendationDetailList
-//             ) {
-//            String pickupId = "pickup_" + UUID.randomUUID().toString();
-//            pickupRepository.save(Pickup.builder()
-//                    .id(pickupId)
-//                    .pickupDate(pickupDate)
-//                    .fleet(recommendationDetail.getRecommendationFleet().getFleet())
-//                    .build());
-//            pickupDetailRepository.save(PickupDetail.builder()
-//                    .id("pickup_detail_" + UUID.randomUUID().toString())
-//                    .pickup(Pickup.builder()
-//                            .id(pickupId)
-//                            .build())
-//                    .cbmPickupAmount(recommendationDetail.getCbmPickupAmount())
-//                    .skuPickupQuantity(recommendationDetail.getSkuPickupQty())
-//                    .merchant(recommendationDetail.getMerchant())
-//                    .sku(recommendationDetail.getSku())
-//                    .pickupPoint(recommendationDetail.getPickupPoint())
-//                    .build());
-//        }
         recommendationResultRepository.deleteAll();
     }
 

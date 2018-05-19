@@ -3,7 +3,6 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/indianapolis-helper/indianapolis-helper.iml" filepath="$PROJECT_DIR$/indianapolis-helper/indianapolis-helper.iml" />
-      <module fileurl="file://$PROJECT_DIR$/indianapolis-helper/indianapolis-helper (1).iml" filepath="$PROJECT_DIR$/indianapolis-helper/indianapolis-helper (1).iml" />
       <module fileurl="file://$PROJECT_DIR$/indianapolis-model/indianapolis-model.iml" filepath="$PROJECT_DIR$/indianapolis-model/indianapolis-model.iml" />
       <module fileurl="file://$PROJECT_DIR$/indianapolis-parent.iml" filepath="$PROJECT_DIR$/indianapolis-parent.iml" />
       <module fileurl="file://$PROJECT_DIR$/indianapolis-repository/indianapolis-repository.iml" filepath="$PROJECT_DIR$/indianapolis-repository/indianapolis-repository.iml" />

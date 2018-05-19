@@ -56,7 +56,6 @@ public class FleetRecommendationBatchConfig {
             "cff_good.cff_id=cff.id AND \n" +
             "allowed_vehicle.pickup_point_id=pickup_point.id AND \n" +
             "allowed_vehicle.vehicle_name=fleet.name AND\n" +
-            "cff.id=pickup_point.cff_id AND \n" +
             "cff.warehouse_id=? AND cff.pickup_date=? AND cff.status=?";
 
     @Qualifier("dataSource")
@@ -123,10 +122,8 @@ public class FleetRecommendationBatchConfig {
 
     @Bean
     public Job fleetRecommendationJob(Step fleetRecommendationStep,
-                                      JobBuilderFactory jobBuilderFactory,
-                                      FleetRecommendationJobListener fleetRecommendationJobListener){
+                                      JobBuilderFactory jobBuilderFactory){
         return jobBuilderFactory.get("fleetRecommendationJob")
-                .listener(fleetRecommendationJobListener)
                 .incrementer(new RunIdIncrementer())
                 .flow(fleetRecommendationStep)
                 .end()
