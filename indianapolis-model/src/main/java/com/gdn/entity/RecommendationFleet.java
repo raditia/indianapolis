@@ -1,11 +1,15 @@
 package com.gdn.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "recommendation_fleet")
@@ -19,15 +23,15 @@ public class RecommendationFleet {
     @Column(name = "recommendation_fleet")
     private String id;
 
-//    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-//    @JoinColumn(name = "recommendation_fleet_id")
-//    @Builder.Default
-//    @JsonManagedReference
-//    private List<RecommendationDetail> recommendationDetailList = new ArrayList<>();
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinColumn(name = "recommendation_fleet_id")
+    @Builder.Default
+    @JsonManagedReference
+    private List<RecommendationDetail> recommendationDetailList = new ArrayList<>();
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "recommendation_result_id")
-//    @JsonBackReference
+    @JsonBackReference
     private RecommendationResult recommendationResult;
 
     @ManyToOne

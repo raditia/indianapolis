@@ -27,4 +27,7 @@ public class Pickup {
     @JoinColumn(name = "fleet_id")
     private Fleet fleet;
 
+    @Column(name = "fleet_plate_number")
+    private String plateNumber;
+
 }

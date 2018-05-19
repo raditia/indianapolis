@@ -21,9 +21,9 @@ public class RecommendationDetail {
     @Column(name = "id")
     private String id;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "recommendation_fleet_id")
-//    @JsonBackReference
+    @JsonBackReference
     private RecommendationFleet recommendationFleet;
 
     @ManyToOne

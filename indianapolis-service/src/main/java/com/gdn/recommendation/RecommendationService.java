@@ -13,6 +13,6 @@ public interface RecommendationService {
     RecommendationResult saveRecommendationResult(RecommendationResult recommendationResult);
     RecommendationFleet saveRecommendationFleet(RecommendationFleet recommendationFleet);
     RecommendationDetail saveRecommendationDetail(RecommendationDetail recommendationDetail);
-    List<RecommendationFleet> findAllRecommendationFleetResult();
-    void choosePickupAndSendEmail(String recommendationFleetId, Date pickupDate);
+    List<RecommendationResult> findAllRecommendationFleetResult();
+    void choosePickupAndSendEmail(String recommendationResultId, Date pickupDate);
 }

@@ -5,6 +5,9 @@ import com.gdn.entity.*;
 import com.gdn.cff.CffService;
 import com.gdn.merchant.MerchantService;
 import com.gdn.repository.CffRepository;
+import com.gdn.response.CffResponse;
+import com.gdn.response.WebResponse;
+import mapper.CffResponseMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,12 +25,12 @@ public class CffServiceImpl implements CffService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<Cff> getAllCff() {
-        return cffRepository.findAll();
+    public WebResponse<List<CffResponse>> getAllCff() {
+        return WebResponse.OK(CffResponseMapper.toCffListResponse(cffRepository.findAll()));
     }
 
     @Override
-    public Cff saveCff(Cff cff) {
+    public WebResponse<CffResponse> saveCff(Cff cff) {
         cff.setId("cff_" + UUID.randomUUID().toString());
         Merchant merchant = merchantService.getOne(cff.getMerchant().getEmailAddress());
         if(merchant!=null)
@@ -39,20 +42,13 @@ public class CffServiceImpl implements CffService {
              ) {
             cffGood.setId("sku_" + UUID.randomUUID().toString());
         }
-        for (PickupPoint pickupPoint:cff.getPickupPointList()
-             ) {
-            pickupPoint.setId("pickup_point_" + UUID.randomUUID().toString());
-            for (AllowedVehicle allowedVehicle:pickupPoint.getAllowedVehicleList()
-                 ) {
-                allowedVehicle.setId("allowed_vehicle_" + UUID.randomUUID().toString());
-            }
+        PickupPoint pickupPoint = cff.getPickupPoint();
+        pickupPoint.setId("pickup_point_" + UUID.randomUUID().toString());
+        for (AllowedVehicle allowedVehicle:pickupPoint.getAllowedVehicleList()
+                ) {
+            allowedVehicle.setId("allowed_vehicle_" + UUID.randomUUID().toString());
         }
-        return cffRepository.save(cff);
-    }
-
-    @Override
-    public Cff findById(String id) {
-        return cffRepository.getOne(id);
+        return WebResponse.OK(CffResponseMapper.toCffResponse(cffRepository.save(cff)));
     }
 
     @Override

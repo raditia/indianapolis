@@ -11,6 +11,8 @@
         <module>indianapolis-service</module>
 		<module>indianapolis-web</module>
         <module>indianapolis-repository</module>
+        <module>indianapolis-helper</module>
+        <module>indianapolis-helper</module>
     </modules>
     <packaging>pom</packaging>
 
@@ -95,6 +97,11 @@
 			<dependency>
 				<groupId>com.gdn</groupId>
 				<artifactId>indianapolis-repository</artifactId>
+				<version>0.0.1-SNAPSHOT</version>
+			</dependency>
+			<dependency>
+				<groupId>com.gdn</groupId>
+				<artifactId>indianapolis-helper</artifactId>
 				<version>0.0.1-SNAPSHOT</version>
 			</dependency>
 			<dependency>

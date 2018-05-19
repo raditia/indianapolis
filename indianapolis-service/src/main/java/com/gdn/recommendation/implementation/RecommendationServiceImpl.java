@@ -12,6 +12,7 @@ import org.springframework.batch.core.repository.JobInstanceAlreadyCompleteExcep
 import org.springframework.batch.core.repository.JobRestartException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
 import java.util.List;
@@ -78,33 +79,61 @@ public class RecommendationServiceImpl implements RecommendationService {
     }
 
     @Override
-    public List<RecommendationFleet> findAllRecommendationFleetResult() {
-        return recommendationFleetRepository.findAll();
+    public List<RecommendationResult> findAllRecommendationFleetResult() {
+        return recommendationResultRepository.findAll();
     }
 
     @Override
-    public void choosePickupAndSendEmail(String recommendationFleetId, Date pickupDate) {
-        List<RecommendationDetail> recommendationDetailList = recommendationDetailRepository.findAllByRecommendationFleetId(recommendationFleetId);
-        for (RecommendationDetail recommendationDetail:recommendationDetailList
+    public void choosePickupAndSendEmail(String recommendationResultId, Date pickupDate) {
+        RecommendationResult recommendationResult = recommendationResultRepository.getOne(recommendationResultId);
+        List<RecommendationFleet> recommendationFleetList = recommendationResult.getRecommendationFleetList();
+        for (RecommendationFleet recommendationFleet:recommendationFleetList
              ) {
             String pickupId = "pickup_" + UUID.randomUUID().toString();
             pickupRepository.save(Pickup.builder()
                     .id(pickupId)
                     .pickupDate(pickupDate)
-                    .fleet(recommendationDetail.getRecommendationFleet().getFleet())
+                    .fleet(recommendationFleet.getFleet())
+                    .plateNumber("plate_number_" + UUID.randomUUID().toString())
                     .build());
-            pickupDetailRepository.save(PickupDetail.builder()
-                    .id("pickup_detail_" + UUID.randomUUID().toString())
-                    .pickup(Pickup.builder()
-                            .id(pickupId)
-                            .build())
-                    .cbmPickupAmount(recommendationDetail.getCbmPickupAmount())
-                    .skuPickupQuantity(recommendationDetail.getSkuPickupQty())
-                    .merchant(recommendationDetail.getMerchant())
-                    .sku(recommendationDetail.getSku())
-                    .pickupPoint(recommendationDetail.getPickupPoint())
-                    .build());
+            List<RecommendationDetail> recommendationDetailList = recommendationFleet.getRecommendationDetailList();
+            for (RecommendationDetail recommendationDetail:recommendationDetailList
+                 ) {
+                pickupDetailRepository.save(PickupDetail.builder()
+                        .id("pickup_detail_" + UUID.randomUUID().toString())
+                        .pickup(Pickup.builder()
+                                .id(pickupId)
+                                .build())
+                        .cbmPickupAmount(recommendationDetail.getCbmPickupAmount())
+                        .skuPickupQuantity(recommendationDetail.getSkuPickupQty())
+                        .merchant(recommendationDetail.getMerchant())
+                        .sku(recommendationDetail.getSku())
+                        .pickupPoint(recommendationDetail.getPickupPoint())
+                        .build());
+            }
         }
+//        List<RecommendationDetail> recommendationDetailList = recommendationDetailRepository.findAllByRecommendationFleetId(recommendationFleetId);
+//        for (RecommendationDetail recommendationDetail:recommendationDetailList
+//             ) {
+//            String pickupId = "pickup_" + UUID.randomUUID().toString();
+//            pickupRepository.save(Pickup.builder()
+//                    .id(pickupId)
+//                    .pickupDate(pickupDate)
+//                    .fleet(recommendationDetail.getRecommendationFleet().getFleet())
+//                    .build());
+//            pickupDetailRepository.save(PickupDetail.builder()
+//                    .id("pickup_detail_" + UUID.randomUUID().toString())
+//                    .pickup(Pickup.builder()
+//                            .id(pickupId)
+//                            .build())
+//                    .cbmPickupAmount(recommendationDetail.getCbmPickupAmount())
+//                    .skuPickupQuantity(recommendationDetail.getSkuPickupQty())
+//                    .merchant(recommendationDetail.getMerchant())
+//                    .sku(recommendationDetail.getSku())
+//                    .pickupPoint(recommendationDetail.getPickupPoint())
+//                    .build());
+//        }
+        recommendationResultRepository.deleteAll();
     }
 
 }

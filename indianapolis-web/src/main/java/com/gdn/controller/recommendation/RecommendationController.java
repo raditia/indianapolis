@@ -2,6 +2,7 @@ package com.gdn.controller.recommendation;
 
 import com.gdn.entity.RecommendationDetail;
 import com.gdn.entity.RecommendationFleet;
+import com.gdn.entity.RecommendationResult;
 import com.gdn.recommendation.DatabaseQueryResult;
 import com.gdn.recommendation.Pickup;
 import com.gdn.recommendation.RecommendationService;
@@ -33,7 +34,7 @@ public class RecommendationController {
             method = RequestMethod.GET,
             produces = MediaType.APPLICATION_JSON_VALUE
     )
-    public List<RecommendationFleet> getAllRecommendationFleetResult(){
+    public List<RecommendationResult> getAllRecommendationFleetResult(){
         return recommendationService.findAllRecommendationFleetResult();
     }
 
@@ -42,9 +43,9 @@ public class RecommendationController {
             method = RequestMethod.GET,
             produces = MediaType.APPLICATION_JSON_VALUE
     )
-    public void chooseRecommendationAndInsertToDatabase(@RequestParam("recommendationFleetId") String recommendationFleetId,
+    public void chooseRecommendationAndInsertToDatabase(@RequestParam("recommendationResultId") String recommendationResultId,
                                                         @RequestParam("pickupDate") @DateTimeFormat(pattern = "yyyy-MM-dd") Date pickupDate){
-        recommendationService.choosePickupAndSendEmail(recommendationFleetId, pickupDate);
+        recommendationService.choosePickupAndSendEmail(recommendationResultId, pickupDate);
     }
 
 }

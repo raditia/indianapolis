@@ -23,11 +23,11 @@ public class RecommendationResult {
     @Column(name = "id")
     private String id;
 
-//    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-//    @JoinColumn(name = "recommendation_result_id")
-//    @Builder.Default
-//    @JsonManagedReference
-//    private List<RecommendationFleet> recommendationFleetList = new ArrayList<>();
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinColumn(name = "recommendation_result_id")
+    @Builder.Default
+    @JsonManagedReference
+    private List<RecommendationFleet> recommendationFleetList = new ArrayList<>();
 
     @Column(name = "total_sku")
     private int totalSku;

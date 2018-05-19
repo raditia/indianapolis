@@ -27,16 +27,23 @@ public class Cff {
     @Column(name = "pickup_date")
     private Date pickupDate;
 
+    @Column(name = "date_uploaded")
+    private Date uploadedDate;
+
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "cff_id")
     @Builder.Default
     @JsonManagedReference
     private List<CffGood> cffGoodList = new ArrayList<>();
 
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @JoinColumn(name = "cff_id")
-    @Builder.Default
-    private List<PickupPoint> pickupPointList = new ArrayList<>();
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinColumn(name = "pickup_point_id")
+    private PickupPoint pickupPoint;
+
+//    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+//    @JoinColumn(name = "cff_id")
+//    @Builder.Default
+//    private List<PickupPoint> pickupPointList = new ArrayList<>();
 
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "merchant_id")

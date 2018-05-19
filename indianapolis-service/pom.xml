@@ -23,6 +23,10 @@
             <artifactId>indianapolis-repository</artifactId>
         </dependency>
         <dependency>
+            <groupId>com.gdn</groupId>
+            <artifactId>indianapolis-helper</artifactId>
+        </dependency>
+        <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
         </dependency>

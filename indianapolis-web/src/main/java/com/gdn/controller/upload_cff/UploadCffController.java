@@ -2,6 +2,8 @@ package com.gdn.controller.upload_cff;
 
 import com.gdn.cff.CffService;
 import com.gdn.entity.Cff;
+import com.gdn.response.CffResponse;
+import com.gdn.response.WebResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -24,7 +26,7 @@ public class UploadCffController {
             produces = MediaType.APPLICATION_JSON_VALUE,
             consumes = MediaType.APPLICATION_JSON_VALUE
     )
-    public Cff saveCff(@RequestBody Cff cff) {
+    public WebResponse<CffResponse> saveCff(@RequestBody Cff cff) {
         return cffService.saveCff(cff);
     }
 
@@ -33,7 +35,7 @@ public class UploadCffController {
             method = RequestMethod.GET,
             produces = MediaType.APPLICATION_JSON_VALUE
     )
-    public List<Cff> getAllCff(){
+    public WebResponse<List<CffResponse>> getAllCff(){
         return cffService.getAllCff();
     }
 
