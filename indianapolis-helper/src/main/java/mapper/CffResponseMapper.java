@@ -13,7 +13,7 @@ public class CffResponseMapper {
         double cbmTotal = 0;
         for (CffGood cffGood:cff.getCffGoodList()
              ) {
-            cbmTotal+=cffGood.getCbm();
+            cbmTotal+=cffGood.getCbm()*cffGood.getQuantity();
         }
         return CffResponse.builder()
                 .pickupPointAddress(cff.getPickupPoint().getPickupAddress())

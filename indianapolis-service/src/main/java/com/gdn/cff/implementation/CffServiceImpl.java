@@ -52,12 +52,19 @@ public class CffServiceImpl implements CffService {
                         cff.getPickupPoint().getLatitude(),
                         cff.getPickupPoint().getLongitude());
         PickupPoint pickupPoint = cff.getPickupPoint();
-        if(pickupPointInDb!=null)
+        // TODO : apabila pickup point sudah ada sebelumnya, pickup_point_id di allowed_vehicle itu null
+        if(pickupPointInDb!=null) {
             pickupPoint.setId(pickupPointInDb.getId());
-        else
+            System.out.println("Pickup point in db not null");
+            System.out.println("pickup point in db id : " + pickupPointInDb.getId());
+        }
+        else {
             pickupPoint.setId("pickup_point_" + UUID.randomUUID().toString());
+            System.out.println("Pickup point in db null");
+        }
         for (AllowedVehicle allowedVehicle:pickupPoint.getAllowedVehicleList()
                 ) {
+            allowedVehicle.setPickupPoint(pickupPoint);
             allowedVehicle.setId("allowed_vehicle_" + UUID.randomUUID().toString());
         }
         return WebResponse.OK(CffResponseMapper.toCffResponse(cffRepository.save(cff)));

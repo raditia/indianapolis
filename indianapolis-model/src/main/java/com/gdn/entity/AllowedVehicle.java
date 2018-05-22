@@ -1,5 +1,6 @@
 package com.gdn.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -23,8 +24,9 @@ public class AllowedVehicle {
     @Column(name = "vehicle_name")
     private String vehicleName;
 
-//    @ManyToOne(cascade = CascadeType.ALL)
-//    @JoinColumn(name = "pickup_point_id")
-//    private PickupPoint pickupPoint;
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "pickup_point_id")
+    @JsonBackReference
+    private PickupPoint pickupPoint;
 
 }

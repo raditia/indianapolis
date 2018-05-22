@@ -1,5 +1,6 @@
 package com.gdn.entity;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -35,6 +36,7 @@ public class PickupPoint {
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "pickup_point_id")
     @Builder.Default
+    @JsonManagedReference
     private List<AllowedVehicle> allowedVehicleList = new ArrayList<>();
 
 }
