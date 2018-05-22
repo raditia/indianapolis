@@ -1,6 +1,7 @@
-package com.gdn.pickup_point;
+package com.gdn.pickup_point.implementation;
 
 import com.gdn.entity.PickupPoint;
+import com.gdn.pickup_point.PickupPointService;
 import com.gdn.repository.PickupPointRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
