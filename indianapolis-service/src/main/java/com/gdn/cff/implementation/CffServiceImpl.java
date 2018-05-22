@@ -51,21 +51,20 @@ public class CffServiceImpl implements CffService {
                         cff.getPickupPoint().getPickupAddress(),
                         cff.getPickupPoint().getLatitude(),
                         cff.getPickupPoint().getLongitude());
-        PickupPoint pickupPoint = cff.getPickupPoint();
-        // TODO : apabila pickup point sudah ada sebelumnya, pickup_point_id di allowed_vehicle itu null
-        if(pickupPointInDb!=null) {
-            pickupPoint.setId(pickupPointInDb.getId());
-            System.out.println("Pickup point in db not null");
-            System.out.println("pickup point in db id : " + pickupPointInDb.getId());
-        }
-        else {
-            pickupPoint.setId("pickup_point_" + UUID.randomUUID().toString());
-            System.out.println("Pickup point in db null");
-        }
-        for (AllowedVehicle allowedVehicle:pickupPoint.getAllowedVehicleList()
+//        if(pickupPointInDb!=null) {
+//            cff.getPickupPoint().setId(pickupPointInDb.getId());
+//            System.out.println("Pickup point in db not null");
+//            System.out.println("pickup point in db id : " + pickupPointInDb.getId());
+//            System.out.println("pickup point new id : " + cff.getPickupPoint().getId());
+//        }
+//        else {
+            cff.getPickupPoint().setId("pickup_point_" + UUID.randomUUID().toString());
+//            System.out.println("Pickup point in db null");
+//        }
+        for (AllowedVehicle allowedVehicle:cff.getPickupPoint().getAllowedVehicleList()
                 ) {
-            allowedVehicle.setPickupPoint(pickupPoint);
             allowedVehicle.setId("allowed_vehicle_" + UUID.randomUUID().toString());
+//            System.out.println(allowedVehicle.getPickupPoint().getId());
         }
         return WebResponse.OK(CffResponseMapper.toCffResponse(cffRepository.save(cff)));
     }
