@@ -23,13 +23,13 @@ public class PickupPoint {
     @Column(name = "id")
     private String id;
 
-    @Column(name = "pickup_address")
+    @Column(name = "pickup_address", unique = true)
     private String pickupAddress;
 
-    @Column(name = "latitude")
+    @Column(name = "latitude", unique = true)
     private Double latitude;
 
-    @Column(name = "longitude")
+    @Column(name = "longitude", unique = true)
     private Double longitude;
 
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)

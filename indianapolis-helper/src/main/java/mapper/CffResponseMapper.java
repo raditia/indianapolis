@@ -3,7 +3,6 @@ package mapper;
 import com.gdn.entity.Cff;
 import com.gdn.entity.CffGood;
 import com.gdn.response.CffResponse;
-import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -19,9 +18,10 @@ public class CffResponseMapper {
         return CffResponse.builder()
                 .pickupPointAddress(cff.getPickupPoint().getPickupAddress())
                 .merchantName(cff.getMerchant().getName())
+                .cffId(cff.getId())
                 .cffGoodList(cff.getCffGoodList())
                 .cbmTotal(cbmTotal)
-                .uploadedDate(cff.getUploadedDate())
+                .pickupDate(cff.getPickupDate())
                 .warehouseName(cff.getWarehouse().getAddress())
                 .schedulingStatus(cff.getSchedulingStatus())
                 .build();

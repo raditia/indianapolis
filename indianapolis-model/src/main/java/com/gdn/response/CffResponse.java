@@ -13,13 +13,15 @@ public class CffResponse {
 
     private String merchantName;
 
+    private String cffId;
+
     private List<CffGood> cffGoodList;
 
     private String pickupPointAddress;
 
     private double cbmTotal;
 
-    private Date uploadedDate;
+    private Date pickupDate;
 
     private String warehouseName;
 
