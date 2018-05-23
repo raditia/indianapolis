@@ -29,7 +29,7 @@ public class CffServiceImpl implements CffService {
     @Override
     @Transactional(readOnly = true)
     public WebResponse<List<CffResponse>> getAllCff() {
-        return WebResponse.OK(CffResponseMapper.toCffListResponse(cffRepository.findAll()));
+        return WebResponse.OK(CffResponseMapper.toCffListResponse(cffRepository.findAllByOrOrderByWarehouseAscPickupDateAsc()));
     }
 
     @Override

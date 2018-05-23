@@ -37,8 +37,8 @@ public class DatabaseQueryResultProcessor implements ItemProcessor<DatabaseQuery
         rowCount = recommendationService.getResultRowCount(warehouseId);
         resultList.add(databaseQueryResult);
         List<Recommendation> rekomendasiList = new ArrayList<>();
-        LOGGER.info("Row count : " + rowCount);
         if(allItemsHaveBeenRetrieved()){
+            LOGGER.info("Row count : " + rowCount);
             LOGGER.info("Processing...");
             rekomendasiList = get3Recommendation();
             for (DatabaseQueryResult item:resultList
