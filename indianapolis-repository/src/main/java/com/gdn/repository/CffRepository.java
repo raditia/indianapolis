@@ -8,5 +8,5 @@ import java.util.List;
 
 @Repository
 public interface CffRepository extends JpaRepository<Cff, String>{
-    List<Cff> findAllByOrOrderByWarehouseAscPickupDateAsc();
+    List<Cff> findAllByOrderByWarehouseAsc();
 }
