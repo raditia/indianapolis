@@ -122,9 +122,11 @@ public class FleetRecommendationBatchConfig {
 
     @Bean
     public Job fleetRecommendationJob(Step fleetRecommendationStep,
-                                      JobBuilderFactory jobBuilderFactory){
+                                      JobBuilderFactory jobBuilderFactory,
+                                      FleetRecommendationJobListener fleetRecommendationJobListener){
         return jobBuilderFactory.get("fleetRecommendationJob")
                 .incrementer(new RunIdIncrementer())
+                .listener(fleetRecommendationJobListener)
                 .flow(fleetRecommendationStep)
                 .end()
                 .build();
