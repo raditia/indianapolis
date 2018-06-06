@@ -9,9 +9,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.batch.item.ItemProcessor;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 public class DatabaseQueryResultProcessor implements ItemProcessor<DatabaseQueryResult, List<Recommendation>> {
 
@@ -34,11 +32,11 @@ public class DatabaseQueryResultProcessor implements ItemProcessor<DatabaseQuery
 
     @Override
     public List<Recommendation> process(DatabaseQueryResult databaseQueryResult) throws Exception {
-        rowCount = recommendationService.getResultRowCount(warehouseId);
+        rowCount = recommendationService.getResultRowCount(warehouseId, tomorrow());
+        LOGGER.info("Row count : " + rowCount);
         resultList.add(databaseQueryResult);
         List<Recommendation> rekomendasiList = new ArrayList<>();
         if(allItemsHaveBeenRetrieved()){
-            LOGGER.info("Row count : " + rowCount);
             LOGGER.info("Processing...");
             rekomendasiList = get3Recommendation();
             for (DatabaseQueryResult item:resultList
@@ -307,5 +305,14 @@ public class DatabaseQueryResultProcessor implements ItemProcessor<DatabaseQuery
         return skuList;
     }
 
+    private Date tomorrow(){
+        Calendar calendar = Calendar.getInstance();
+        calendar.add(Calendar.DAY_OF_YEAR, 1);
+        calendar.set(Calendar.HOUR_OF_DAY, 7);
+        calendar.set(Calendar.MINUTE, 0);
+        calendar.set(Calendar.SECOND, 0);
+        calendar.set(Calendar.MILLISECOND, 0);
+        return calendar.getTime();
+    }
 
 }

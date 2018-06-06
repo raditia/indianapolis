@@ -70,10 +70,11 @@ public class RecommendationServiceImpl implements RecommendationService {
     }
 
     @Override
-    public int getResultRowCount(String warehouseId) {
+    public int getResultRowCount(String warehouseId, Date pickupDate) {
         return recommendationRepository.getRowCount(Warehouse.builder()
                 .id(warehouseId)
-                .build());
+                .build(),
+                pickupDate);
     }
 
     @Override

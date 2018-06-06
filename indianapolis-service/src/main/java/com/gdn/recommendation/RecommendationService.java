@@ -13,7 +13,7 @@ import java.util.List;
 
 public interface RecommendationService {
     WebResponse<SchedulingResponse> executeBatch(String warehouseId);
-    int getResultRowCount(String warehouseId);
+    int getResultRowCount(String warehouseId, Date pickupDate);
     RecommendationResult saveRecommendationResult(RecommendationResult recommendationResult);
     RecommendationFleet saveRecommendationFleet(RecommendationFleet recommendationFleet);
     RecommendationDetail saveRecommendationDetail(RecommendationDetail recommendationDetail);
