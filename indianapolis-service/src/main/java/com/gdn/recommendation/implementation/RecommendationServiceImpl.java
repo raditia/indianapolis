@@ -6,7 +6,7 @@ import com.gdn.repository.*;
 import com.gdn.response.RecommendationResponse;
 import com.gdn.response.SchedulingResponse;
 import com.gdn.response.WebResponse;
-import mapper.FleetRecommendationResponseMapper;
+import helper.DateHelper;
 import mapper.RecommendationResponseMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,6 +16,7 @@ import org.springframework.batch.core.repository.JobExecutionAlreadyRunningExcep
 import org.springframework.batch.core.repository.JobInstanceAlreadyCompleteException;
 import org.springframework.batch.core.repository.JobRestartException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
@@ -43,29 +44,27 @@ public class RecommendationServiceImpl implements RecommendationService {
     private PickupRepository pickupRepository;
     @Autowired
     private PickupDetailRepository pickupDetailRepository;
+    @Autowired
+    private CffRepository cffRepository;
 
+    @Scheduled(cron = "${recommendation.cron}")
     @Override
-    public WebResponse<SchedulingResponse> executeBatch(String warehouseId) {
+    public void executeBatch() {
         boolean batchExecutionSuccessStatus;
-        try {
-            JobParameters fleetRecommendationJobParameters = new JobParametersBuilder()
-                    .addLong(UUID.randomUUID().toString(),System.currentTimeMillis())
-                    .addString("warehouse", warehouseId)
-                    .toJobParameters();
-            JobExecution jobExecution = jobLauncher.run(fleetRecommendationJob, fleetRecommendationJobParameters);
-            batchExecutionSuccessStatus = !jobExecution.getStatus().isUnsuccessful();
-            if(batchExecutionSuccessStatus){
-                return WebResponse.OK(SchedulingResponse.builder()
-                        .startTime(jobExecution.getStartTime())
-                        .endTime(jobExecution.getEndTime())
-                        .duration(jobExecution.getEndTime().getTime()-jobExecution.getStartTime().getTime())
-                        .build());
-            } else{
-                return WebResponse.ERROR(jobExecution.getStatus().getBatchStatus().toString());
+        List<Warehouse> warehouseListOfCffPickedUpdTomorrow = cffRepository.findDistinctWarehouseAndPickupDateIs(DateHelper.tomorrow());
+        for (Warehouse warehouse:warehouseListOfCffPickedUpdTomorrow
+             ) {
+            LOGGER.info("Warehouse ID listed on cff to be pickup tomorrow : " + warehouse.getId());
+            try {
+                JobParameters fleetRecommendationJobParameters = new JobParametersBuilder()
+                        .addLong(UUID.randomUUID().toString(),System.currentTimeMillis())
+                        .addString("warehouse", warehouse.getId())
+                        .toJobParameters();
+                JobExecution jobExecution = jobLauncher.run(fleetRecommendationJob, fleetRecommendationJobParameters);
+                batchExecutionSuccessStatus = !jobExecution.getStatus().isUnsuccessful();
+            } catch (JobExecutionAlreadyRunningException | JobRestartException | JobInstanceAlreadyCompleteException | JobParametersInvalidException e) {
+                e.printStackTrace();
             }
-        } catch (JobExecutionAlreadyRunningException | JobRestartException | JobInstanceAlreadyCompleteException | JobParametersInvalidException e) {
-            e.printStackTrace();
-            return WebResponse.ERROR(e.getMessage());
         }
     }
 

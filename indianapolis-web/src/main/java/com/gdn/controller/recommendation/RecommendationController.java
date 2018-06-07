@@ -21,11 +21,12 @@ public class RecommendationController {
     private RecommendationService recommendationService;
 
     @RequestMapping(
+            value = "/execute",
             method = RequestMethod.GET,
             produces = MediaType.APPLICATION_JSON_VALUE
     )
-    public WebResponse<SchedulingResponse> recommendation(@RequestParam("warehouseId") String warehouseId){
-        return recommendationService.executeBatch(warehouseId);
+    public void recommendation(){
+        recommendationService.executeBatch();
     }
 
     @RequestMapping(
