@@ -4,6 +4,7 @@ import com.gdn.cff.CffService;
 import com.gdn.entity.Fleet;
 import com.gdn.fleet.FleetService;
 import com.gdn.recommendation.*;
+import helper.DateHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.batch.item.ItemProcessor;
@@ -32,7 +33,7 @@ public class DatabaseQueryResultProcessor implements ItemProcessor<DatabaseQuery
 
     @Override
     public List<Recommendation> process(DatabaseQueryResult databaseQueryResult) throws Exception {
-        rowCount = recommendationService.getResultRowCount(warehouseId, tomorrow());
+        rowCount = recommendationService.getResultRowCount(warehouseId, DateHelper.tomorrow());
         LOGGER.info("Row count : " + rowCount);
         resultList.add(databaseQueryResult);
         List<Recommendation> rekomendasiList = new ArrayList<>();
@@ -303,16 +304,6 @@ public class DatabaseQueryResultProcessor implements ItemProcessor<DatabaseQuery
             }
         }
         return skuList;
-    }
-
-    private Date tomorrow(){
-        Calendar calendar = Calendar.getInstance();
-        calendar.add(Calendar.DAY_OF_YEAR, 1);
-        calendar.set(Calendar.HOUR_OF_DAY, 7);
-        calendar.set(Calendar.MINUTE, 0);
-        calendar.set(Calendar.SECOND, 0);
-        calendar.set(Calendar.MILLISECOND, 0);
-        return calendar.getTime();
     }
 
 }

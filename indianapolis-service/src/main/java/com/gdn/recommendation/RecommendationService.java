@@ -12,7 +12,7 @@ import java.util.Date;
 import java.util.List;
 
 public interface RecommendationService {
-    WebResponse<SchedulingResponse> executeBatch(String warehouseId);
+    void executeBatch();
     int getResultRowCount(String warehouseId, Date pickupDate);
     RecommendationResult saveRecommendationResult(RecommendationResult recommendationResult);
     RecommendationFleet saveRecommendationFleet(RecommendationFleet recommendationFleet);

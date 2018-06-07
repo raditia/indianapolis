@@ -46,11 +46,11 @@ public class CffServiceImpl implements CffService {
              ) {
             cffGood.setId("sku_" + UUID.randomUUID().toString());
         }
-        PickupPoint pickupPointInDb = pickupPointService
-                .findByPickupAddressOrLatitudeOrLongitude(
-                        cff.getPickupPoint().getPickupAddress(),
-                        cff.getPickupPoint().getLatitude(),
-                        cff.getPickupPoint().getLongitude());
+//        PickupPoint pickupPointInDb = pickupPointService
+//                .findByPickupAddressOrLatitudeOrLongitude(
+//                        cff.getPickupPoint().getPickupAddress(),
+//                        cff.getPickupPoint().getLatitude(),
+//                        cff.getPickupPoint().getLongitude());
 //        if(pickupPointInDb!=null) {
 //            cff.getPickupPoint().setId(pickupPointInDb.getId());
 //            System.out.println("Pickup point in db not null");
@@ -78,6 +78,11 @@ public class CffServiceImpl implements CffService {
         } else{
             return cff;
         }
+    }
+
+    @Override
+    public List<Warehouse> findDistinctWarehouseAndPickupDateIs(Date pickupDate) {
+        return cffRepository.findDistinctWarehouseAndPickupDateIs(pickupDate);
     }
 
 }
