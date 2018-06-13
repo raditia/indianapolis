@@ -3,6 +3,7 @@ package com.gdn.recommendation.implementation;
 import com.gdn.entity.*;
 import com.gdn.recommendation.RecommendationService;
 import com.gdn.repository.*;
+import com.gdn.request.PickupChoiceRequest;
 import com.gdn.response.RecommendationResponse;
 import com.gdn.response.SchedulingResponse;
 import com.gdn.response.WebResponse;
@@ -97,15 +98,15 @@ public class RecommendationServiceImpl implements RecommendationService {
     }
 
     @Override
-    public void choosePickupAndSendEmail(String recommendationResultId, Date pickupDate) {
-        RecommendationResult recommendationResult = recommendationResultRepository.getOne(recommendationResultId);
+    public void choosePickupAndSendEmail(PickupChoiceRequest pickupChoiceRequest) {
+        RecommendationResult recommendationResult = recommendationResultRepository.getOne(pickupChoiceRequest.getRecommendationResultId());
         List<RecommendationFleet> recommendationFleetList = recommendationResult.getRecommendationFleetList();
         for (RecommendationFleet recommendationFleet:recommendationFleetList
              ) {
             String pickupId = "pickup_" + UUID.randomUUID().toString();
             pickupRepository.save(Pickup.builder()
                     .id(pickupId)
-                    .pickupDate(pickupDate)
+                    .pickupDate(pickupChoiceRequest.getPickupDate())
                     .fleet(recommendationFleet.getFleet())
                     .plateNumber("plate_number_" + UUID.randomUUID().toString())
                     .build());

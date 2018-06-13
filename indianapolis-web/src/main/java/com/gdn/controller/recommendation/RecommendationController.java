@@ -1,6 +1,7 @@
 package com.gdn.controller.recommendation;
 
 import com.gdn.recommendation.RecommendationService;
+import com.gdn.request.PickupChoiceRequest;
 import com.gdn.response.FleetRecommendationResponse;
 import com.gdn.response.RecommendationResponse;
 import com.gdn.response.SchedulingResponse;
@@ -40,12 +41,11 @@ public class RecommendationController {
 
     @RequestMapping(
             value = "/pickup",
-            method = RequestMethod.GET,
+            method = RequestMethod.POST,
             produces = MediaType.APPLICATION_JSON_VALUE
     )
-    public void chooseRecommendationAndInsertToDatabase(@RequestParam("id") String recommendationResultId,
-                                                        @RequestParam("pickupDate") @DateTimeFormat(pattern = "yyyy-MM-dd") Date pickupDate){
-        recommendationService.choosePickupAndSendEmail(recommendationResultId, pickupDate);
+    public void chooseRecommendationAndInsertToDatabase(@RequestBody PickupChoiceRequest pickupChoiceRequest){
+        recommendationService.choosePickupAndSendEmail(pickupChoiceRequest);
     }
 
 }
