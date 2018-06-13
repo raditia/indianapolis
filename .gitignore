@@ -90,6 +90,6 @@ fabric.properties
 hs_err_pid*
 
 # project's files
-indianapolis-web/src/main/resources
+# indianapolis-web/src/main/resources
 
 # End of https://www.gitignore.io/api/java,intellij
