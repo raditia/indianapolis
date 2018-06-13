@@ -2,10 +2,7 @@ package com.gdn.controller.recommendation;
 
 import com.gdn.recommendation.RecommendationService;
 import com.gdn.request.PickupChoiceRequest;
-import com.gdn.response.FleetRecommendationResponse;
-import com.gdn.response.RecommendationResponse;
-import com.gdn.response.SchedulingResponse;
-import com.gdn.response.WebResponse;
+import com.gdn.response.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.MediaType;
@@ -44,8 +41,8 @@ public class RecommendationController {
             method = RequestMethod.POST,
             produces = MediaType.APPLICATION_JSON_VALUE
     )
-    public void chooseRecommendationAndInsertToDatabase(@RequestBody PickupChoiceRequest pickupChoiceRequest){
-        recommendationService.choosePickupAndSendEmail(pickupChoiceRequest);
+    public WebResponse<List<PickupChoiceResponse>> chooseRecommendationAndInsertToDatabase(@RequestBody PickupChoiceRequest pickupChoiceRequest){
+        return recommendationService.choosePickupAndSendEmail(pickupChoiceRequest);
     }
 
 }

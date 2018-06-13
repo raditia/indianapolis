@@ -20,7 +20,7 @@ import java.util.List;
 public class RecommendationFleet {
 
     @Id
-    @Column(name = "recommendation_fleet")
+    @Column(name = "id")
     private String id;
 
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
