@@ -1,10 +1,8 @@
 package com.gdn.controller.recommendation;
 
 import com.gdn.recommendation.RecommendationService;
-import com.gdn.response.FleetRecommendationResponse;
-import com.gdn.response.RecommendationResponse;
-import com.gdn.response.SchedulingResponse;
-import com.gdn.response.WebResponse;
+import com.gdn.request.PickupChoiceRequest;
+import com.gdn.response.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.MediaType;
@@ -40,12 +38,11 @@ public class RecommendationController {
 
     @RequestMapping(
             value = "/pickup",
-            method = RequestMethod.GET,
+            method = RequestMethod.POST,
             produces = MediaType.APPLICATION_JSON_VALUE
     )
-    public void chooseRecommendationAndInsertToDatabase(@RequestParam("id") String recommendationResultId,
-                                                        @RequestParam("pickupDate") @DateTimeFormat(pattern = "yyyy-MM-dd") Date pickupDate){
-        recommendationService.choosePickupAndSendEmail(recommendationResultId, pickupDate);
+    public WebResponse<List<PickupChoiceResponse>> chooseRecommendationAndInsertToDatabase(@RequestBody PickupChoiceRequest pickupChoiceRequest){
+        return recommendationService.choosePickupAndSendEmail(pickupChoiceRequest);
     }
 
 }
