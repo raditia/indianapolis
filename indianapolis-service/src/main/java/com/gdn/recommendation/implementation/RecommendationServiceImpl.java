@@ -96,8 +96,13 @@ public class RecommendationServiceImpl implements RecommendationService {
     }
 
     @Override
-    public WebResponse<RecommendationResponse> findAllRecommendationFleetResult() {
-        return WebResponse.OK(RecommendationResponseMapper.toRecommendationResponse(recommendationResultRepository.findAll()));
+    public WebResponse<RecommendationResponse> findAllRecommendationFleetResult(String warehouseId) {
+        return WebResponse
+                .OK(RecommendationResponseMapper.toRecommendationResponse(
+                                recommendationResultRepository.findByWarehouse(
+                                                Warehouse.builder()
+                                                .id(warehouseId)
+                                                .build())));
     }
 
     @Override
