@@ -4,11 +4,9 @@ import com.gdn.recommendation.RecommendationService;
 import com.gdn.request.PickupChoiceRequest;
 import com.gdn.response.*;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Date;
 import java.util.List;
 
 @RestController
@@ -32,8 +30,8 @@ public class RecommendationController {
             method = RequestMethod.GET,
             produces = MediaType.APPLICATION_JSON_VALUE
     )
-    public WebResponse<RecommendationResponse> getAllRecommendationFleetResult(){
-        return recommendationService.findAllRecommendationFleetResult();
+    public WebResponse<RecommendationResponse> getAllRecommendationFleetResult(@RequestParam("warehouseId") String warehouseId){
+        return recommendationService.findAllRecommendationFleetResult(warehouseId);
     }
 
     @RequestMapping(

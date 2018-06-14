@@ -15,6 +15,6 @@ public interface RecommendationService {
     RecommendationResult saveRecommendationResult(RecommendationResult recommendationResult);
     RecommendationFleet saveRecommendationFleet(RecommendationFleet recommendationFleet);
     RecommendationDetail saveRecommendationDetail(RecommendationDetail recommendationDetail);
-    WebResponse<RecommendationResponse> findAllRecommendationFleetResult();
+    WebResponse<RecommendationResponse> findAllRecommendationFleetResult(String warehouseId);
     WebResponse<List<PickupChoiceResponse>> choosePickupAndSendEmail(PickupChoiceRequest pickupChoiceRequest);
 }
