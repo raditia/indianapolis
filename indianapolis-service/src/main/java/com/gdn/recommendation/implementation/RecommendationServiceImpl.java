@@ -10,6 +10,7 @@ import com.gdn.response.SchedulingResponse;
 import com.gdn.response.WebResponse;
 import helper.DateHelper;
 import mapper.PickupChoiceResponseMapper;
+import mapper.PickupDetailMapper;
 import mapper.RecommendationResponseMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -112,31 +113,15 @@ public class RecommendationServiceImpl implements RecommendationService {
         List<Pickup> pickupList = new ArrayList<>();
         for (RecommendationFleet recommendationFleet:recommendationFleetList
              ) {
-            String pickupId = "pickup_" + UUID.randomUUID().toString();
-            String plateNumber = "plate_number_" + UUID.randomUUID().toString();
             Pickup pickup = Pickup.builder()
-                    .id(pickupId)
+                    .id("pickup_" + UUID.randomUUID().toString())
                     .pickupDate(pickupChoiceRequest.getPickupDate())
                     .fleet(recommendationFleet.getFleet())
-                    .plateNumber(plateNumber)
+                    .plateNumber("plate_number_" + UUID.randomUUID().toString())
+                    .pickupDetailList(PickupDetailMapper.toPickupDetailList(recommendationFleet.getRecommendationDetailList()))
                     .build();
             pickupList.add(pickup);
             pickupRepository.save(pickup);
-            List<RecommendationDetail> recommendationDetailList = recommendationFleet.getRecommendationDetailList();
-            for (RecommendationDetail recommendationDetail:recommendationDetailList
-                 ) {
-                String pickupDetailId = "pickup_detail_" + UUID.randomUUID().toString();
-                PickupDetail pickupDetail = PickupDetail.builder()
-                        .id(pickupDetailId)
-                        .pickup(pickup)
-                        .cbmPickupAmount(recommendationDetail.getCbmPickupAmount())
-                        .skuPickupQuantity(recommendationDetail.getSkuPickupQty())
-                        .merchant(recommendationDetail.getMerchant())
-                        .sku(recommendationDetail.getSku())
-                        .pickupPoint(recommendationDetail.getPickupPoint())
-                        .build();
-                pickupDetailRepository.save(pickupDetail);
-            }
         }
         recommendationResultRepository.deleteAll();
         return WebResponse.OK(PickupChoiceResponseMapper.toPickupChoiceResponseList(pickupList));
