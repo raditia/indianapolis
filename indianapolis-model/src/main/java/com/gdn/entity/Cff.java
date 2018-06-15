@@ -40,11 +40,6 @@ public class Cff {
     @JoinColumn(name = "pickup_point_id")
     private PickupPoint pickupPoint;
 
-//    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-//    @JoinColumn(name = "cff_id")
-//    @Builder.Default
-//    private List<PickupPoint> pickupPointList = new ArrayList<>();
-
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "merchant_id")
     private Merchant merchant;
