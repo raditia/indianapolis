@@ -1,17 +1,16 @@
 package com.gdn.email.implementation;
 
 import com.gdn.email.SendEmailService;
-import com.gdn.entity.Pickup;
-import com.gdn.entity.PickupDetail;
-import com.gdn.entity.RecommendationResult;
-import com.gdn.entity.Warehouse;
+import com.gdn.entity.*;
 import com.gdn.repository.PickupDetailRepository;
 import com.gdn.repository.PickupRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class SendEmailServiceImpl implements SendEmailService {
@@ -85,6 +84,31 @@ public class SendEmailServiceImpl implements SendEmailService {
             }
         }
         return String.valueOf(warehouseEmailContent);
+    }
+
+    @Override
+    public String getLogisticVendorEmailContent(Warehouse warehouse) {
+        List<Pickup> pickupList = pickupRepository.findAllByWarehouse(warehouse);
+        StringBuilder merchantAndTpEmailContent = new StringBuilder();
+        // TODO : Rapikan lagi kontennya.. Mungkin bisa plate number per fleet dijadikan sebagai patokan supaya setiap fleet, tidak perlu menyebut data merchant yang sama berkali-kali
+        for (Pickup pickup:pickupList
+             ) {
+            merchantAndTpEmailContent
+                    .append("Fleet : ").append(pickup.getFleet().getName()).append("\n");
+            for (PickupDetail pickupDetail:pickup.getPickupDetailList()
+                 ) {
+                merchantAndTpEmailContent
+                        .append("Merchant name : ").append(pickupDetail.getMerchant().getName()).append("\n")
+                        .append("Merchant phone : ").append(pickupDetail.getMerchant().getPhoneNumber()).append("\n")
+                        .append("Merchant address : ").append(pickupDetail.getPickupPoint().getPickupAddress()).append("\n")
+                        .append("SKU : ").append("\n");
+                merchantAndTpEmailContent
+                        .append("Name : ").append(pickupDetail.getSku().getSku()).append("\n")
+                        .append("Quantity : ").append(pickupDetail.getSkuPickupQuantity()).append("\n")
+                        .append("CBM : ").append(pickupDetail.getCbmPickupAmount()).append("\n\n");
+            }
+        }
+        return String.valueOf(merchantAndTpEmailContent);
     }
 
 }

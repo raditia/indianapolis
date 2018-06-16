@@ -124,6 +124,8 @@ public class RecommendationServiceImpl implements RecommendationService {
         merchantEmailAddressList.forEach(email -> LOGGER.info("Email merchant : " + email));
         List<String> logisticVendorEmailAddressList = sendEmailService.getLogisticVendorEmailList(pickupList);
         logisticVendorEmailAddressList.forEach(email -> LOGGER.info("Email logistic : " + email));
+        String logisticVendorEmailContent = sendEmailService.getLogisticVendorEmailContent(recommendationResult.getWarehouse());
+        LOGGER.info("Email logistic vendor content : \n" + logisticVendorEmailContent);
         List<String> tpEmailAddressList = sendEmailService.getTpEmailList(pickupDetailList);
         tpEmailAddressList.forEach(email -> LOGGER.info("Email TP : " + email));
 

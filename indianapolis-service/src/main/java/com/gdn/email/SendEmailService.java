@@ -13,4 +13,5 @@ public interface SendEmailService {
     List<String> getMerchantEmailList(List<PickupDetail> pickupDetailList);
     String getWarehouseEmail(RecommendationResult recommendationResult);
     String getWarehouseEmailContent(Warehouse warehouse);
+    String getLogisticVendorEmailContent(Warehouse warehouse);
 }
