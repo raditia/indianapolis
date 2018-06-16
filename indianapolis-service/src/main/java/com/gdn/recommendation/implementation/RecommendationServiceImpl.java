@@ -11,7 +11,6 @@ import com.gdn.response.RecommendationResponse;
 import com.gdn.response.WebResponse;
 import helper.DateHelper;
 import mapper.PickupChoiceResponseMapper;
-import mapper.PickupDetailMapper;
 import mapper.RecommendationResponseMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -119,6 +118,8 @@ public class RecommendationServiceImpl implements RecommendationService {
 
         String warehouseEmailAddress = sendEmailService.getWarehouseEmail(recommendationResult);
         LOGGER.info("Email warehouse : " + warehouseEmailAddress);
+        String warehouseEmailContent = sendEmailService.getWarehouseEmailContent(recommendationResult.getWarehouse());
+        LOGGER.info("Email warehouse content : \n" + warehouseEmailContent);
         List<String> merchantEmailAddressList = sendEmailService.getMerchantEmailList(pickupDetailList);
         merchantEmailAddressList.forEach(email -> LOGGER.info("Email merchant : " + email));
         List<String> logisticVendorEmailAddressList = sendEmailService.getLogisticVendorEmailList(pickupList);
