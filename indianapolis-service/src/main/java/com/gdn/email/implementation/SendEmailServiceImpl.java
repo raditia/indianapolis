@@ -94,7 +94,8 @@ public class SendEmailServiceImpl implements SendEmailService {
         for (Pickup pickup:pickupList
              ) {
             merchantAndTpEmailContent
-                    .append("Fleet : ").append(pickup.getFleet().getName()).append("\n");
+                    .append("Fleet : ").append(pickup.getFleet().getName()).append("\n")
+                    .append("Warehouse destination : ").append(warehouse.getAddress()).append("\n");
             for (PickupDetail pickupDetail:pickup.getPickupDetailList()
                  ) {
                 merchantAndTpEmailContent
