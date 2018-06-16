@@ -109,6 +109,7 @@ public class RecommendationServiceImpl implements RecommendationService {
     @Override
     public WebResponse<List<PickupChoiceResponse>> choosePickupAndSendEmail(PickupChoiceRequest pickupChoiceRequest) {
         RecommendationResult recommendationResult = recommendationResultRepository.getOne(pickupChoiceRequest.getRecommendationResultId());
+        String warehouseEmailAddress = recommendationResult.getWarehouse().getEmailAddress();
         List<RecommendationFleet> recommendationFleetList = recommendationResult.getRecommendationFleetList();
         List<Pickup> pickupList = new ArrayList<>();
         for (RecommendationFleet recommendationFleet:recommendationFleetList
