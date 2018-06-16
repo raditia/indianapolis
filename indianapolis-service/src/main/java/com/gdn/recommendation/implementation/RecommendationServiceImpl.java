@@ -111,21 +111,47 @@ public class RecommendationServiceImpl implements RecommendationService {
         RecommendationResult recommendationResult = recommendationResultRepository.getOne(pickupChoiceRequest.getRecommendationResultId());
         List<RecommendationFleet> recommendationFleetList = recommendationResult.getRecommendationFleetList();
         List<Pickup> pickupList = new ArrayList<>();
+        List<PickupDetail> pickupDetailList;
+        List<String> merchantEmailList = new ArrayList<>();
         for (RecommendationFleet recommendationFleet:recommendationFleetList
              ) {
+            pickupDetailList = PickupDetailMapper.toPickupDetailList(recommendationFleet.getRecommendationDetailList());
             Pickup pickup = Pickup.builder()
                     .id("pickup_" + UUID.randomUUID().toString())
                     .pickupDate(pickupChoiceRequest.getPickupDate())
                     .fleet(recommendationFleet.getFleet())
                     .plateNumber("plate_number_" + UUID.randomUUID().toString())
                     .warehouse(recommendationResult.getWarehouse())
-                    .pickupDetailList(PickupDetailMapper.toPickupDetailList(recommendationFleet.getRecommendationDetailList()))
+                    .pickupDetailList(pickupDetailList)
                     .build();
             pickupList.add(pickup);
             pickupRepository.save(pickup);
+            for (String merchantEmail:getMerchantEmailList(pickupDetailList)
+                 ) {
+                if(!merchantEmailList.contains(merchantEmail)){
+                    merchantEmailList.add(merchantEmail);
+                }
+            }
+        }
+        for (String email:merchantEmailList
+             ) {
+            LOGGER.info("Email merchant : " + email);
         }
         recommendationResultRepository.deleteAll();
         return WebResponse.OK(PickupChoiceResponseMapper.toPickupChoiceResponseList(pickupList));
+    }
+
+    private List<String> getMerchantEmailList(List<PickupDetail> pickupDetailList){
+        List<String> merchantEmailList = new ArrayList<>();
+        String merchantEmailAddress;
+        for (PickupDetail pickupDetail:pickupDetailList
+             ) {
+            merchantEmailAddress = pickupDetail.getMerchant().getEmailAddress();
+            if(!merchantEmailList.contains(merchantEmailAddress)){
+                merchantEmailList.add(merchantEmailAddress);
+            }
+        }
+        return merchantEmailList;
     }
 
 }
