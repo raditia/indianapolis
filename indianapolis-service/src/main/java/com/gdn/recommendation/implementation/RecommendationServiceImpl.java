@@ -137,9 +137,26 @@ public class RecommendationServiceImpl implements RecommendationService {
              ) {
             LOGGER.info("Email merchant : " + email);
         }
+        List<String> logisticVendorEmailAddressList = getLogisticVendorEmails(pickupList);
+        for (String email:logisticVendorEmailAddressList
+             ) {
+            LOGGER.info("Email logistic vendor : " + email);
+        }
         recommendationResultRepository.deleteAll();
         return WebResponse.OK(PickupChoiceResponseMapper.toPickupChoiceResponseList(pickupList));
     }
+
+    private List<String> getLogisticVendorEmails(List<Pickup> pickupList){
+        List<String> logisticVendorEmailList = new ArrayList<>();
+        String logisticEmailAddress;
+        for (Pickup pickup:pickupList
+             ) {
+            logisticEmailAddress = pickup.getFleet().getLogisticVendor().getEmailAddress();
+            if(!logisticVendorEmailList.contains(logisticEmailAddress)) {
+                logisticVendorEmailList.add(logisticEmailAddress);
+            }
+        }
+        return logisticVendorEmailList;
 
     private List<String> getMerchantEmailList(List<PickupDetail> pickupDetailList){
         List<String> merchantEmailList = new ArrayList<>();
@@ -151,7 +168,6 @@ public class RecommendationServiceImpl implements RecommendationService {
                 merchantEmailList.add(merchantEmailAddress);
             }
         }
-        return merchantEmailList;
     }
 
 }
