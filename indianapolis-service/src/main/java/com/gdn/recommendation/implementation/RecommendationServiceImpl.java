@@ -118,8 +118,8 @@ public class RecommendationServiceImpl implements RecommendationService {
 
         String warehouseEmailAddress = recommendationResult.getWarehouse().getEmailAddress();
         LOGGER.info("Email warehouse : " + warehouseEmailAddress);
-        List<String> merchantEmailList = getMerchantEmailList(pickupDetailList);
-        for (String email:merchantEmailList
+        List<String> merchantEmailAddressList = getMerchantEmailList(pickupDetailList);
+        for (String email:merchantEmailAddressList
              ) {
             LOGGER.info("Email merchant : " + email);
         }
@@ -127,6 +127,11 @@ public class RecommendationServiceImpl implements RecommendationService {
         for (String email:logisticVendorEmailAddressList
              ) {
             LOGGER.info("Email logistic vendor : " + email);
+        }
+        List<String> tpEmailAddressList = getTpEmailList(pickupDetailList);
+        for (String email:tpEmailAddressList
+             ) {
+            LOGGER.info("Email TP : " + email);
         }
 
         recommendationResultRepository.deleteAll();
@@ -153,6 +158,19 @@ public class RecommendationServiceImpl implements RecommendationService {
             pickupRepository.save(pickup);
         }
         return pickupList;
+    }
+
+    private List<String> getTpEmailList(List<PickupDetail> pickupDetailList){
+        List<String> tpEmailList = new ArrayList<>();
+        String tpEmailAddress;
+        for (PickupDetail pickupDetail:pickupDetailList
+                ) {
+            tpEmailAddress = pickupDetail.getSku().getCff().getTp().getEmailAddress();
+            if(!tpEmailList.contains(tpEmailAddress)){
+                tpEmailList.add(tpEmailAddress);
+            }
+        }
+        return tpEmailList;
     }
 
     private List<String> getLogisticVendorEmailList(List<Pickup> pickupList) {
