@@ -34,7 +34,7 @@ public class CffServiceImpl implements CffService {
 
     @Override
     public WebResponse<CffResponse> saveCff(Cff cff) {
-        cff.setId("cff_" + UUID.randomUUID().toString());
+//        cff.setId("cff_" + UUID.randomUUID().toString());
         cff.setUploadedDate(new Date());
         Merchant merchant = merchantService.getOne(cff.getMerchant().getEmailAddress());
         if(merchant!=null)
