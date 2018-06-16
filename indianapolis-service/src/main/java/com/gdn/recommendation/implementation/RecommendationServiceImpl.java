@@ -1,6 +1,8 @@
 package com.gdn.recommendation.implementation;
 
+import com.gdn.email.SendEmailService;
 import com.gdn.entity.*;
+import com.gdn.pickup.PickupService;
 import com.gdn.recommendation.RecommendationService;
 import com.gdn.repository.*;
 import com.gdn.request.PickupChoiceRequest;
@@ -21,6 +23,7 @@ import org.springframework.batch.core.repository.JobRestartException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -45,11 +48,11 @@ public class RecommendationServiceImpl implements RecommendationService {
     @Autowired
     private RecommendationDetailRepository recommendationDetailRepository;
     @Autowired
-    private PickupRepository pickupRepository;
-    @Autowired
-    private PickupDetailRepository pickupDetailRepository;
-    @Autowired
     private CffRepository cffRepository;
+    @Autowired
+    private PickupService pickupService;
+    @Autowired
+    private SendEmailService sendEmailService;
 
     @Scheduled(cron = "${recommendation.cron}")
     @Override
@@ -106,97 +109,25 @@ public class RecommendationServiceImpl implements RecommendationService {
     }
 
     @Override
+    @Transactional
     public WebResponse<List<PickupChoiceResponse>> choosePickupAndSendEmail(PickupChoiceRequest pickupChoiceRequest) {
         RecommendationResult recommendationResult = recommendationResultRepository.getOne(pickupChoiceRequest.getRecommendationResultId());
 
-        List<Pickup> pickupList = saveToPickupEntity(pickupChoiceRequest);
+        List<Pickup> pickupList = pickupService.savePickup(pickupChoiceRequest);
         List<PickupDetail> pickupDetailList = new ArrayList<>();
-        for (Pickup pickup:pickupList
-             ) {
-            pickupDetailList.addAll(pickup.getPickupDetailList());
-        }
+        pickupList.forEach(pickup -> pickupDetailList.addAll(pickup.getPickupDetailList()));
 
-        String warehouseEmailAddress = recommendationResult.getWarehouse().getEmailAddress();
+        String warehouseEmailAddress = sendEmailService.getWarehouseEmail(recommendationResult);
         LOGGER.info("Email warehouse : " + warehouseEmailAddress);
-        List<String> merchantEmailAddressList = getMerchantEmailList(pickupDetailList);
-        for (String email:merchantEmailAddressList
-             ) {
-            LOGGER.info("Email merchant : " + email);
-        }
-        List<String> logisticVendorEmailAddressList = getLogisticVendorEmailList(pickupList);
-        for (String email:logisticVendorEmailAddressList
-             ) {
-            LOGGER.info("Email logistic vendor : " + email);
-        }
-        List<String> tpEmailAddressList = getTpEmailList(pickupDetailList);
-        for (String email:tpEmailAddressList
-             ) {
-            LOGGER.info("Email TP : " + email);
-        }
+        List<String> merchantEmailAddressList = sendEmailService.getMerchantEmailList(pickupDetailList);
+        merchantEmailAddressList.forEach(email -> LOGGER.info("Email merchant : " + email));
+        List<String> logisticVendorEmailAddressList = sendEmailService.getLogisticVendorEmailList(pickupList);
+        logisticVendorEmailAddressList.forEach(email -> LOGGER.info("Email logistic : " + email));
+        List<String> tpEmailAddressList = sendEmailService.getTpEmailList(pickupDetailList);
+        tpEmailAddressList.forEach(email -> LOGGER.info("Email TP : " + email));
 
-        recommendationResultRepository.deleteAll();
+        recommendationResultRepository.deleteAllByWarehouse(recommendationResult.getWarehouse());
         return WebResponse.OK(PickupChoiceResponseMapper.toPickupChoiceResponseList(pickupList));
-    }
-
-    private List<Pickup> saveToPickupEntity(PickupChoiceRequest pickupChoiceRequest){
-        List<Pickup> pickupList = new ArrayList<>();
-        List<PickupDetail> pickupDetailList;
-        RecommendationResult recommendationResult = recommendationResultRepository.getOne(pickupChoiceRequest.getRecommendationResultId());
-        List<RecommendationFleet> recommendationFleetList = recommendationResult.getRecommendationFleetList();
-        for (RecommendationFleet recommendationFleet:recommendationFleetList
-                ) {
-            pickupDetailList = PickupDetailMapper.toPickupDetailList(recommendationFleet.getRecommendationDetailList());
-            Pickup pickup = Pickup.builder()
-                    .id("pickup_" + UUID.randomUUID().toString())
-                    .pickupDate(pickupChoiceRequest.getPickupDate())
-                    .fleet(recommendationFleet.getFleet())
-                    .plateNumber("plate_number_" + UUID.randomUUID().toString())
-                    .warehouse(recommendationResult.getWarehouse())
-                    .pickupDetailList(pickupDetailList)
-                    .build();
-            pickupList.add(pickup);
-            pickupRepository.save(pickup);
-        }
-        return pickupList;
-    }
-
-    private List<String> getTpEmailList(List<PickupDetail> pickupDetailList){
-        List<String> tpEmailList = new ArrayList<>();
-        String tpEmailAddress;
-        for (PickupDetail pickupDetail:pickupDetailList
-                ) {
-            tpEmailAddress = pickupDetail.getSku().getCff().getTp().getEmailAddress();
-            if(!tpEmailList.contains(tpEmailAddress)){
-                tpEmailList.add(tpEmailAddress);
-            }
-        }
-        return tpEmailList;
-    }
-
-    private List<String> getLogisticVendorEmailList(List<Pickup> pickupList) {
-        List<String> logisticVendorEmailList = new ArrayList<>();
-        String logisticEmailAddress;
-        for (Pickup pickup : pickupList
-                ) {
-            logisticEmailAddress = pickup.getFleet().getLogisticVendor().getEmailAddress();
-            if (!logisticVendorEmailList.contains(logisticEmailAddress)) {
-                logisticVendorEmailList.add(logisticEmailAddress);
-            }
-        }
-        return logisticVendorEmailList;
-    }
-
-    private List<String> getMerchantEmailList(List<PickupDetail> pickupDetailList){
-        List<String> merchantEmailList = new ArrayList<>();
-        String merchantEmailAddress;
-        for (PickupDetail pickupDetail:pickupDetailList
-             ) {
-            merchantEmailAddress = pickupDetail.getMerchant().getEmailAddress();
-            if(!merchantEmailList.contains(merchantEmailAddress)){
-                merchantEmailList.add(merchantEmailAddress);
-            }
-        }
-        return merchantEmailList;
     }
 
 }

@@ -10,4 +10,5 @@ import java.util.List;
 @Repository
 public interface RecommendationResultRepository extends JpaRepository<RecommendationResult, String> {
     List<RecommendationResult> findByWarehouse(Warehouse warehouse);
+    void deleteAllByWarehouse(Warehouse warehouse);
 }
