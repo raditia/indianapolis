@@ -118,6 +118,7 @@ public class RecommendationServiceImpl implements RecommendationService {
                     .pickupDate(pickupChoiceRequest.getPickupDate())
                     .fleet(recommendationFleet.getFleet())
                     .plateNumber("plate_number_" + UUID.randomUUID().toString())
+                    .warehouse(recommendationResult.getWarehouse())
                     .pickupDetailList(PickupDetailMapper.toPickupDetailList(recommendationFleet.getRecommendationDetailList()))
                     .build();
             pickupList.add(pickup);

@@ -33,6 +33,10 @@ public class Pickup {
     @Column(name = "fleet_plate_number")
     private String plateNumber;
 
+    @ManyToOne
+    @JoinColumn(name = "warehouse_id")
+    private Warehouse warehouse;
+
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "pickup_id")
     @Builder.Default
