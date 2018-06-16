@@ -8,9 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @Service
 public class SendEmailServiceImpl implements SendEmailService {
@@ -63,6 +61,17 @@ public class SendEmailServiceImpl implements SendEmailService {
     }
 
     @Override
+    public List<Merchant> getMerchantList(List<PickupDetail> pickupDetailList) {
+        List<Merchant> merchantList = new ArrayList<>();
+        for (PickupDetail pickupDetail:pickupDetailList
+             ) {
+            if(!merchantList.contains(pickupDetail.getMerchant()))
+                merchantList.add(pickupDetail.getMerchant());
+        }
+        return merchantList;
+    }
+
+    @Override
     public String getWarehouseEmail(RecommendationResult recommendationResult) {
         return recommendationResult.getWarehouse().getEmailAddress();
     }
@@ -110,6 +119,30 @@ public class SendEmailServiceImpl implements SendEmailService {
             }
         }
         return String.valueOf(merchantAndTpEmailContent);
+    }
+
+    @Override
+    public String getMerchantEmailContent(Warehouse warehouse, Merchant merchant) {
+        List<Pickup> pickupList = pickupRepository.findAllByWarehouse(warehouse);
+        List<PickupDetail> pickupDetailList;
+        StringBuilder merchantEmailContent = new StringBuilder();
+        for (Pickup pickup:pickupList
+             ) {
+            pickupDetailList = pickupDetailRepository.findAllByPickupAndMerchant(pickup, merchant);
+            for (PickupDetail pickupDetail:pickupDetailList
+                 ) {
+                merchantEmailContent
+                        .append("Merchant name : ").append(pickupDetail.getMerchant().getName()).append("\n")
+                        .append("CFF Number : ").append(pickupDetail.getSku().getCff().getId()).append("\n")
+                        .append("SKU : ").append(pickupDetail.getSku().getSku()).append("\n")
+                        .append("SKU Quantity : ").append(pickupDetail.getSkuPickupQuantity()).append("\n")
+                        .append("Width : ").append(pickupDetail.getSku().getWidth()).append("\n")
+                        .append("Length : ").append(pickupDetail.getSku().getLength()).append("\n")
+                        .append("Height : ").append(pickupDetail.getSku().getHeight()).append("\n")
+                        .append("Weight : ").append(pickupDetail.getSku().getWeight()).append("\n\n");
+            }
+        }
+        return String.valueOf(merchantEmailContent);
     }
 
 }

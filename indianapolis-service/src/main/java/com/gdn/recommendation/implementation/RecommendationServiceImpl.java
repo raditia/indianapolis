@@ -122,6 +122,12 @@ public class RecommendationServiceImpl implements RecommendationService {
         LOGGER.info("Email warehouse content : \n" + warehouseEmailContent);
         List<String> merchantEmailAddressList = sendEmailService.getMerchantEmailList(pickupDetailList);
         merchantEmailAddressList.forEach(email -> LOGGER.info("Email merchant : " + email));
+        List<Merchant> merchantList = sendEmailService.getMerchantList(pickupDetailList);
+        for (Merchant merchant:merchantList
+             ) {
+            String merchantEmailContent = sendEmailService.getMerchantEmailContent(recommendationResult.getWarehouse(), merchant);
+            LOGGER.info("Email merchant content : \n" + merchantEmailContent);
+        }
         List<String> logisticVendorEmailAddressList = sendEmailService.getLogisticVendorEmailList(pickupList);
         logisticVendorEmailAddressList.forEach(email -> LOGGER.info("Email logistic : " + email));
         String logisticVendorEmailContent = sendEmailService.getLogisticVendorEmailContent(recommendationResult.getWarehouse());
