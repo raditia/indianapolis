@@ -124,8 +124,26 @@ public class RecommendationServiceImpl implements RecommendationService {
             pickupList.add(pickup);
             pickupRepository.save(pickup);
         }
+        List<String> logisticVendorEmailAddressList = getLogisticVendorEmails(pickupList);
+        for (String email:logisticVendorEmailAddressList
+             ) {
+            LOGGER.info("Email logistic vendor : " + email);
+        }
         recommendationResultRepository.deleteAll();
         return WebResponse.OK(PickupChoiceResponseMapper.toPickupChoiceResponseList(pickupList));
+    }
+
+    private List<String> getLogisticVendorEmails(List<Pickup> pickupList){
+        List<String> logisticVendorEmailList = new ArrayList<>();
+        String logisticEmailAddress;
+        for (Pickup pickup:pickupList
+             ) {
+            logisticEmailAddress = pickup.getFleet().getLogisticVendor().getEmailAddress();
+            if(!logisticVendorEmailList.contains(logisticEmailAddress)) {
+                logisticVendorEmailList.add(logisticEmailAddress);
+            }
+        }
+        return logisticVendorEmailList;
     }
 
 }
