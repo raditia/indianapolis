@@ -13,6 +13,6 @@ import java.util.List;
 @Repository
 public interface CffRepository extends JpaRepository<Cff, String>{
     List<Cff> findAllByOrderByWarehouseAsc();
-    @Query("SELECT DISTINCT c.warehouse from Cff c where c.pickupDate=:pickupDate")
+    @Query("SELECT DISTINCT c.warehouse from Cff c where c.pickupDate=:pickupDate and c.schedulingStatus='pending'")
     List<Warehouse> findDistinctWarehouseAndPickupDateIs(@Param("pickupDate") Date pickupDate);
 }
