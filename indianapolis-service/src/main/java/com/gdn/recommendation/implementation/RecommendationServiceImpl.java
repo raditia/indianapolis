@@ -123,6 +123,8 @@ public class RecommendationServiceImpl implements RecommendationService {
 
         String warehouseEmailAddress = sendEmailService.getWarehouseEmail(recommendationResult);
         String warehouseEmailContent = sendEmailService.getWarehouseEmailContent(recommendationResult.getWarehouse());
+        LOGGER.info("Alamat email warehouse : " + warehouseEmailAddress);
+        LOGGER.info("Isi email warehouse : \n" + warehouseEmailContent);
         sendEmailService
                 .sendEmail(Email.builder()
                         .emailAddressDestination(warehouseEmailAddress)
@@ -134,6 +136,8 @@ public class RecommendationServiceImpl implements RecommendationService {
         for (Merchant merchant:merchantList
              ) {
             String merchantEmailContent = sendEmailService.getMerchantEmailContent(recommendationResult.getWarehouse(), merchant);
+            LOGGER.info("Alamat email merchant : " + merchant.getEmailAddress());
+            LOGGER.info("Isi email merchant : \n" + merchantEmailContent);
             sendEmailService
                     .sendEmail(Email.builder()
                             .emailAddressDestination(merchant.getEmailAddress())
@@ -142,12 +146,24 @@ public class RecommendationServiceImpl implements RecommendationService {
                             .build());
         }
 
-        List<String> logisticVendorEmailAddressList = sendEmailService.getLogisticVendorEmailList(pickupList);
-        String logisticVendorEmailContent = sendEmailService.getLogisticVendorEmailContent(recommendationResult.getWarehouse());
+        List<LogisticVendor> logisticVendorList = sendEmailService.getLogisticVendorList(pickupList);
+        for (LogisticVendor logisticVendor:logisticVendorList){
+            String logisticVendorEmailContent = sendEmailService.getLogisticVendorEmailContent(recommendationResult.getWarehouse(), logisticVendor);
+            LOGGER.info("Alamat email logistic : " + logisticVendor.getEmailAddress());
+            LOGGER.info("Isi email logistic : \n" + logisticVendorEmailContent);
+            sendEmailService
+                    .sendEmail(Email.builder()
+                            .emailAddressDestination(logisticVendor.getEmailAddress())
+                            .emailSubject("Pickup at " + pickupDate.format(pickupChoiceRequest.getPickupDate()))
+                            .emailBody(logisticVendorEmailContent)
+                            .build());
+        }
 
         List<User> tpList = sendEmailService.getTpList(pickupDetailList);
         for (User tp:tpList){
             String tpEmailContent = sendEmailService.getTpEmailContent(recommendationResult.getWarehouse(), tp);
+            LOGGER.info("Alamat email tp : " + tp.getEmailAddress());
+            LOGGER.info("Isi email tp : \n" + tpEmailContent);
             sendEmailService
                     .sendEmail(Email.builder()
                             .emailAddressDestination(tp.getEmailAddress())

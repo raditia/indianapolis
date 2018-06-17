@@ -14,10 +14,7 @@ import org.springframework.stereotype.Service;
 
 import javax.mail.*;
 import javax.mail.internet.*;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Properties;
+import java.util.*;
 
 @Service
 public class SendEmailServiceImpl implements SendEmailService {
@@ -35,17 +32,17 @@ public class SendEmailServiceImpl implements SendEmailService {
     private CffRepository cffRepository;
 
     @Override
-    public List<String> getLogisticVendorEmailList(List<Pickup> pickupList) {
-        List<String> logisticVendorEmailList = new ArrayList<>();
-        String logisticEmailAddress;
+    public List<LogisticVendor> getLogisticVendorList(List<Pickup> pickupList) {
+        List<LogisticVendor> logisticVendorList = new ArrayList<>();
+        LogisticVendor logisticVendor;
         for (Pickup pickup : pickupList
                 ) {
-            logisticEmailAddress = pickup.getFleet().getLogisticVendor().getEmailAddress();
-            if (!logisticVendorEmailList.contains(logisticEmailAddress)) {
-                logisticVendorEmailList.add(logisticEmailAddress);
+            logisticVendor = pickup.getFleet().getLogisticVendor();
+            if (!logisticVendorList.contains(logisticVendor)) {
+                logisticVendorList.add(logisticVendor);
             }
         }
-        return logisticVendorEmailList;
+        return logisticVendorList;
     }
 
     @Override
@@ -96,10 +93,10 @@ public class SendEmailServiceImpl implements SendEmailService {
     }
 
     @Override
-    public String getLogisticVendorEmailContent(Warehouse warehouse) {
-        List<Pickup> pickupList = pickupRepository.findAllByWarehouse(warehouse);
+    public String getLogisticVendorEmailContent(Warehouse warehouse, LogisticVendor logisticVendor) {
+        List<Pickup> pickupList = pickupRepository.findAllByWarehouseAndFleetLogisticVendor(warehouse, logisticVendor);
         StringBuilder merchantAndTpEmailContent = new StringBuilder();
-        // TODO : Rapikan lagi kontennya.. Mungkin bisa plate number per fleet dijadikan sebagai patokan supaya setiap fleet, tidak perlu menyebut data merchant yang sama berkali-kali
+        Map<String, String> pickupIdAndMerchantNameMap = new HashMap<>();
         for (Pickup pickup:pickupList
              ) {
             merchantAndTpEmailContent
@@ -107,11 +104,15 @@ public class SendEmailServiceImpl implements SendEmailService {
                     .append("Warehouse destination : ").append(warehouse.getAddress()).append("\n");
             for (PickupDetail pickupDetail:pickup.getPickupDetailList()
                  ) {
-                merchantAndTpEmailContent
-                        .append("Merchant name : ").append(pickupDetail.getMerchant().getName()).append("\n")
-                        .append("Merchant phone : ").append(pickupDetail.getMerchant().getPhoneNumber()).append("\n")
-                        .append("Merchant address : ").append(pickupDetail.getPickupPoint().getPickupAddress()).append("\n")
-                        .append("SKU : ").append("\n");
+                if(!pickupIdAndMerchantNameMap.containsKey(pickup.getId())
+                        && !pickupIdAndMerchantNameMap.containsValue(pickupDetail.getMerchant().getName())){
+                    pickupIdAndMerchantNameMap.put(pickup.getId(), pickupDetail.getMerchant().getName());
+                    merchantAndTpEmailContent
+                            .append("Merchant name : ").append(pickupDetail.getMerchant().getName()).append("\n")
+                            .append("Merchant phone : ").append(pickupDetail.getMerchant().getPhoneNumber()).append("\n")
+                            .append("Merchant address : ").append(pickupDetail.getPickupPoint().getPickupAddress()).append("\n")
+                            .append("SKU : ").append("\n");
+                }
                 merchantAndTpEmailContent
                         .append("Name : ").append(pickupDetail.getSku().getSku()).append("\n")
                         .append("Quantity : ").append(pickupDetail.getSkuPickupQuantity()).append("\n")
