@@ -8,7 +8,7 @@ import com.gdn.pickup.PickupService;
 import com.gdn.repository.PickupRepository;
 import com.gdn.repository.RecommendationResultRepository;
 import com.gdn.request.PickupChoiceRequest;
-import mapper.PickupDetailMapper;
+import com.gdn.mapper.PickupDetailMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

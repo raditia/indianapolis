@@ -4,7 +4,7 @@ import com.gdn.repository.WarehouseRepository;
 import com.gdn.response.WarehouseResponse;
 import com.gdn.response.WebResponse;
 import com.gdn.warehouse.WarehouseService;
-import mapper.WarehouseResponseMapper;
+import com.gdn.mapper.WarehouseResponseMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

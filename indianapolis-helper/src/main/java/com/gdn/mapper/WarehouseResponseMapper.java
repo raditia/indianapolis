@@ -1,4 +1,4 @@
-package mapper;
+package com.gdn.mapper;
 
 import com.gdn.entity.Warehouse;
 import com.gdn.response.WarehouseResponse;

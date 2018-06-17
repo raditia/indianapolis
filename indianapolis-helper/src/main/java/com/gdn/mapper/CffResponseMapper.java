@@ -1,4 +1,4 @@
-package mapper;
+package com.gdn.mapper;
 
 import com.gdn.entity.Cff;
 import com.gdn.entity.CffGood;

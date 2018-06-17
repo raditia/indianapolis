@@ -2,11 +2,12 @@ package com.gdn;
 
 import lombok.Builder;
 import lombok.Data;
+import org.thymeleaf.context.Context;
 
 @Data
 @Builder
 public class Email {
     private String emailAddressDestination;
     private String emailSubject;
-    private String emailBody;
+    private Context emailBodyContext;
 }

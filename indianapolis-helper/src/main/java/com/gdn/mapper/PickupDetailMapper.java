@@ -1,4 +1,4 @@
-package mapper;
+package com.gdn.mapper;
 
 import com.gdn.entity.PickupDetail;
 import com.gdn.entity.RecommendationDetail;

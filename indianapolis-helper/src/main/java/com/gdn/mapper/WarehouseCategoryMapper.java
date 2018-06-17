@@ -1,9 +1,7 @@
-package mapper;
+package com.gdn.mapper;
 
-import com.gdn.entity.Warehouse;
 import com.gdn.entity.WarehouseCategory;
 import com.gdn.response.WarehouseCategoryResponse;
-import com.gdn.response.WarehouseResponse;
 
 import java.util.List;
 import java.util.stream.Collectors;

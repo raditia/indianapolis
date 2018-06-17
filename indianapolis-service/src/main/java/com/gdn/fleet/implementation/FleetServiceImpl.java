@@ -5,9 +5,8 @@ import com.gdn.fleet.FleetService;
 import com.gdn.repository.FleetRepository;
 import com.gdn.response.FleetResponse;
 import com.gdn.response.WebResponse;
-import mapper.FleetResponseMapper;
+import com.gdn.mapper.FleetResponseMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

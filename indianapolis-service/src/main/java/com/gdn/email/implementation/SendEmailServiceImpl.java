@@ -6,11 +6,13 @@ import com.gdn.entity.*;
 import com.gdn.repository.CffRepository;
 import com.gdn.repository.PickupDetailRepository;
 import com.gdn.repository.PickupRepository;
-import helper.DateHelper;
+import com.gdn.helper.DateHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
+import org.thymeleaf.TemplateEngine;
+import org.thymeleaf.context.Context;
 
 import javax.mail.*;
 import javax.mail.internet.*;
@@ -30,6 +32,8 @@ public class SendEmailServiceImpl implements SendEmailService {
     private PickupDetailRepository pickupDetailRepository;
     @Autowired
     private CffRepository cffRepository;
+    @Autowired
+    private TemplateEngine emailTemplateEngine;
 
     @Override
     public List<LogisticVendor> getLogisticVendorList(List<Pickup> pickupList) {
@@ -74,22 +78,12 @@ public class SendEmailServiceImpl implements SendEmailService {
     }
 
     @Override
-    public String getWarehouseEmailContent(Warehouse warehouse) {
-        List<Pickup> pickupList = pickupRepository.findAllByWarehouse(warehouse);
-        StringBuilder warehouseEmailContent = new StringBuilder();
-        for(Pickup pickup:pickupList) {
-            warehouseEmailContent
-                    .append("Fleet : ").append(pickup.getFleet().getName()).append("\n")
-                    .append("Logistic vendor : ").append(pickup.getFleet().getLogisticVendor().getName()).append("\n")
-                    .append("SKU : ").append("\n\n");
-            for(PickupDetail pickupDetail:pickup.getPickupDetailList()) {
-                warehouseEmailContent
-                        .append("Name : ").append(pickupDetail.getSku().getSku()).append("\n")
-                        .append("Quantity : ").append(pickupDetail.getSkuPickupQuantity()).append("\n")
-                        .append("CBM : ").append(pickupDetail.getCbmPickupAmount()).append("\n\n");
-            }
-        }
-        return String.valueOf(warehouseEmailContent);
+    public Context getWarehouseEmailContent(Warehouse warehouse, String pickupDate, List<Pickup> pickupList) {
+        Context context = new Context();
+        context.setVariable("warehouseName", warehouse.getAddress());
+        context.setVariable("pickupDate", pickupDate);
+        context.setVariable("pickupList", pickupList);
+        return context;
     }
 
     @Override
@@ -191,11 +185,26 @@ public class SendEmailServiceImpl implements SendEmailService {
 
         msg.setRecipients(Message.RecipientType.TO, InternetAddress.parse(email.getEmailAddressDestination()));
         msg.setSubject(email.getEmailSubject());
-        msg.setContent(email.getEmailBody(), "text/html");
+
+        String body="";
+        Context context;
+
+        if(email.getEmailSubject().contains("warehouse")){
+            context = email.getEmailBodyContext();
+            body = emailTemplateEngine.process("email-warehouse", context); //Menspecify body dari email adalah email.html dengan context (yaitu variabel2 yang dilempar tadi)
+        } else if(email.getEmailSubject().contains("merchant")){
+
+        } else if(email.getEmailSubject().contains("logistic")){
+
+        } else if(email.getEmailSubject().contains("trade")){
+
+        }
+
+        msg.setContent(body, "text/html");
         msg.setSentDate(new Date());
 
         MimeBodyPart messageBodyPart = new MimeBodyPart();
-        messageBodyPart.setContent(email.getEmailBody(),"text/html");
+        messageBodyPart.setContent(body,"text/html");
 
         //sends the email
         Transport.send(msg);

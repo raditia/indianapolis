@@ -8,7 +8,7 @@ import com.gdn.pickup_point.PickupPointService;
 import com.gdn.repository.CffRepository;
 import com.gdn.response.CffResponse;
 import com.gdn.response.WebResponse;
-import mapper.CffResponseMapper;
+import com.gdn.mapper.CffResponseMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
