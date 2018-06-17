@@ -75,6 +75,11 @@
 				<scope>test</scope>
 			</dependency>
 			<dependency>
+				<groupId>com.sun.mail</groupId>
+				<artifactId>javax.mail</artifactId>
+				<version>1.6.1</version>
+			</dependency>
+			<dependency>
 				<groupId>com.gdn</groupId>
 				<artifactId>indianapolis-model</artifactId>
 				<version>0.0.1-SNAPSHOT</version>

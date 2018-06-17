@@ -6,6 +6,7 @@ import com.gdn.entity.RecommendationResult;
 import com.gdn.request.PickupChoiceRequest;
 import com.gdn.response.*;
 
+import javax.mail.MessagingException;
 import java.util.Date;
 import java.util.List;
 
@@ -16,5 +17,5 @@ public interface RecommendationService {
     RecommendationFleet saveRecommendationFleet(RecommendationFleet recommendationFleet);
     RecommendationDetail saveRecommendationDetail(RecommendationDetail recommendationDetail);
     WebResponse<RecommendationResponse> findAllRecommendationFleetResult(String warehouseId);
-    WebResponse<List<PickupChoiceResponse>> choosePickupAndSendEmail(PickupChoiceRequest pickupChoiceRequest);
+    WebResponse<List<PickupChoiceResponse>> choosePickupAndSendEmail(PickupChoiceRequest pickupChoiceRequest) throws MessagingException;
 }

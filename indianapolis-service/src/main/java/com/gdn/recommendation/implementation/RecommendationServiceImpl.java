@@ -1,5 +1,6 @@
 package com.gdn.recommendation.implementation;
 
+import com.gdn.Email;
 import com.gdn.email.SendEmailService;
 import com.gdn.entity.*;
 import com.gdn.pickup.PickupService;
@@ -24,6 +25,8 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.mail.MessagingException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -109,39 +112,48 @@ public class RecommendationServiceImpl implements RecommendationService {
 
     @Override
     @Transactional
-    public WebResponse<List<PickupChoiceResponse>> choosePickupAndSendEmail(PickupChoiceRequest pickupChoiceRequest) {
+    public WebResponse<List<PickupChoiceResponse>> choosePickupAndSendEmail(PickupChoiceRequest pickupChoiceRequest) throws MessagingException {
         RecommendationResult recommendationResult = recommendationResultRepository.getOne(pickupChoiceRequest.getRecommendationResultId());
 
         List<Pickup> pickupList = pickupService.savePickup(pickupChoiceRequest);
         List<PickupDetail> pickupDetailList = new ArrayList<>();
         pickupList.forEach(pickup -> pickupDetailList.addAll(pickup.getPickupDetailList()));
 
+        SimpleDateFormat pickupDate = new SimpleDateFormat("dd-MM-yyyy");
+
         String warehouseEmailAddress = sendEmailService.getWarehouseEmail(recommendationResult);
-        LOGGER.info("Email warehouse : " + warehouseEmailAddress);
-
         String warehouseEmailContent = sendEmailService.getWarehouseEmailContent(recommendationResult.getWarehouse());
-        LOGGER.info("Email warehouse content : \n" + warehouseEmailContent);
+        sendEmailService
+                .sendEmail(Email.builder()
+                        .emailAddressDestination(warehouseEmailAddress)
+                        .emailSubject("Pickup at " + pickupDate.format(pickupChoiceRequest.getPickupDate()))
+                        .emailBody(warehouseEmailContent)
+                        .build());
 
-        List<String> merchantEmailAddressList = sendEmailService.getMerchantEmailList(pickupDetailList);
-        merchantEmailAddressList.forEach(email -> LOGGER.info("Email merchant : " + email));
         List<Merchant> merchantList = sendEmailService.getMerchantList(pickupDetailList);
         for (Merchant merchant:merchantList
              ) {
             String merchantEmailContent = sendEmailService.getMerchantEmailContent(recommendationResult.getWarehouse(), merchant);
-            LOGGER.info("Email merchant content : \n" + merchantEmailContent);
+            sendEmailService
+                    .sendEmail(Email.builder()
+                            .emailAddressDestination(merchant.getEmailAddress())
+                            .emailSubject("Pickup at " + pickupDate.format(pickupChoiceRequest.getPickupDate()))
+                            .emailBody(merchantEmailContent)
+                            .build());
         }
 
         List<String> logisticVendorEmailAddressList = sendEmailService.getLogisticVendorEmailList(pickupList);
-        logisticVendorEmailAddressList.forEach(email -> LOGGER.info("Email logistic : " + email));
         String logisticVendorEmailContent = sendEmailService.getLogisticVendorEmailContent(recommendationResult.getWarehouse());
-        LOGGER.info("Email logistic vendor content : \n" + logisticVendorEmailContent);
 
-        List<String> tpEmailAddressList = sendEmailService.getTpEmailList(pickupDetailList);
-        tpEmailAddressList.forEach(email -> LOGGER.info("Email TP : " + email));
         List<User> tpList = sendEmailService.getTpList(pickupDetailList);
         for (User tp:tpList){
             String tpEmailContent = sendEmailService.getTpEmailContent(recommendationResult.getWarehouse(), tp);
-            LOGGER.info("TP Email content : \n" + tpEmailContent);
+            sendEmailService
+                    .sendEmail(Email.builder()
+                            .emailAddressDestination(tp.getEmailAddress())
+                            .emailSubject("Pickup at " + pickupDate.format(pickupChoiceRequest.getPickupDate()))
+                            .emailBody(tpEmailContent)
+                            .build());
         }
 
         recommendationResultRepository.deleteAllByWarehouse(recommendationResult.getWarehouse());

@@ -1,13 +1,14 @@
 package com.gdn.email;
 
+import com.gdn.Email;
 import com.gdn.entity.*;
 
+import javax.mail.MessagingException;
+import javax.mail.internet.AddressException;
 import java.util.List;
 
 public interface SendEmailService {
-    List<String> getTpEmailList(List<PickupDetail> pickupDetailList);
     List<String> getLogisticVendorEmailList(List<Pickup> pickupList);
-    List<String> getMerchantEmailList(List<PickupDetail> pickupDetailList);
     List<Merchant> getMerchantList(List<PickupDetail> pickupDetailList);
     List<User> getTpList(List<PickupDetail> pickupDetailList);
     String getWarehouseEmail(RecommendationResult recommendationResult);
@@ -15,4 +16,5 @@ public interface SendEmailService {
     String getLogisticVendorEmailContent(Warehouse warehouse);
     String getMerchantEmailContent(Warehouse warehouse, Merchant merchant);
     String getTpEmailContent(Warehouse warehouse, User tp);
+    void sendEmail(Email email) throws MessagingException;
 }

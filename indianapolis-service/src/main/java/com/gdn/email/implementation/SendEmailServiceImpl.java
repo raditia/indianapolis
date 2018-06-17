@@ -1,5 +1,6 @@
 package com.gdn.email.implementation;
 
+import com.gdn.Email;
 import com.gdn.email.SendEmailService;
 import com.gdn.entity.*;
 import com.gdn.repository.CffRepository;
@@ -7,13 +8,24 @@ import com.gdn.repository.PickupDetailRepository;
 import com.gdn.repository.PickupRepository;
 import helper.DateHelper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
+import javax.mail.*;
+import javax.mail.internet.*;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Properties;
 
 @Service
 public class SendEmailServiceImpl implements SendEmailService {
+
+    @Value("${email.address}")
+    private String emailAddress;
+    @Value("${email.password}")
+    private String password;
 
     @Autowired
     private PickupRepository pickupRepository;
@@ -21,20 +33,6 @@ public class SendEmailServiceImpl implements SendEmailService {
     private PickupDetailRepository pickupDetailRepository;
     @Autowired
     private CffRepository cffRepository;
-
-    @Override
-    public List<String> getTpEmailList(List<PickupDetail> pickupDetailList) {
-        List<String> tpEmailList = new ArrayList<>();
-        String tpEmailAddress;
-        for (PickupDetail pickupDetail:pickupDetailList
-                ) {
-            tpEmailAddress = pickupDetail.getSku().getCff().getTp().getEmailAddress();
-            if(!tpEmailList.contains(tpEmailAddress)){
-                tpEmailList.add(tpEmailAddress);
-            }
-        }
-        return tpEmailList;
-    }
 
     @Override
     public List<String> getLogisticVendorEmailList(List<Pickup> pickupList) {
@@ -48,20 +46,6 @@ public class SendEmailServiceImpl implements SendEmailService {
             }
         }
         return logisticVendorEmailList;
-    }
-
-    @Override
-    public List<String> getMerchantEmailList(List<PickupDetail> pickupDetailList) {
-        List<String> merchantEmailList = new ArrayList<>();
-        String merchantEmailAddress;
-        for (PickupDetail pickupDetail:pickupDetailList
-                ) {
-            merchantEmailAddress = pickupDetail.getMerchant().getEmailAddress();
-            if(!merchantEmailList.contains(merchantEmailAddress)){
-                merchantEmailList.add(merchantEmailAddress);
-            }
-        }
-        return merchantEmailList;
     }
 
     @Override
@@ -183,6 +167,37 @@ public class SendEmailServiceImpl implements SendEmailService {
             }
         }
         return String.valueOf(tpEmailContent);
+    }
+
+    @Override
+    @Async
+    public void sendEmail(Email email) throws MessagingException {
+        Properties prop = new Properties();
+        prop.put("mail.smtp.auth","true");
+        prop.put("mail.smtp.starttls.enable", "true");
+        prop.put("mail.smtp.host","smtp.gmail.com");
+        prop.put("mail.smtp.port","587");
+
+        Session session = Session.getInstance(prop, new javax.mail.Authenticator(){
+            protected PasswordAuthentication getPasswordAuthentication() {
+                return new PasswordAuthentication(emailAddress, password);
+            }
+        });
+
+        Message msg = new MimeMessage(session);
+
+        msg.setFrom(new InternetAddress(emailAddress, false));
+
+        msg.setRecipients(Message.RecipientType.TO, InternetAddress.parse(email.getEmailAddressDestination()));
+        msg.setSubject(email.getEmailSubject());
+        msg.setContent(email.getEmailBody(), "text/html");
+        msg.setSentDate(new Date());
+
+        MimeBodyPart messageBodyPart = new MimeBodyPart();
+        messageBodyPart.setContent(email.getEmailBody(),"text/html");
+
+        //sends the email
+        Transport.send(msg);
     }
 
 }
