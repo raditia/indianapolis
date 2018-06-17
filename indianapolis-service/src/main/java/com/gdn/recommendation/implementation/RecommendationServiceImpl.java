@@ -118,8 +118,10 @@ public class RecommendationServiceImpl implements RecommendationService {
 
         String warehouseEmailAddress = sendEmailService.getWarehouseEmail(recommendationResult);
         LOGGER.info("Email warehouse : " + warehouseEmailAddress);
+
         String warehouseEmailContent = sendEmailService.getWarehouseEmailContent(recommendationResult.getWarehouse());
         LOGGER.info("Email warehouse content : \n" + warehouseEmailContent);
+
         List<String> merchantEmailAddressList = sendEmailService.getMerchantEmailList(pickupDetailList);
         merchantEmailAddressList.forEach(email -> LOGGER.info("Email merchant : " + email));
         List<Merchant> merchantList = sendEmailService.getMerchantList(pickupDetailList);
@@ -128,12 +130,19 @@ public class RecommendationServiceImpl implements RecommendationService {
             String merchantEmailContent = sendEmailService.getMerchantEmailContent(recommendationResult.getWarehouse(), merchant);
             LOGGER.info("Email merchant content : \n" + merchantEmailContent);
         }
+
         List<String> logisticVendorEmailAddressList = sendEmailService.getLogisticVendorEmailList(pickupList);
         logisticVendorEmailAddressList.forEach(email -> LOGGER.info("Email logistic : " + email));
         String logisticVendorEmailContent = sendEmailService.getLogisticVendorEmailContent(recommendationResult.getWarehouse());
         LOGGER.info("Email logistic vendor content : \n" + logisticVendorEmailContent);
+
         List<String> tpEmailAddressList = sendEmailService.getTpEmailList(pickupDetailList);
         tpEmailAddressList.forEach(email -> LOGGER.info("Email TP : " + email));
+        List<User> tpList = sendEmailService.getTpList(pickupDetailList);
+        for (User tp:tpList){
+            String tpEmailContent = sendEmailService.getTpEmailContent(recommendationResult.getWarehouse(), tp);
+            LOGGER.info("TP Email content : \n" + tpEmailContent);
+        }
 
         recommendationResultRepository.deleteAllByWarehouse(recommendationResult.getWarehouse());
         return WebResponse.OK(PickupChoiceResponseMapper.toPickupChoiceResponseList(pickupList));

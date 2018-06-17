@@ -2,8 +2,10 @@ package com.gdn.email.implementation;
 
 import com.gdn.email.SendEmailService;
 import com.gdn.entity.*;
+import com.gdn.repository.CffRepository;
 import com.gdn.repository.PickupDetailRepository;
 import com.gdn.repository.PickupRepository;
+import helper.DateHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -17,6 +19,8 @@ public class SendEmailServiceImpl implements SendEmailService {
     private PickupRepository pickupRepository;
     @Autowired
     private PickupDetailRepository pickupDetailRepository;
+    @Autowired
+    private CffRepository cffRepository;
 
     @Override
     public List<String> getTpEmailList(List<PickupDetail> pickupDetailList) {
@@ -69,6 +73,18 @@ public class SendEmailServiceImpl implements SendEmailService {
                 merchantList.add(pickupDetail.getMerchant());
         }
         return merchantList;
+    }
+
+    @Override
+    public List<User> getTpList(List<PickupDetail> pickupDetailList) {
+        List<User> tpList = new ArrayList<>();
+        User tp;
+        for (PickupDetail pickupDetail:pickupDetailList){
+            tp = pickupDetail.getSku().getCff().getTp();
+            if(!tpList.contains(tp))
+                tpList.add(tp);
+        }
+        return tpList;
     }
 
     @Override
@@ -126,11 +142,9 @@ public class SendEmailServiceImpl implements SendEmailService {
         List<Pickup> pickupList = pickupRepository.findAllByWarehouse(warehouse);
         List<PickupDetail> pickupDetailList;
         StringBuilder merchantEmailContent = new StringBuilder();
-        for (Pickup pickup:pickupList
-             ) {
+        for (Pickup pickup:pickupList) {
             pickupDetailList = pickupDetailRepository.findAllByPickupAndMerchant(pickup, merchant);
-            for (PickupDetail pickupDetail:pickupDetailList
-                 ) {
+            for (PickupDetail pickupDetail:pickupDetailList) {
                 merchantEmailContent
                         .append("Merchant name : ").append(pickupDetail.getMerchant().getName()).append("\n")
                         .append("CFF Number : ").append(pickupDetail.getSku().getCff().getId()).append("\n")
@@ -143,6 +157,32 @@ public class SendEmailServiceImpl implements SendEmailService {
             }
         }
         return String.valueOf(merchantEmailContent);
+    }
+
+    @Override
+    public String getTpEmailContent(Warehouse warehouse, User tp) {
+        List<Pickup> pickupList = pickupRepository.findAllByWarehouse(warehouse);
+        List<PickupDetail> pickupDetailList;
+        List<Cff> cffList;
+        StringBuilder tpEmailContent = new StringBuilder();
+        for (Pickup pickup:pickupList){
+            cffList = cffRepository.findAllByTpAndPickupDateAndWarehouse(tp, DateHelper.tomorrow(), warehouse);
+            for (Cff cff:cffList){
+                pickupDetailList = pickupDetailRepository.findAllByPickupAndSkuCff(pickup, cff);
+                for (PickupDetail pickupDetail:pickupDetailList){
+                    tpEmailContent
+                            .append("Merchant name : ").append(pickupDetail.getMerchant().getName()).append("\n")
+                            .append("CFF Number : ").append(pickupDetail.getSku().getCff().getId()).append("\n")
+                            .append("SKU : ").append(pickupDetail.getSku().getSku()).append("\n")
+                            .append("SKU Quantity : ").append(pickupDetail.getSkuPickupQuantity()).append("\n")
+                            .append("Width : ").append(pickupDetail.getSku().getWidth()).append("\n")
+                            .append("Length : ").append(pickupDetail.getSku().getLength()).append("\n")
+                            .append("Height : ").append(pickupDetail.getSku().getHeight()).append("\n")
+                            .append("Weight : ").append(pickupDetail.getSku().getWeight()).append("\n\n");
+                }
+            }
+        }
+        return String.valueOf(tpEmailContent);
     }
 
 }
