@@ -1,6 +1,6 @@
 package com.gdn.recommendation.implementation;
 
-import com.gdn.Email;
+import com.gdn.email.Email;
 import com.gdn.email.SendEmailService;
 import com.gdn.entity.*;
 import com.gdn.pickup.PickupService;
@@ -143,9 +143,16 @@ public class RecommendationServiceImpl implements RecommendationService {
 
         List<LogisticVendor> logisticVendorList = sendEmailService.getLogisticVendorList(pickupList);
         for (LogisticVendor logisticVendor:logisticVendorList){
-            String logisticVendorEmailContent = sendEmailService.getLogisticVendorEmailContent(recommendationResult.getWarehouse(), logisticVendor);
-            LOGGER.info("Alamat email logistic : " + logisticVendor.getEmailAddress());
-            LOGGER.info("Isi email logistic : \n" + logisticVendorEmailContent);
+            sendEmailService
+                    .sendEmail(Email.builder()
+                            .emailAddressDestination(logisticVendor.getEmailAddress())
+                            .emailSubject("indianapolis fbb logistic vendor")
+                            .emailBodyContext(sendEmailService
+                                    .getLogisticVendorEmailContent(
+                                            recommendationResult.getWarehouse(),
+                                            logisticVendor,
+                                            pickupDate.format(pickupChoiceRequest.getPickupDate())))
+                            .build());
         }
 
         List<User> tpList = sendEmailService.getTpList(pickupDetailList);

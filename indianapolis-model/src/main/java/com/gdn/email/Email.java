@@ -1,4 +1,4 @@
-package com.gdn;
+package com.gdn.email;
 
 import lombok.Builder;
 import lombok.Data;

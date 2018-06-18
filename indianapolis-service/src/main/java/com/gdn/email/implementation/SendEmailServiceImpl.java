@@ -1,8 +1,9 @@
 package com.gdn.email.implementation;
 
-import com.gdn.Email;
+import com.gdn.email.Email;
 import com.gdn.email.SendEmailService;
 import com.gdn.entity.*;
+import com.gdn.mapper.LogisticVendorEmailBodyMapper;
 import com.gdn.repository.CffRepository;
 import com.gdn.repository.PickupDetailRepository;
 import com.gdn.repository.PickupRepository;
@@ -87,33 +88,14 @@ public class SendEmailServiceImpl implements SendEmailService {
     }
 
     @Override
-    public String getLogisticVendorEmailContent(Warehouse warehouse, LogisticVendor logisticVendor) {
+    public Context getLogisticVendorEmailContent(Warehouse warehouse, LogisticVendor logisticVendor, String pickupDate) {
         List<Pickup> pickupList = pickupRepository.findAllByWarehouseAndFleetLogisticVendor(warehouse, logisticVendor);
-        StringBuilder merchantAndTpEmailContent = new StringBuilder();
-        Map<String, String> pickupIdAndMerchantNameMap = new HashMap<>();
-        for (Pickup pickup:pickupList
-             ) {
-            merchantAndTpEmailContent
-                    .append("Fleet : ").append(pickup.getFleet().getName()).append("\n")
-                    .append("Warehouse destination : ").append(warehouse.getAddress()).append("\n");
-            for (PickupDetail pickupDetail:pickup.getPickupDetailList()
-                 ) {
-                if(!pickupIdAndMerchantNameMap.containsKey(pickup.getId())
-                        && !pickupIdAndMerchantNameMap.containsValue(pickupDetail.getMerchant().getName())){
-                    pickupIdAndMerchantNameMap.put(pickup.getId(), pickupDetail.getMerchant().getName());
-                    merchantAndTpEmailContent
-                            .append("Merchant name : ").append(pickupDetail.getMerchant().getName()).append("\n")
-                            .append("Merchant phone : ").append(pickupDetail.getMerchant().getPhoneNumber()).append("\n")
-                            .append("Merchant address : ").append(pickupDetail.getPickupPoint().getPickupAddress()).append("\n")
-                            .append("SKU : ").append("\n");
-                }
-                merchantAndTpEmailContent
-                        .append("Name : ").append(pickupDetail.getSku().getSku()).append("\n")
-                        .append("Quantity : ").append(pickupDetail.getSkuPickupQuantity()).append("\n")
-                        .append("CBM : ").append(pickupDetail.getCbmPickupAmount()).append("\n\n");
-            }
-        }
-        return String.valueOf(merchantAndTpEmailContent);
+        Context context = new Context();
+        context.setVariable("logisticVendorName", logisticVendor.getName());
+        context.setVariable("pickupDate", pickupDate);
+        context.setVariable("warehouseName", warehouse.getAddress());
+        context.setVariable("logisticVendorEmailBodyList", LogisticVendorEmailBodyMapper.toLogisticVendorEmailBodyList(pickupList));
+        return context;
     }
 
     @Override
@@ -187,15 +169,14 @@ public class SendEmailServiceImpl implements SendEmailService {
         msg.setSubject(email.getEmailSubject());
 
         String body="";
-        Context context;
+        Context context = email.getEmailBodyContext();
 
         if(email.getEmailSubject().contains("warehouse")){
-            context = email.getEmailBodyContext();
             body = emailTemplateEngine.process("email-warehouse", context); //Menspecify body dari email adalah email.html dengan context (yaitu variabel2 yang dilempar tadi)
         } else if(email.getEmailSubject().contains("merchant")){
 
         } else if(email.getEmailSubject().contains("logistic")){
-
+            body = emailTemplateEngine.process("email-logistic-vendor", context);
         } else if(email.getEmailSubject().contains("trade")){
 
         }

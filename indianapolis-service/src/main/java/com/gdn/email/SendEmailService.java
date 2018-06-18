@@ -1,6 +1,5 @@
 package com.gdn.email;
 
-import com.gdn.Email;
 import com.gdn.entity.*;
 import org.thymeleaf.context.Context;
 
@@ -13,7 +12,7 @@ public interface SendEmailService {
     List<User> getTpList(List<PickupDetail> pickupDetailList);
     String getWarehouseEmail(RecommendationResult recommendationResult);
     Context getWarehouseEmailContent(Warehouse warehouse, String pickupDate, List<Pickup> pickupList);
-    String getLogisticVendorEmailContent(Warehouse warehouse, LogisticVendor logisticVendor);
+    Context getLogisticVendorEmailContent(Warehouse warehouse, LogisticVendor logisticVendor, String pickupDates);
     String getMerchantEmailContent(Warehouse warehouse, Merchant merchant);
     String getTpEmailContent(Warehouse warehouse, User tp);
     void sendEmail(Email email) throws MessagingException;

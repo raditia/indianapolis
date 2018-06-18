@@ -18,31 +18,25 @@
                         <td style="font-weight: 400; font-size: 14px; padding-top: 10px">Merchant goods delivery at <a th:text="${pickupDate}" style="font-weight: 600; color: #000000"></a> </td>
                     </tr>
                     <tr>
-                        <td style="padding: 30px 0 5px 0; font-weight: 800; font-size: 14px">Delivery detail</td>
-                    </tr>
-                    <tr>
                         <td style="padding-top: 10px">
                             <table width="100%">
                                 <th:block th:each="pickup : ${pickupList}">
                                     <tbody class="row">
                                         <tr>
-                                            <td style="font-weight: 500; font-size: 14px; padding-top: 10px">Logistic Vendor : <a th:text="${pickup.fleet.logisticVendor.name}" style="font-weight: 600; color: #000000"></a> </td>
+                                            <td style="font-weight: 500; font-size: 14px;">Logistic Vendor : <a th:text="${pickup.fleet.logisticVendor.name}" style="font-weight: 600; color: #000000"></a> </td>
                                         </tr>
                                         <tr>
-                                            <td style="font-weight: 500; font-size: 14px; padding-top: 10px">Fleet : <a th:text="${pickup.fleet.name}" style="font-weight: 600; color: #000000"></a> </td>
-                                        </tr>
-                                        <tr>
-                                            <td style="font-weight: 500; font-size: 14px; padding-top: 10px">Goods detail : </td>
+                                            <td style="font-weight: 500; font-size: 14px;">Fleet : <a th:text="${pickup.fleet.name}" style="font-weight: 600; color: #000000"></a> </td>
                                         </tr>
                                         <th:block th:each="sku : ${pickup.pickupDetailList}">
                                             <tr>
-                                                <td style="font-weight: 400; font-size: 12px; padding-top: 10px"> SKU : <a th:text="${sku.sku.sku}"></a></td>
+                                                <td style="font-weight: 400; font-size: 12px; padding-left: 16px"> SKU : <a th:text="${sku.sku.sku}" style="font-weight: 600; color: #000000"></a></td>
                                             </tr>
                                             <tr>
-                                                <td style="font-weight: 400; font-size: 12px; padding-top: 10px"> Quantity : <a th:text="${sku.skuPickupQuantity}"></a></td>
+                                                <td style="font-weight: 400; font-size: 12px; padding-left: 16px"> Quantity : <a th:text="${sku.skuPickupQuantity}"></a></td>
                                             </tr>
                                             <tr>
-                                                <td style="font-weight: 400; font-size: 12px; padding-top: 10px"> CBM : <a th:text="${sku.cbmPickupAmount}"></a></td>
+                                                <td style="font-weight: 400; font-size: 12px; padding-left: 16px"> CBM : <a th:text="${sku.cbmPickupAmount}"></a></td>
                                             </tr>
                                         </th:block>
                                         <hr/>
