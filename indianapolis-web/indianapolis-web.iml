@@ -66,6 +66,9 @@
     <orderEntry type="library" name="Maven: org.codehaus.jettison:jettison:1.2" level="project" />
     <orderEntry type="library" name="Maven: org.springframework.batch:spring-batch-infrastructure:4.0.0.RELEASE" level="project" />
     <orderEntry type="library" name="Maven: org.springframework.retry:spring-retry:1.2.2.RELEASE" level="project" />
+    <orderEntry type="library" name="Maven: org.xhtmlrenderer:flying-saucer-core:9.1.13" level="project" />
+    <orderEntry type="library" name="Maven: org.xhtmlrenderer:flying-saucer-pdf-itext5:9.1.13" level="project" />
+    <orderEntry type="library" name="Maven: com.itextpdf:itextpdf:5.5.11" level="project" />
     <orderEntry type="library" name="Maven: org.springframework.boot:spring-boot-starter-web:2.0.0.RELEASE" level="project" />
     <orderEntry type="library" name="Maven: org.springframework.boot:spring-boot-starter:2.0.0.RELEASE" level="project" />
     <orderEntry type="library" name="Maven: org.springframework.boot:spring-boot:2.0.0.RELEASE" level="project" />

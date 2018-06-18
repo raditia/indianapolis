@@ -100,5 +100,8 @@
     <orderEntry type="library" name="Maven: org.springframework.retry:spring-retry:1.2.2.RELEASE" level="project" />
     <orderEntry type="library" name="Maven: org.springframework:spring-tx:5.0.4.RELEASE" level="project" />
     <orderEntry type="library" name="Maven: joda-time:joda-time:2.9.9" level="project" />
+    <orderEntry type="library" name="Maven: org.xhtmlrenderer:flying-saucer-core:9.1.13" level="project" />
+    <orderEntry type="library" name="Maven: org.xhtmlrenderer:flying-saucer-pdf-itext5:9.1.13" level="project" />
+    <orderEntry type="library" name="Maven: com.itextpdf:itextpdf:5.5.11" level="project" />
   </component>
 </module>

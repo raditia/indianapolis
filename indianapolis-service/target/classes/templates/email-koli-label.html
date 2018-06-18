@@ -1,0 +1,65 @@
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"/>
+    <style>
+        @page {
+            size: 4.13386in 5.82677in;
+            size: portrait;
+        }
+    </style>
+</head>
+<body>
+<div class="col-md-6 col-md-offset-3" style="background-color: #ffffff; padding: 16px; border-style: solid">
+    <table align="center" cellpadding="0" cellspacing="0" width="100%">
+        <tr>
+            <td bgcolor="#ffffff" style="height: 60px; color: black; font-size: 32px; padding: 10px 0 10px 10px; border-style: solid">KOLI LABEL</td>
+        </tr>
+    </table>
+    <table align="center" cellpadding="0" cellspacing="0" width="100%" style="margin-top: 8px">
+        <tr>
+            <td bgcolor="#ffffff" style="height: 24px; color: black; font-size: 16px; border-style: solid">Nomor Consignment Form</td>
+        </tr>
+        <tr>
+            <td bgcolor="#ffffff" style="height: 64px; color: black; font-size: 32px; padding: 10px 0 10px 10px; border-style: solid"><a th:text="${cffId}" style="font-weight: 600; color: #000000"></a></td>
+        </tr>
+    </table>
+    <table align="center" cellpadding="0" cellspacing="0" width="100%" style="margin-top: 8px">
+        <tr>
+            <td bgcolor="#ffffff" style="height: 24px; color: black; font-size: 16px; border-style: solid; width: 480px">Nomor Koli</td>
+            <td bgcolor="#ffffff" style="height: 24px; color: black; font-size: 16px; border-style: solid">Total Koli</td>
+        </tr>
+        <tr>
+            <td bgcolor="#ffffff" style="height: 60px; color: black; font-size: 32px; padding: 10px 0 10px 10px; border-style: solid"><a th:text="${sku}" style="font-weight: 600; color: #000000"></a></td>
+            <td bgcolor="#ffffff" style="height: 60px; color: black; font-size: 32px; padding: 10px 0 10px 10px; border-style: solid"><a th:text="${skuPickupQuantity}" style="font-weight: 600; color: #000000"></a></td>
+        </tr>
+    </table>
+    <table align="center" cellpadding="0" cellspacing="0" width="100%" style="margin-top: 8px">
+        <tr>
+            <td bgcolor="#ffffff" style="height: 24px; color: black; font-size: 16px; border-style: solid">Nama merchant</td>
+        </tr>
+        <tr>
+            <td bgcolor="#ffffff" style="height: 64px; color: black; font-size: 32px; padding: 10px 0 10px 10px; border-style: solid"><a th:text="${merchantName}" style="font-weight: 600; color: #000000"></a></td>
+        </tr>
+    </table>
+    <table align="center" cellpadding="0" cellspacing="0" width="100%" style="margin-top: 8px">
+        <tr>
+            <td bgcolor="#ffffff" style="height: 24px; color: black; font-size: 16px; border-style: solid solid none solid">Dimensi koli</td>
+        </tr>
+    </table>
+    <table align="center" cellpadding="0" cellspacing="0" width="100%">
+        <tr>
+            <td bgcolor="#ffffff" style="height: 24px; color: black; font-size: 16px; border-style: solid">Panjang (cm)</td>
+            <td bgcolor="#ffffff" style="height: 24px; color: black; font-size: 16px; border-style: solid">Lebar (cm)</td>
+            <td bgcolor="#ffffff" style="height: 24px; color: black; font-size: 16px; border-style: solid">Tinggi (cm)</td>
+            <td bgcolor="#ffffff" style="height: 24px; color: black; font-size: 16px; border-style: solid">Berat (kg)</td>
+        </tr>
+        <tr>
+            <td bgcolor="#ffffff" style="height: 60px; color: black; font-size: 32px; padding: 10px 0 10px 10px; border-style: solid"><a th:text="${skuLength}" style="font-weight: 600; color: #000000"></a></td>
+            <td bgcolor="#ffffff" style="height: 60px; color: black; font-size: 32px; padding: 10px 0 10px 10px; border-style: solid"><a th:text="${skuWidth}" style="font-weight: 600; color: #000000"></a></td>
+            <td bgcolor="#ffffff" style="height: 60px; color: black; font-size: 32px; padding: 10px 0 10px 10px; border-style: solid"><a th:text="${skuHeight}" style="font-weight: 600; color: #000000"></a></td>
+            <td bgcolor="#ffffff" style="height: 60px; color: black; font-size: 32px; padding: 10px 0 10px 10px; border-style: solid"><a th:text="${skuWeight}" style="font-weight: 600; color: #000000"></a></td>
+        </tr>
+    </table>
+</div>
+</body>
+</html>

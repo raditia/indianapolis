@@ -13,6 +13,7 @@ import com.gdn.response.WebResponse;
 import com.gdn.helper.DateHelper;
 import com.gdn.mapper.PickupChoiceResponseMapper;
 import com.gdn.mapper.RecommendationResponseMapper;
+import com.itextpdf.text.DocumentException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.batch.core.*;
@@ -26,6 +27,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.mail.MessagingException;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -112,7 +114,7 @@ public class RecommendationServiceImpl implements RecommendationService {
 
     @Override
     @Transactional
-    public WebResponse<List<PickupChoiceResponse>> choosePickupAndSendEmail(PickupChoiceRequest pickupChoiceRequest) throws MessagingException {
+    public WebResponse<List<PickupChoiceResponse>> choosePickupAndSendEmail(PickupChoiceRequest pickupChoiceRequest) throws MessagingException, IOException, DocumentException {
         RecommendationResult recommendationResult = recommendationResultRepository.getOne(pickupChoiceRequest.getRecommendationResultId());
 
         List<Pickup> pickupList = pickupService.savePickup(pickupChoiceRequest);
@@ -131,14 +133,26 @@ public class RecommendationServiceImpl implements RecommendationService {
                                         recommendationResult.getWarehouse(),
                                         pickupDate.format(pickupChoiceRequest.getPickupDate()),
                                         pickupList))
+                        .pickupDate(pickupDate.format(pickupChoiceRequest.getPickupDate()))
                         .build());
 
         List<Merchant> merchantList = sendEmailService.getMerchantList(pickupDetailList);
         for (Merchant merchant:merchantList
              ) {
-            String merchantEmailContent = sendEmailService.getMerchantEmailContent(recommendationResult.getWarehouse(), merchant);
-            LOGGER.info("Alamat email merchant : " + merchant.getEmailAddress());
-            LOGGER.info("Isi email merchant : \n" + merchantEmailContent);
+            sendEmailService
+                    .sendEmail(Email.builder()
+                            .emailAddressDestination(merchant.getEmailAddress())
+                            .emailSubject("indianapolis fbb merchant")
+                            .emailBodyText("Hai " + merchant.getName() + "!\n" +
+                                    "Barang anda akan diambil oleh blibli pada " + pickupDate.format(pickupChoiceRequest.getPickupDate()) + "\n" +
+                                    "Harap cetak koli label ini dan tempelkan pada barang anda sesuai dengan data yang tertera.\n" +
+                                    "Terima kasih")
+                            .emailBodyContextList(sendEmailService
+                                    .getMerchantEmailContent(
+                                            recommendationResult.getWarehouse(),
+                                            merchant))
+                            .pickupDate(pickupDate.format(pickupChoiceRequest.getPickupDate()))
+                            .build());
         }
 
         List<LogisticVendor> logisticVendorList = sendEmailService.getLogisticVendorList(pickupList);
@@ -152,6 +166,7 @@ public class RecommendationServiceImpl implements RecommendationService {
                                             recommendationResult.getWarehouse(),
                                             logisticVendor,
                                             pickupDate.format(pickupChoiceRequest.getPickupDate())))
+                            .pickupDate(pickupDate.format(pickupChoiceRequest.getPickupDate()))
                             .build());
         }
 
