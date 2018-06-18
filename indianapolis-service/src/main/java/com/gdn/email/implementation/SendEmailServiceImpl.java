@@ -97,23 +97,23 @@ public class SendEmailServiceImpl implements SendEmailService {
     }
 
     @Override
-    public Context getWarehouseEmailContent(Warehouse warehouse, String pickupDate, List<Pickup> pickupList) {
+    public List<Context> getWarehouseEmailContent(Warehouse warehouse, String pickupDate, List<Pickup> pickupList) {
         Context context = new Context();
         context.setVariable("warehouseName", warehouse.getAddress());
         context.setVariable("pickupDate", pickupDate);
         context.setVariable("pickupList", pickupList);
-        return context;
+        return Collections.singletonList(context);
     }
 
     @Override
-    public Context getLogisticVendorEmailContent(Warehouse warehouse, LogisticVendor logisticVendor, String pickupDate) {
+    public List<Context> getLogisticVendorEmailContent(Warehouse warehouse, LogisticVendor logisticVendor, String pickupDate) {
         List<Pickup> pickupList = pickupRepository.findAllByWarehouseAndFleetLogisticVendor(warehouse, logisticVendor);
         Context context = new Context();
         context.setVariable("logisticVendorName", logisticVendor.getName());
         context.setVariable("pickupDate", pickupDate);
         context.setVariable("warehouseName", warehouse.getAddress());
         context.setVariable("logisticVendorEmailBodyList", LogisticVendorEmailBodyMapper.toLogisticVendorEmailBodyList(pickupList));
-        return context;
+        return Collections.singletonList(context);
     }
 
     @Override
@@ -123,66 +123,40 @@ public class SendEmailServiceImpl implements SendEmailService {
         for (Pickup pickup:pickupList
              ) {
             List<PickupDetail> pickupDetailList = pickupDetailRepository.findAllByPickupAndMerchant(pickup, merchant);
-            for (PickupDetail pickupDetail:pickupDetailList
-                 ) {
-                Context context = new Context();
-                context.setVariable("cffId", pickupDetail.getSku().getCff().getId());
-                context.setVariable("sku", pickupDetail.getSku().getSku());
-                context.setVariable("skuPickupQuantity", pickupDetail.getSkuPickupQuantity());
-                context.setVariable("merchantName", pickupDetail.getMerchant().getName());
-                context.setVariable("skuLength", pickupDetail.getSku().getLength());
-                context.setVariable("skuWidth", pickupDetail.getSku().getWidth());
-                context.setVariable("skuHeight", pickupDetail.getSku().getHeight());
-                context.setVariable("skuWeight", pickupDetail.getSku().getWeight());
-                contextList.add(context);
-            }
+            populateContext(contextList, pickupDetailList);
         }
-//        List<String> bodyList = new ArrayList<>();
-//        Context context = new Context();
-//        List<PickupDetail> pickupDetailList;
-//        for (Pickup pickup:pickupList) {
-//            pickupDetailList = pickupDetailRepository.findAllByPickupAndMerchant(pickup, merchant);
-//            for (PickupDetail pickupDetail:pickupDetailList) {
-//                context.setVariable("cffId", pickupDetail.getSku().getCff().getId());
-//                context.setVariable("sku", pickupDetail.getSku().getSku());
-//                context.setVariable("skuPickupQuantity", pickupDetail.getSkuPickupQuantity());
-//                context.setVariable("merchantName", pickupDetail.getMerchant().getName());
-//                context.setVariable("skuLength", pickupDetail.getSku().getLength()*100);
-//                context.setVariable("skuWidth", pickupDetail.getSku().getWidth()*100);
-//                context.setVariable("skuHeight", pickupDetail.getSku().getHeight()*100);
-//                context.setVariable("skuWeight", pickupDetail.getSku().getWeight());
-//                String body = emailTemplateEngine.process("email-koli-label", context);
-//                bodyList.add(body);
-//            }
-//        }
-//        return bodyList;
         return contextList;
     }
 
     @Override
-    public String getTpEmailContent(Warehouse warehouse, User tp) {
+    public List<Context> getTpEmailContent(Warehouse warehouse, User tp) {
         List<Pickup> pickupList = pickupRepository.findAllByWarehouse(warehouse);
+        List<Context> contextList = new ArrayList<>();
         List<PickupDetail> pickupDetailList;
         List<Cff> cffList;
-        StringBuilder tpEmailContent = new StringBuilder();
         for (Pickup pickup:pickupList){
             cffList = cffRepository.findAllByTpAndPickupDateAndWarehouse(tp, DateHelper.tomorrow(), warehouse);
             for (Cff cff:cffList){
                 pickupDetailList = pickupDetailRepository.findAllByPickupAndSkuCff(pickup, cff);
-                for (PickupDetail pickupDetail:pickupDetailList){
-                    tpEmailContent
-                            .append("Merchant name : ").append(pickupDetail.getMerchant().getName()).append("\n")
-                            .append("CFF Number : ").append(pickupDetail.getSku().getCff().getId()).append("\n")
-                            .append("SKU : ").append(pickupDetail.getSku().getSku()).append("\n")
-                            .append("SKU Quantity : ").append(pickupDetail.getSkuPickupQuantity()).append("\n")
-                            .append("Width : ").append(pickupDetail.getSku().getWidth()).append("\n")
-                            .append("Length : ").append(pickupDetail.getSku().getLength()).append("\n")
-                            .append("Height : ").append(pickupDetail.getSku().getHeight()).append("\n")
-                            .append("Weight : ").append(pickupDetail.getSku().getWeight()).append("\n\n");
-                }
+                populateContext(contextList, pickupDetailList);
             }
         }
-        return String.valueOf(tpEmailContent);
+        return contextList;
+    }
+
+    private void populateContext(List<Context> contextList, List<PickupDetail> pickupDetailList) {
+        for (PickupDetail pickupDetail:pickupDetailList){
+            Context context = new Context();
+            context.setVariable("cffId", pickupDetail.getSku().getCff().getId());
+            context.setVariable("sku", pickupDetail.getSku().getSku());
+            context.setVariable("skuPickupQuantity", pickupDetail.getSkuPickupQuantity());
+            context.setVariable("merchantName", pickupDetail.getMerchant().getName());
+            context.setVariable("skuLength", pickupDetail.getSku().getLength());
+            context.setVariable("skuWidth", pickupDetail.getSku().getWidth());
+            context.setVariable("skuHeight", pickupDetail.getSku().getHeight());
+            context.setVariable("skuWeight", pickupDetail.getSku().getWeight());
+            contextList.add(context);
+        }
     }
 
     @Override
@@ -199,60 +173,61 @@ public class SendEmailServiceImpl implements SendEmailService {
         msg.setRecipients(Message.RecipientType.TO, InternetAddress.parse(email.getEmailAddressDestination()));
         msg.setSubject(email.getEmailSubject());
 
-        String body="";
-        Context context = email.getEmailBodyContext();
+        String body;
 
         MimeMultipart mimeMultipart = new MimeMultipart();
         MimeBodyPart textBodyPart = new MimeBodyPart();
 
-        OutputStream outputStream = new ByteArrayOutputStream();
-        ITextRenderer renderer = new ITextRenderer();
-
         if(email.getEmailSubject().contains("warehouse")){
-            body = emailTemplateEngine.process("email-warehouse", context);
+            body = emailTemplateEngine.process("email-warehouse", email.getEmailBodyContextList().get(0));
             textBodyPart.setContent(body, "text/html");
             mimeMultipart.addBodyPart(textBodyPart);
-            // set content of email message with body and pdf
             msg.setContent(mimeMultipart);
-        } else if(email.getEmailSubject().contains("merchant")){
+            generatePdf(mimeMultipart, email, "email-warehouse");
+            msg.setContent(mimeMultipart);
+        } else if(email.getEmailSubject().contains("merchant") || email.getEmailSubject().contains("trade")){
             textBodyPart.setText(email.getEmailBodyText());
             mimeMultipart.addBodyPart(textBodyPart);
             msg.setContent(mimeMultipart);
-            MimeMultipart merchantMimeMultipart = new MimeMultipart();
-            int i=1;
-            for (Context merchantEmailBodyContext:email.getEmailBodyContextList()
-                 ) {
-                String emailMerchantBody = emailTemplateEngine.process("email-koli-label", merchantEmailBodyContext);
-
-                // creating pdf
-                renderer.setDocumentFromString(emailMerchantBody);
-                renderer.layout();
-                renderer.createPDF(outputStream);
-                byte[] pdfoutput = ((ByteArrayOutputStream) outputStream).toByteArray();
-                outputStream.close();
-                DataSource source = new ByteArrayDataSource(pdfoutput, "application/pdf");
-
-                // add generated pdf to mime multi part
-                MimeBodyPart pdfBodyPart = new MimeBodyPart();
-                pdfBodyPart.setDataHandler(new DataHandler(source));
-                pdfBodyPart.setFileName(email.getEmailSubject() + "_" + email.getPickupDate() + "_" + i);
-                merchantMimeMultipart.addBodyPart(pdfBodyPart);
-                i++;
-            }
-            // set content of email message with body and pdf
-            msg.setContent(merchantMimeMultipart);
+            generatePdf(mimeMultipart, email, "email-koli-label");
+            msg.setContent(mimeMultipart);
         } else if(email.getEmailSubject().contains("logistic")){
-            body = emailTemplateEngine.process("email-logistic-vendor", context);
+            body = emailTemplateEngine.process("email-logistic-vendor", email.getEmailBodyContextList().get(0));
             textBodyPart.setContent(body, "text/html");
             mimeMultipart.addBodyPart(textBodyPart);
-            // set content of email message with body and pdf
             msg.setContent(mimeMultipart);
-        } else if(email.getEmailSubject().contains("trade")){
-
+            generatePdf(mimeMultipart, email, "email-logistic-vendor");
+            msg.setContent(mimeMultipart);
         }
 
         //sends the email
         Transport.send(msg);
+    }
+
+    private void generatePdf(MimeMultipart mimeMultipart, Email email, String template) throws IOException, DocumentException, MessagingException {
+        String body;
+        OutputStream outputStream = new ByteArrayOutputStream();
+        ITextRenderer renderer = new ITextRenderer();
+        int i=1;
+        for (Context emailBodyContext:email.getEmailBodyContextList()
+                ) {
+            body = emailTemplateEngine.process(template, emailBodyContext);
+
+            // creating pdf
+            renderer.setDocumentFromString(body);
+            renderer.layout();
+            renderer.createPDF(outputStream);
+            byte[] pdfoutput = ((ByteArrayOutputStream) outputStream).toByteArray();
+            outputStream.close();
+            DataSource source = new ByteArrayDataSource(pdfoutput, "application/pdf");
+
+            // add generated pdf to mime multi part
+            MimeBodyPart pdfBodyPart = new MimeBodyPart();
+            pdfBodyPart.setDataHandler(new DataHandler(source));
+            pdfBodyPart.setFileName(email.getEmailSubject() + "_" + email.getPickupDate() + "_" + i);
+            mimeMultipart.addBodyPart(pdfBodyPart);
+            i++;
+        }
     }
 
 }

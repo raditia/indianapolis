@@ -127,8 +127,8 @@ public class RecommendationServiceImpl implements RecommendationService {
                 .sendEmail(Email.builder()
                         .emailAddressDestination(sendEmailService
                                 .getWarehouseEmail(recommendationResult))
-                        .emailSubject("indianapolis fbb warehouse")
-                        .emailBodyContext(sendEmailService
+                        .emailSubject("Fulfillment by Blibli - warehouse")
+                        .emailBodyContextList(sendEmailService
                                 .getWarehouseEmailContent(
                                         recommendationResult.getWarehouse(),
                                         pickupDate.format(pickupChoiceRequest.getPickupDate()),
@@ -142,7 +142,7 @@ public class RecommendationServiceImpl implements RecommendationService {
             sendEmailService
                     .sendEmail(Email.builder()
                             .emailAddressDestination(merchant.getEmailAddress())
-                            .emailSubject("indianapolis fbb merchant")
+                            .emailSubject("Fulfillment by Blibli - merchant - koli label")
                             .emailBodyText("Hai " + merchant.getName() + "!\n" +
                                     "Barang anda akan diambil oleh blibli pada " + pickupDate.format(pickupChoiceRequest.getPickupDate()) + "\n" +
                                     "Harap cetak koli label ini dan tempelkan pada barang anda sesuai dengan data yang tertera.\n" +
@@ -160,8 +160,8 @@ public class RecommendationServiceImpl implements RecommendationService {
             sendEmailService
                     .sendEmail(Email.builder()
                             .emailAddressDestination(logisticVendor.getEmailAddress())
-                            .emailSubject("indianapolis fbb logistic vendor")
-                            .emailBodyContext(sendEmailService
+                            .emailSubject("Fulfillment by Blibli - logistic vendor")
+                            .emailBodyContextList(sendEmailService
                                     .getLogisticVendorEmailContent(
                                             recommendationResult.getWarehouse(),
                                             logisticVendor,
@@ -172,9 +172,19 @@ public class RecommendationServiceImpl implements RecommendationService {
 
         List<User> tpList = sendEmailService.getTpList(pickupDetailList);
         for (User tp:tpList){
-            String tpEmailContent = sendEmailService.getTpEmailContent(recommendationResult.getWarehouse(), tp);
-            LOGGER.info("Alamat email tp : " + tp.getEmailAddress());
-            LOGGER.info("Isi email tp : \n" + tpEmailContent);
+            sendEmailService
+                    .sendEmail(Email.builder()
+                            .emailAddressDestination(tp.getEmailAddress())
+                            .emailSubject("Fulfillment by Blibli - trade partnership - koli label")
+                            .emailBodyText("Hai " + tp.getName() + "!\n" +
+                                    "Berikut adalah koli label dari para merchant yang anda tangani.\n" +
+                                    "Barang merchant akan diangkut pada " + pickupDate.format(pickupChoiceRequest.getPickupDate()))
+                            .emailBodyContextList(sendEmailService
+                                    .getTpEmailContent(
+                                            recommendationResult.getWarehouse(),
+                                            tp))
+                            .pickupDate(pickupDate.format(pickupChoiceRequest.getPickupDate()))
+                            .build());
         }
 
         recommendationResultRepository.deleteAllByWarehouse(recommendationResult.getWarehouse());

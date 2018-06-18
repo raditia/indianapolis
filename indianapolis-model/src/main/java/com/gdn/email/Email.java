@@ -13,7 +13,6 @@ import java.util.List;
 public class Email {
     private String emailAddressDestination;
     private String emailSubject;
-    private Context emailBodyContext;
     private List<Context> emailBodyContextList;
     private String emailBodyText;
     private String pickupDate;
