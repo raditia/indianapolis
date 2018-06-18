@@ -121,8 +121,21 @@ public class RecommendationServiceImpl implements RecommendationService {
         List<PickupDetail> pickupDetailList = new ArrayList<>();
         pickupList.forEach(pickup -> pickupDetailList.addAll(pickup.getPickupDetailList()));
 
-        SimpleDateFormat pickupDate = new SimpleDateFormat("dd-MM-yyyy");
+        SimpleDateFormat pickupDateFormatter = new SimpleDateFormat("dd-MM-yyyy");
+        String pickupDate = pickupDateFormatter.format(pickupChoiceRequest.getPickupDate());
 
+        sendEmailToWarehouse(recommendationResult, pickupDate, pickupList);
+        sendEmailToMerchant(recommendationResult, pickupDate, pickupDetailList);
+        sendEmailToLogisticVendor(recommendationResult, pickupDate, pickupList);
+        sendEmailToTradePartnership(recommendationResult, pickupDate, pickupDetailList);
+        
+        recommendationResultRepository.deleteAllByWarehouse(recommendationResult.getWarehouse());
+        return WebResponse.OK(PickupChoiceResponseMapper.toPickupChoiceResponseList(pickupList));
+    }
+
+    private void sendEmailToWarehouse(RecommendationResult recommendationResult,
+                                      String pickupDate,
+                                      List<Pickup> pickupList) throws DocumentException, MessagingException, IOException {
         sendEmailService
                 .sendEmail(Email.builder()
                         .emailAddressDestination(sendEmailService
@@ -131,30 +144,38 @@ public class RecommendationServiceImpl implements RecommendationService {
                         .emailBodyContextList(sendEmailService
                                 .getWarehouseEmailContent(
                                         recommendationResult.getWarehouse(),
-                                        pickupDate.format(pickupChoiceRequest.getPickupDate()),
+                                        pickupDate,
                                         pickupList))
-                        .pickupDate(pickupDate.format(pickupChoiceRequest.getPickupDate()))
+                        .pickupDate(pickupDate)
                         .build());
+    }
 
+    private void sendEmailToMerchant(RecommendationResult recommendationResult,
+                                     String pickupDate,
+                                     List<PickupDetail> pickupDetailList) throws DocumentException, MessagingException, IOException {
         List<Merchant> merchantList = sendEmailService.getMerchantList(pickupDetailList);
         for (Merchant merchant:merchantList
-             ) {
+                ) {
             sendEmailService
                     .sendEmail(Email.builder()
                             .emailAddressDestination(merchant.getEmailAddress())
                             .emailSubject("Fulfillment by Blibli - merchant - koli label")
                             .emailBodyText("Hai " + merchant.getName() + "!\n" +
-                                    "Barang anda akan diambil oleh blibli pada " + pickupDate.format(pickupChoiceRequest.getPickupDate()) + "\n" +
+                                    "Barang anda akan diambil oleh blibli pada " + pickupDate + "\n" +
                                     "Harap cetak koli label ini dan tempelkan pada barang anda sesuai dengan data yang tertera.\n" +
                                     "Terima kasih")
                             .emailBodyContextList(sendEmailService
                                     .getMerchantEmailContent(
                                             recommendationResult.getWarehouse(),
                                             merchant))
-                            .pickupDate(pickupDate.format(pickupChoiceRequest.getPickupDate()))
+                            .pickupDate(pickupDate)
                             .build());
         }
+    }
 
+    private void sendEmailToLogisticVendor(RecommendationResult recommendationResult,
+                                           String pickupDate,
+                                           List<Pickup> pickupList) throws DocumentException, MessagingException, IOException {
         List<LogisticVendor> logisticVendorList = sendEmailService.getLogisticVendorList(pickupList);
         for (LogisticVendor logisticVendor:logisticVendorList){
             sendEmailService
@@ -165,11 +186,15 @@ public class RecommendationServiceImpl implements RecommendationService {
                                     .getLogisticVendorEmailContent(
                                             recommendationResult.getWarehouse(),
                                             logisticVendor,
-                                            pickupDate.format(pickupChoiceRequest.getPickupDate())))
-                            .pickupDate(pickupDate.format(pickupChoiceRequest.getPickupDate()))
+                                            pickupDate))
+                            .pickupDate(pickupDate)
                             .build());
         }
+    }
 
+    private void sendEmailToTradePartnership(RecommendationResult recommendationResult,
+                                             String pickupDate,
+                                             List<PickupDetail> pickupDetailList) throws DocumentException, MessagingException, IOException {
         List<User> tpList = sendEmailService.getTpList(pickupDetailList);
         for (User tp:tpList){
             sendEmailService
@@ -178,17 +203,14 @@ public class RecommendationServiceImpl implements RecommendationService {
                             .emailSubject("Fulfillment by Blibli - trade partnership - koli label")
                             .emailBodyText("Hai " + tp.getName() + "!\n" +
                                     "Berikut adalah koli label dari para merchant yang anda tangani.\n" +
-                                    "Barang merchant akan diangkut pada " + pickupDate.format(pickupChoiceRequest.getPickupDate()))
+                                    "Barang merchant akan diangkut pada " + pickupDate)
                             .emailBodyContextList(sendEmailService
                                     .getTpEmailContent(
                                             recommendationResult.getWarehouse(),
                                             tp))
-                            .pickupDate(pickupDate.format(pickupChoiceRequest.getPickupDate()))
+                            .pickupDate(pickupDate)
                             .build());
         }
-
-        recommendationResultRepository.deleteAllByWarehouse(recommendationResult.getWarehouse());
-        return WebResponse.OK(PickupChoiceResponseMapper.toPickupChoiceResponseList(pickupList));
     }
 
 }
