@@ -24,6 +24,11 @@ public class FleetServiceImpl implements FleetService {
     }
 
     @Override
+    public List<Fleet> findAllByOrderByCbmCapacityAsc() {
+        return fleetRepository.findAllByOrderByCbmCapacityAsc();
+    }
+
+    @Override
     public WebResponse<List<FleetResponse>> findDistinctAllFleetOrderByCbmCapacityDesc() {
         return WebResponse.OK(FleetResponseMapper.toFleetResponseList(fleetRepository.findAllByOrderByCbmCapacityDesc()));
     }

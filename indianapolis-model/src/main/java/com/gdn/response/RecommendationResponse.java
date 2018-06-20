@@ -11,7 +11,7 @@ public class RecommendationResponse {
 
     private String warehouseName;
 
-    private double cbmTotal;
+    private Float cbmTotal;
 
     private List<FleetRecommendationResponse> fleetRecommendationResponseList;
 

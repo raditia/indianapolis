@@ -42,6 +42,6 @@ public class RecommendationFleet {
     private int fleetSkuPickupQty;
 
     @Column(name = "fleet_cbm_pickup_amount")
-    private double fleetCbmPickupAmount;
+    private Float fleetCbmPickupAmount;
 
 }

@@ -19,7 +19,7 @@ public class CffResponse {
 
     private String pickupPointAddress;
 
-    private double cbmTotal;
+    private Float cbmTotal;
 
     private Date pickupDate;
 

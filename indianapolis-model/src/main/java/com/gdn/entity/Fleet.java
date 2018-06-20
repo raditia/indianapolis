@@ -26,10 +26,10 @@ public class Fleet {
     private Double price;
 
     @Column(name = "cbm_capacity")
-    private Double cbmCapacity;
+    private Float cbmCapacity;
 
     @Column(name = "min_cbm_capacity")
-    private Double minCbm;
+    private Float minCbm;
 
     @ManyToOne
     @JoinColumn(name = "logisctic_vendor_id")

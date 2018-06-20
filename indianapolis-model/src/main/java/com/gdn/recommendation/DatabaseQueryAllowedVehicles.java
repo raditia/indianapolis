@@ -11,5 +11,5 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class DatabaseQueryAllowedVehicles {
     private String vehicleName;
-    private Double cbmCapacity;
+    private Float cbmCapacity;
 }

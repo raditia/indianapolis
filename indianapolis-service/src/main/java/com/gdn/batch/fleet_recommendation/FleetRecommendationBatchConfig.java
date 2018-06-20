@@ -3,6 +3,7 @@ package com.gdn.batch.fleet_recommendation;
 import com.gdn.SchedulingStatus;
 import com.gdn.recommendation.DatabaseQueryResult;
 import com.gdn.recommendation.Recommendation;
+import helper.DateHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.batch.core.Job;
@@ -56,7 +57,8 @@ public class FleetRecommendationBatchConfig {
             "cff_good.cff_id=cff.id AND \n" +
             "allowed_vehicle.pickup_point_id=pickup_point.id AND \n" +
             "allowed_vehicle.vehicle_name=fleet.name AND\n" +
-            "cff.warehouse_id=? AND cff.pickup_date=? AND cff.status=?";
+            "cff.warehouse_id=? AND cff.pickup_date=? AND cff.status=?\n" +
+            "ORDER BY cff_good.sku ASC, fleet.cbm_capacity DESC";
 
     @Qualifier("dataSource")
     @Autowired
@@ -76,23 +78,13 @@ public class FleetRecommendationBatchConfig {
         reader.setPreparedStatementSetter(new PreparedStatementSetter() {
             public void setValues(PreparedStatement ps) throws SQLException {
                 ps.setString(1, finalWarehouseId);
-                ps.setTimestamp(2, new Timestamp(tomorrow().getTime()));
+                ps.setTimestamp(2, new Timestamp(DateHelper.tomorrow().getTime()));
                 ps.setString(3, SchedulingStatus.PENDING);
             }
         });
         reader.setRowMapper(databaseQueryResultRowMapper);
         return reader;
     }
-
-    private java.util.Date tomorrow(){
-            Calendar calendar = Calendar.getInstance();
-            calendar.set(Calendar.HOUR_OF_DAY, 7);
-            calendar.set(Calendar.MINUTE, 0);
-            calendar.set(Calendar.SECOND, 0);
-            calendar.set(Calendar.MILLISECOND, 0);
-            calendar.add(Calendar.DAY_OF_MONTH, 1);
-            return calendar.getTime();
-        }
 
     @Bean(destroyMethod = "")
     @StepScope

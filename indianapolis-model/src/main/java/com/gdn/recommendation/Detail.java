@@ -11,6 +11,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class Detail {
     private Sku sku;
-    private double cbmPickup;
+    private Float cbmPickup;
     private int pickupAmount;
 }

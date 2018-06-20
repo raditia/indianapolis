@@ -14,7 +14,7 @@ import java.util.List;
 public class Recommendation {
     private String id;
     private List<Pickup> pickupList;
-    private Double cbmTotal;
+    private Float cbmTotal;
     private Integer skuAmount;
     private String warehouseId;
 }

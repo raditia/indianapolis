@@ -39,6 +39,6 @@ public class PickupDetail {
     private int skuPickupQuantity;
 
     @Column(name = "cbm_pickup_amount")
-    private double cbmPickupAmount;
+    private Float cbmPickupAmount;
 
 }
