@@ -1,4 +1,4 @@
-package mapper;
+package com.gdn.mapper;
 
 import com.gdn.entity.Fleet;
 import com.gdn.response.FleetResponse;

@@ -8,7 +8,7 @@ import com.gdn.pickup_point.PickupPointService;
 import com.gdn.repository.CffRepository;
 import com.gdn.response.CffResponse;
 import com.gdn.response.WebResponse;
-import mapper.CffResponseMapper;
+import com.gdn.mapper.CffResponseMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -34,7 +34,7 @@ public class CffServiceImpl implements CffService {
 
     @Override
     public WebResponse<CffResponse> saveCff(Cff cff) {
-        cff.setId("cff_" + UUID.randomUUID().toString());
+//        cff.setId("cff_" + UUID.randomUUID().toString());
         cff.setUploadedDate(new Date());
         Merchant merchant = merchantService.getOne(cff.getMerchant().getEmailAddress());
         if(merchant!=null)

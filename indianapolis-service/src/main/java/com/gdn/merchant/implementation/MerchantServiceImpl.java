@@ -5,7 +5,7 @@ import com.gdn.merchant.MerchantService;
 import com.gdn.repository.MerchantRepository;
 import com.gdn.response.MerchantResponse;
 import com.gdn.response.WebResponse;
-import mapper.MerchantResponseMapper;
+import com.gdn.mapper.MerchantResponseMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

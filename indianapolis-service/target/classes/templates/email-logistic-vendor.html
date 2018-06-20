@@ -1,0 +1,70 @@
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <style>
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+        }
+    </style>
+</head>
+<body>
+<div class="col-md-6 col-md-offset-3" style="background-color: #e2e2e2; padding: 15px">
+    <table align="center" cellpadding="0" cellspacing="0" width="100%">
+        <tr>
+            <td bgcolor="#1991EB" style="height: 60px; color: #ffffff; font-size: 32px; padding: 10px 0 10px 10px">Fulfillment by Blibli</td>
+        </tr>
+        <tr>
+            <td bgcolor="#ffffff" style="padding: 10px 10px 10px 10px;">
+                <table bgcolor="#ffffff" cellpadding="0" cellspacing="0" width="100%">
+                    <tr>
+                        <td>Logistic : <a th:text="${logisticVendorName}" style="font-weight: 600; color: #000000"></a></td>
+                    </tr>
+                    <tr>
+                        <td style="font-weight: 400; font-size: 14px; padding-top: 10px">Pickup at <a th:text="${pickupDate}" style="font-weight: 600; color: #000000"></a> </td>
+                    </tr>
+                    <tr>
+                        <td style="padding-top: 10px">
+                            <table width="100%">
+                                <th:block th:each="logisticVendorEmailBody : ${logisticVendorEmailBodyList}">
+                                    <tbody class="row">
+                                    <tr>
+                                        <td style="font-weight: 500; font-size: 14px;">Fleet : <a th:text="${logisticVendorEmailBody.fleetName}" style="font-weight: 600; color: #000000"></a> </td>
+                                    </tr>
+                                    <tr>
+                                        <td style="font-weight: 500; font-size: 14px;">Warehouse destination : <a th:text="${logisticVendorEmailBody.warehouseDestinationName}" style="font-weight: 600; color: #000000"></a> | <a th:text="${logisticVendorEmailBody.warehouseDestinationPhoneNumber}" style="font-weight: 600; color: #000000"></a> </td>
+                                    </tr>
+                                    <tr>
+                                        <td style="font-weight: 400; font-size: 12px; padding-left: 16px"> Merchant name : <a th:text="${logisticVendorEmailBody.merchantName}" style="font-weight: 600; color: #000000"></a></td>
+                                    </tr>
+                                    <tr>
+                                        <td style="font-weight: 400; font-size: 12px; padding-left: 16px"> Merchant phone : <a th:text="${logisticVendorEmailBody.merchantPhoneNumber}" style="font-weight: 600; color: #000000"></a></td>
+                                    </tr>
+                                    <tr>
+                                        <td style="font-weight: 400; font-size: 12px; padding-left: 16px"> Merchant address : <a th:text="${logisticVendorEmailBody.merchantAddress}" style="font-weight: 600; color: #000000"></a></td>
+                                    </tr>
+                                    <tr>
+                                        <td style="font-weight: 400; font-size: 12px; padding-left: 16px"> Merchant address coordinate : <a th:text="${logisticVendorEmailBody.merchantAddressCoordinate}" style="font-weight: 600; color: #000000"></a></td>
+                                    </tr>
+                                    <th:block th:each="skuPickup : ${logisticVendorEmailBody.skuPickupList}">
+                                        <tr>
+                                            <td style="font-weight: 400; font-size: 12px; padding-left: 24px"> SKU : <a th:text="${skuPickup.sku}" style="font-weight: 600; color: #000000"></a></td>
+                                        </tr>
+                                        <tr>
+                                            <td style="font-weight: 400; font-size: 12px; padding-left: 24px"> Quantity : <a th:text="${skuPickup.skuPickupQuantity}"></a></td>
+                                        </tr>
+                                        <tr>
+                                            <td style="font-weight: 400; font-size: 12px; padding-left: 24px"> CBM : <a th:text="${skuPickup.skuPickupCbmAmount}"></a></td>
+                                        </tr>
+                                    </th:block>
+                                    <hr/>
+                                    </tbody>
+                                </th:block>
+                            </table>
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </table>
+</div>
+</body>
+</html>
