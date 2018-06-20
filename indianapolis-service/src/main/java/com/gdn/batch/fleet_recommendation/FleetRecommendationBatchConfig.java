@@ -3,7 +3,7 @@ package com.gdn.batch.fleet_recommendation;
 import com.gdn.SchedulingStatus;
 import com.gdn.recommendation.DatabaseQueryResult;
 import com.gdn.recommendation.Recommendation;
-import helper.DateHelper;
+import com.gdn.helper.DateHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.batch.core.Job;
@@ -27,7 +27,6 @@ import javax.sql.DataSource;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Timestamp;
-import java.util.Calendar;
 import java.util.List;
 
 @Configuration

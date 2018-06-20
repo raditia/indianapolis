@@ -8,5 +8,5 @@ import lombok.Data;
 public class SkuPickup {
     private String sku;
     private int skuPickupQuantity;
-    private double skuPickupCbmAmount;
+    private Float skuPickupCbmAmount;
 }
