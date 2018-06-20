@@ -8,5 +8,6 @@ import java.util.List;
 
 public interface FleetService {
     List<Fleet> findAllByOrderByCbmCapacityDesc();
+    List<Fleet> findAllByOrderByCbmCapacityAsc();
     WebResponse<List<FleetResponse>> findDistinctAllFleetOrderByCbmCapacityDesc();
 }

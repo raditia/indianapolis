@@ -11,7 +11,7 @@ public class RecommendationResponseMapper {
 
     public static RecommendationResponse toRecommendationResponse(List<RecommendationResult> recommendationResultList){
         String warehouse="";
-        double cbmTotal=0;
+        Float cbmTotal=0.0f;
         List<FleetRecommendationResponse> fleetRecommendationResponseList = new ArrayList<>();
         for (RecommendationResult recommendationResult:recommendationResultList
              ) {

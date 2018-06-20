@@ -33,7 +33,7 @@ public class RecommendationResult {
     private int totalSku;
 
     @Column(name = "total_cbm")
-    private double totalCbm;
+    private Float totalCbm;
 
     @Column(name = "pickup_date")
     private Date pickupDate;

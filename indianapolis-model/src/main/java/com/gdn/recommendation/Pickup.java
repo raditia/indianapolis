@@ -17,5 +17,5 @@ public class Pickup {
     private Fleet fleet;
     private String fleetIdNumber;
     private int pickupTotalAmount;
-    private double pickupTotalCbm;
+    private Float pickupTotalCbm;
 }

@@ -24,6 +24,7 @@ public class LogisticVendorEmailBodyMapper {
         for (PickupDetail pickupDetail:pickup.getPickupDetailList()){
             if(!pickupIdAndMerchantNameMap.containsKey(pickup.getId())
                     && !pickupIdAndMerchantNameMap.containsValue(pickupDetail.getMerchant().getName())){
+                pickupIdAndMerchantNameMap.put(pickup.getId(), pickupDetail.getMerchant().getName());
                 logisticVendorEmailBody.setMerchantName(pickupDetail.getMerchant().getName());
                 logisticVendorEmailBody.setMerchantPhoneNumber(pickupDetail.getMerchant().getPhoneNumber());
                 logisticVendorEmailBody.setMerchantAddress(pickupDetail.getPickupPoint().getPickupAddress());

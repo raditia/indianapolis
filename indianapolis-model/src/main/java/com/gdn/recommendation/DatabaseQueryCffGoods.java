@@ -11,6 +11,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class DatabaseQueryCffGoods {
     private String id, sku;
-    private Double cbm;
+    private Float cbm;
     private int quantity;
 }

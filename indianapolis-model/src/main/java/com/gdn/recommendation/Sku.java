@@ -14,7 +14,7 @@ import java.util.List;
 public class Sku {
     private String id, name;
     private int quantity;
-    private double cbm;
+    private Float cbm;
     private List<Vehicle> vehicleList;
     private String merchantId, pickupPointId;
 }

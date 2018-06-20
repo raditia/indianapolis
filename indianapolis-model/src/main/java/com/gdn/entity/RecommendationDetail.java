@@ -34,7 +34,7 @@ public class RecommendationDetail {
     private int skuPickupQty;
 
     @Column(name = "cbm_pickup_amount")
-    private double cbmPickupAmount;
+    private Float cbmPickupAmount;
 
     @ManyToOne
     @JoinColumn(name = "merchant_id")

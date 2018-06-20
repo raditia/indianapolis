@@ -10,7 +10,7 @@ import java.util.stream.Collectors;
 public class CffResponseMapper {
 
     public static CffResponse toCffResponse(Cff cff){
-        double cbmTotal = 0;
+        Float cbmTotal = 0.0f;
         for (CffGood cffGood:cff.getCffGoodList()
              ) {
             cbmTotal+=cffGood.getCbm()*cffGood.getQuantity();

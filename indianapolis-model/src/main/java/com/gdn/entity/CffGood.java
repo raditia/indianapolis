@@ -24,19 +24,19 @@ public class CffGood {
     private String sku;
 
     @Column(name = "length")
-    private double length;
+    private Float length;
 
     @Column(name = "width")
-    private double width;
+    private Float width;
 
     @Column(name = "height")
-    private double height;
+    private Float height;
 
     @Column(name = "weight")
-    private double weight;
+    private Float weight;
 
     @Column(name = "cbm")
-    private double cbm;
+    private Float cbm;
 
     @Column(name = "quantity")
     private int quantity;
