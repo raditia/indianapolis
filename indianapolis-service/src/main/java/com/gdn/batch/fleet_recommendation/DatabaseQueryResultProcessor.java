@@ -38,31 +38,25 @@ public class DatabaseQueryResultProcessor implements ItemProcessor<DatabaseQuery
         rowCount = recommendationService.getResultRowCount(warehouseId, DateHelper.tomorrow());
         LOGGER.info("Row count : " + rowCount);
         resultList.add(databaseQueryResult);
-        List<Recommendation> rekomendasiList = new ArrayList<>();
+        List<Recommendation> recommendationList = new ArrayList<>();
         if(allItemsHaveBeenRetrieved()){
             LOGGER.info("Processing...");
             this.skuList=migrateIntoSkuList(resultList);
-            rekomendasiList = getThreeRecommendation();
-            System.out.println(this.getMaxFleet(this.skuList).getName());
-            for(Fleet fleet : this.getThreeMaxFleet()){
-                System.out.println("00 "+fleet.getName());
-            }
-            for (DatabaseQueryResult item:resultList
-                    ) {
+            recommendationList = getThreeRecommendation();
+            for (DatabaseQueryResult item : resultList) {
                 cffService.updateSchedulingStatus(item.getCffId());
-                System.out.println("-------------------------"+item.getCffGoods().getSku());
             }
             resultList.clear();
         }
-        return rekomendasiList;
+        return recommendationList;
     }
 
     /**
      * Digunakan untuk mendapatkan tiga buah rekomendasi
-     * Dengan cara melakukan 3 x perulangan terhadap 3 maximal kendaraan
-     * Input : -
+     * Cara : melakukan 3 x perulangan terhadap 3 maximal kendaraan
+     * Input : List semua SKU
      * Output : List rekomendasi
-     * @return
+     * @return List<Recommendation>
      */
     private List<Recommendation> getThreeRecommendation(){
         List<Recommendation> recommendationList = new ArrayList<>();
@@ -74,8 +68,7 @@ public class DatabaseQueryResultProcessor implements ItemProcessor<DatabaseQuery
                 break;
             }
             Recommendation recommendation = new Recommendation();
-            this.skuList=migrateIntoSkuList(resultList);
-            System.out.println("---masuk kendaraan : "+fleet.getName());
+            this.skuList = migrateIntoSkuList(resultList);
             recommendation = getRecommendation(fleet);
             recommendation.setId("recommendation_result_" + UUID.randomUUID().toString());
             recommendation.setWarehouseId(warehouseId);
@@ -88,7 +81,14 @@ public class DatabaseQueryResultProcessor implements ItemProcessor<DatabaseQuery
 
     /**
      * Untuk mendapatkan 3 buah kendaraan maksimal yang akan digunakan
-     * @return
+     * Cara : Melakukan perulangan sebanyak kendaraan dalam db,
+     *          jika cbm kendaraan tersebut lebih besar dari cbm maxKendaraan
+     *          maka akan ditampung dalam list
+     *        Perulangan dilakukan sampai didapatkan 3 buah kendaraan atau
+     *          sampai data kendaraan pada db habis
+     * Input : List master kendaraan dari basis data secara descending dan kendaraan maximal
+     * Output : List 3 buah kendaraan maksimal yang akan digunakan
+     * @return List<Fleet>
      */
     private List<Fleet> getThreeMaxFleet(){
         List<Fleet> fleetOnDbList = fleetService.findAllByOrderByCbmCapacityDesc();
@@ -113,7 +113,11 @@ public class DatabaseQueryResultProcessor implements ItemProcessor<DatabaseQuery
     /**
      * Untuk mendapatkan kendaraan dengan kapasitas cbm paling maksimal yang akan digunakan
      * @param skuList
-     * @return
+     * Cara : Seperti melakukan pencarian bilangan terbesar. Dimana digunakan variabel penampung, dan membandingkan
+     *          cbm angkut (yang dapat diangkut) dengan cbm pada variabel penampung.
+     *        Fungsi akan mereturnkan kendaraan dengan cbm terbesar, dengan cbm angkut yang melebihi min cbm kendaraan tersebut
+     * Input : List master kendaraan dari basis data secara descending, list sku, cbm angkut dari masing" kendaraan
+     * @return Fleet
      */
     private Fleet getMaxFleet(List<Sku> skuList){
         List<Fleet> fleetList = fleetService.findAllByOrderByCbmCapacityDesc();
@@ -121,7 +125,6 @@ public class DatabaseQueryResultProcessor implements ItemProcessor<DatabaseQuery
         fleetTemp.setCbmCapacity(0.0f);
 
         for(Fleet fleet : fleetList){
-            System.out.println(":: For Fleet : "+fleet.getName()+" With Cbm : "+this.getCbmForFleet(fleet, skuList));
             if(this.getCbmForFleet(fleet, skuList) >= fleet.getMinCbm() && fleet.getCbmCapacity() > fleetTemp.getCbmCapacity()){
                 fleetTemp = fleet;
             }
@@ -129,7 +132,16 @@ public class DatabaseQueryResultProcessor implements ItemProcessor<DatabaseQuery
         return fleetTemp;
     }
 
-
+    /**
+     * Untuk mengetahui cbm angkut dari jenis kendaraan tertentu
+     * Cara : Dengan melakukan perulangan atau pengaksesan terhadap semua sku,
+     *          kemudian mengakses semua kendaraan yang available untuk sku tersebut,
+     *          jika nama dari kendaraan pada sku tersebut dengan nama dari kendaraan yang diperiksa (param input) sama,
+     *          maka cbm sku tersebut di kali dengan quantitynya kemudain di tampung pada variabel cbm.
+     *        Ketika perulangan selesai, maka pada variabel cbm telah tertampung total cbm dari seluruh sku yang dapat diangkut oleh kendaraan jenis tertentu
+     * @param fleet dan skuList
+     * @return cbm angkut ( yang dapat diangkut) untuk jenis kendaraan tertentu
+     */
     private Float getCbmForFleet(Fleet fleet, List<Sku> skuList){
         Float cbm = 0.0f;
 
@@ -143,42 +155,54 @@ public class DatabaseQueryResultProcessor implements ItemProcessor<DatabaseQuery
         return cbm;
     }
 
+    /**
+     * Digunakan untuk mendapatkan 1 set rekomendasi pengangkutan (keseluruhan diperlukan 3 set rekomendasi)
+     * Cara : Fungsi ini akan melakukan perulangan selama data list sku belum habis untuk diproses.
+     *          Setiap 1 kali perulangan akan diperoleh satu pengangkutan dengan menggunakan method getPickup
+     *          Selain itu akan dihitung cbmTotal yang sudah masuk dalam rekomendasi, dan jumlah SKU nya.
+     *          Pada saat perulangan, ada kalanya ditemukan kondisi dimana sebuah sku memiliki cbm yang lebih besar dari kapasitas cbm maxKendaraan,
+     *          yang dapat menyebabkan infinity loop. Hal ini dapat diatasi dengan mengganti maxFleet dengan kendaraan dengan kapasitas diatasnya.
+     *          Setelah hal tersebut teratasi, maxFleet akan dikembalikan pada kendaraan semula.
+     *          Sebuah rekomendasi memiliki beberapa pengangkutan (berbeda" kendaraan), totalCbm, dan jumlah sku.
+     * @param maxFleet
+     * @return Recommendation
+     */
     private Recommendation getRecommendation(Fleet maxFleet){
         Recommendation recommendation = new Recommendation();
         List<Pickup> pickupList = new ArrayList<>();
-        Float totalCbm = 0.0f;
+        Float cbmTotal = 0.0f;
         Integer numberOfSku = 0;
-        Integer counterPengangkutan = 0;
         Fleet maxFleetTemp = maxFleet;
-        while(!isEmpty(this.skuList)){
-            counterPengangkutan+=1;
-            System.out.println(counterPengangkutan+" counterPengangkutan");
 
+        while(!isEmpty(this.skuList)){
             Pickup pickup = new Pickup();
             pickup = this.getPickup(skuList, maxFleet);
-            System.out.println(pickup.getFleet().getName()+" nama kendaraan");
-            for (Detail detail : pickup.getDetailList()){
-                System.out.println(detail.getSku().getName()+" pickup00");
-            }
-            totalCbm = this.formatNormalFloat(totalCbm+pickup.getPickupTotalCbm());
+
+            cbmTotal = this.formatNormalFloat(cbmTotal+pickup.getPickupTotalCbm());
             numberOfSku += pickup.getPickupTotalAmount();
-            if(pickup.getPickupTotalCbm()>0) {
+
+            if(pickup.getPickupTotalCbm() > 0) {
                 pickupList.add(pickup);
                 maxFleet = maxFleetTemp;
             } else {
                 maxFleet = getUpFleet(maxFleet);
             }
 
-            System.out.println(numberOfSku+" numberOfSku");
-            System.out.println("Cbm Angkut : "+pickup.getPickupTotalCbm());
-            System.out.println(totalCbm+" totalCbm-------------------");
         }
         recommendation.setPickupList(pickupList);
-        recommendation.setCbmTotal(totalCbm);
+        recommendation.setCbmTotal(cbmTotal);
         recommendation.setSkuAmount(numberOfSku);
         return recommendation;
     }
 
+    /**
+     * Digunakan untuk mendapatkan kendaraan dengan kapasitas cbm satu tingkat diatas cbm kendaraan parameter input.
+     * Cara : Melakukan pengaksesan pada setiap data kendaraan db dan membandingkan cbm kendaraan tersebut dengan cbm parameter input.
+     *          Fungsi akan me-return kendaraan yang memiliki cbm diatas cbm parameter input
+     * Input : List kendaraan dalam db secara Asc berdasarkan cbm nya
+     * @param maxFleet
+     * @return Fleet
+     */
     private Fleet getUpFleet(Fleet maxFleet) {
         List<Fleet> fleetList = fleetService.findAllByOrderByCbmCapacityAsc();
 
@@ -190,47 +214,90 @@ public class DatabaseQueryResultProcessor implements ItemProcessor<DatabaseQuery
         return null;
     }
 
+    /**
+     * Digunakan untuk melakukan pengecekan terhadap list sku.
+     * Cara : melakukan pengaksesan terhadap setiap sku dan melakukan pengecekan terhadap jumlah atau quantity
+     *          sku tersebut. Fungsi ini memastika bahwa semua quantity sku adalah 0
+     * @param skuList
+     * @return
+     */
     private boolean isEmpty(List<Sku> skuList) {
         for(Sku sku : skuList){
-            if(sku.getQuantity()>0)
+            if(sku.getQuantity() > 0){
                 return false;
+            }
         }return true;
     }
 
-    private Pickup getPickup(List<Sku> skuList, Fleet maxKendaraan) {
-        Pickup pengangkutan = new Pickup();
-        pengangkutan = initPengangkutan(pengangkutan);
-        Fleet kendaraan = getNextKendaraan(skuList, maxKendaraan);
+    /**
+     * Digunakan untuk mendapatkan sebuah pengangkutan berdasarkan sku yang ada dan maxFleet
+     * Cara : Pertama akan ditentukan kendaraan apa yang tepat untuk mengangkut sku yang ada, menggunakan fungsi getNextFleet
+     *          Setelah itu akan dilakukan proses untuk mendapatkan detail sku yang diangkut pada pengangkutan ini
+     *          dengan menggunakan fungsi getDetailList.
+     *          Data sku pada lsit sku akan diperbarui untuk proses pengangkutan selanjutnya.
+     *        Setaip pengangkutan memiliki atribut berupa kendaraan, detail sku yang diangkut, total cbm, dan jumlah total sku yang diangkut.
+     * @param skuList
+     * @param maxFleet
+     * @return
+     */
+    private Pickup getPickup(List<Sku> skuList, Fleet maxFleet) {
+        Pickup pickup = new Pickup();
+        pickup = initPickup(pickup);
+        Fleet fleet = getNextFleet(skuList, maxFleet);
 
-        if(kendaraan != null){
-            pengangkutan.setFleetIdNumber(kendaraan.getId());
-            pengangkutan.setFleet(kendaraan);
+        if(fleet != null){
+            pickup.setFleetIdNumber(fleet.getId());
+            pickup.setFleet(fleet);
             List<Detail> detailList = new ArrayList<>();
-            detailList = getDetailList(skuList,kendaraan);
+            detailList = getDetailList(skuList,fleet);
             if(detailList != null){
                 this.skuList = updateSkuList(skuList, detailList);
-                pengangkutan.setPickupTotalCbm(getCbmTotalAngkut(detailList));
-                pengangkutan.setPickupTotalAmount(getJumlahTotalPengangkutan(detailList));
-                pengangkutan.setDetailList(detailList);
+                pickup.setPickupTotalCbm(getCbmTotalPickup(detailList));
+                pickup.setPickupTotalAmount(getJumlahTotalPengangkutan(detailList));
+                pickup.setDetailList(detailList);
             }
         }
-        return pengangkutan;
+        return pickup;
     }
 
-    private Float getCbmTotalAngkut(List<Detail> detailList) {
+    /**
+     * Digunakan untuk melakukan perhitungan terhadap total cbm yang diangkut oleh sebuah pengangkutan.
+     * Cara : dilakukan pengaksesan terhadap setiap detail sku, kemudian dilakukan penghitungan dengan mengalikan cbm sku tersebut dengan jumlah yang diangkut.
+     * @param detailList
+     * @return total cbm untuk pengangkutan tertentu
+     */
+    private Float getCbmTotalPickup(List<Detail> detailList) {
         Float total = 0.0f;
+
         for(Detail detail : detailList){
             total = formatNormalFloat(total+detail.getCbmPickup());
-        }return total;
+        }
+        return total;
     }
 
+    /**
+     * Digunakan untuk melakukan penghitungan terhadap jumlah sku yang diangkut oleh sebuah pengangkutan
+     * Cara : dilakukan pengaksesan terhadap setiap detai sku, kemudian menghitung keseluruhan jumlah sku
+     * @param detailList
+     * @return totalPengangkutan
+     */
     private Integer getJumlahTotalPengangkutan(List<Detail> detailList) {
         Integer jumlah=0;
+
         for(Detail detail : detailList){
             jumlah+=detail.getPickupAmount();
-        }return jumlah;
+        }
+        return jumlah;
     }
 
+    /**
+     * Digunakan untuk memperbaui data pada sku list. Dengan ini apabila setelah dilakukan pengangkutan (pick up) maka sku list diupdate.
+     * Sku yang telah ada di pengangkutan akan dihapus dari sku list.
+     * Cara : dilakukan pengaksesan terhadap seluruh sku list. Jika ditemukan sku yang ada pada detailSku (sudah di pick up) maka akan dikurangi jumlahnya sebanyak yang di pickup.
+     * @param skuList
+     * @param detailList
+     * @return List<Sku>
+     */
     private List<Sku> updateSkuList(List<Sku> skuList, List<Detail> detailList) {
         for(Sku sku: skuList){
             for(Detail detail : detailList){
@@ -242,35 +309,43 @@ public class DatabaseQueryResultProcessor implements ItemProcessor<DatabaseQuery
         return skuList;
     }
 
-    private List<Detail> getDetailList(List<Sku> skuList, Fleet kendaraan) {
+    /**
+     * Digunakan untuk mendapatkan detail sku yang akan diangkut oleh sebuah pengangkutan.
+     * Cara : Dilakukan pengaksesan terhadap sku pada skuList yang masih belum mendapatkan pengangkutan (quantity > 0 ).
+     *          Kemudian dilakukan pengaksesan terhadap setiap kendaraan available pada sku tersebut. Jika ditemukan kendaraan dengan cbm >= cbm kendaraan parameter input,
+     *          maka akan dilakukan pengecekan apakah space cbm pada kendaraan tersebut( var cbm ) masih bisa menampung sebuah sku. Jika bisa maka sebuah sku akan dimasukkan dalam pengangkutan tersebut.
+     * @param skuList
+     * @param fleet
+     * @return
+     */
+    private List<Detail> getDetailList(List<Sku> skuList, Fleet fleet) {
         List<Detail> detailList = new ArrayList<>();
         Integer counter = 0;
-        Integer jumlahSku = 0;
+        Integer skuAmount = 0;
         Float cbm = 0.0f;
         boolean statusBreak = false;
         for(Sku sku : skuList){
             if(sku.getQuantity() >0){
-                jumlahSku = 0;
+                skuAmount = 0;
                 Detail detail = new Detail();
                 detail.setSku(new Sku(
                         sku.getId(),
                         sku.getName(),
-                        jumlahSku,
+                        skuAmount,
                         sku.getCbm(),
                         sku.getVehicleList(),
                         sku.getMerchantId(),
                         sku.getPickupPointId()));
                 counter = sku.getQuantity();
-                for(Vehicle kendaraan2 : sku.getVehicleList()){
-                    if(kendaraan2.getCbmCapacity()>=kendaraan.getCbmCapacity()){
-                        while(cbm<kendaraan.getCbmCapacity() && counter>0){
-//                            System.out.println("CBM GAN-----------------------------------------"+this.formatNormalFloat(cbm+sku.getCbm())+ " Banding: "+(cbm+sku.getCbm())+" cbm: "+kendaraan.getCbm());
-                            if(this.formatNormalFloat(cbm+sku.getCbm()) > kendaraan.getCbmCapacity()){
+                for(Vehicle vehicle : sku.getVehicleList()){
+                    if(vehicle.getCbmCapacity()>=fleet.getCbmCapacity()){
+                        while(cbm<fleet.getCbmCapacity() && counter>0){
+                            if(this.formatNormalFloat(cbm+sku.getCbm()) > fleet.getCbmCapacity()){
                                 statusBreak = true;
                                 break;
                             }else{
                                 cbm = this.formatNormalFloat(cbm+sku.getCbm());
-                                jumlahSku+=1;
+                                skuAmount+=1;
                             }
                             counter--;
                         }
@@ -280,9 +355,9 @@ public class DatabaseQueryResultProcessor implements ItemProcessor<DatabaseQuery
                         break;
                     }
                 }
-                detail.setCbmPickup(this.formatNormalFloat(jumlahSku * sku.getCbm()));
-                detail.setPickupAmount(jumlahSku);
-                if(jumlahSku >0){
+                detail.setCbmPickup(this.formatNormalFloat(skuAmount * sku.getCbm()));
+                detail.setPickupAmount(skuAmount);
+                if(skuAmount >0){
                     detailList.add(detail);
                 }
                 if(statusBreak == true){
@@ -293,44 +368,57 @@ public class DatabaseQueryResultProcessor implements ItemProcessor<DatabaseQuery
         return detailList;
     }
 
-    public Fleet getNextKendaraan(List<Sku> skuList, Fleet maxKendaraan){
-        List<Fleet> kendaraanList = fleetService.findAllByOrderByCbmCapacityDesc();
-        Fleet tempKendaraan = new Fleet();
+    /**
+     * Digunakan untuk mendapatkan jenis kendaraan untuk melanjutkan proses rekomendasi
+     * Cara : Melakukan pengaksesan terhadap masing-masing kendaraan dalam basis data,
+     *          jika ditemukan kendaraan dengan cbm <= cbm maxFleet maka akan dilakukan pengaksesan terhadap setiap sku.
+     *          Untuk masing-masing kendaraan available pada setiap sku, jika cbm kendaraan available >= kendaraan (dari db)
+     *          maka cbm total dari sku tersebut (cbm * quantity) akan ditampung.
+     *          Dengan demikian dapat diketahui berapa total cbm yang dapat diangkut oleh jenis kendaraan tertentu(parameter).
+     *          Jika cbm tersebut melebihi cbm minimal dari kendaraan, maka pengangkutan selanjutnya menggunakan kendaraan tersebut.
+     *          Jika tidak maka proses berlanjut ke kendaraan dengan cbm dibawahnya.
+     *
+     * @param skuList
+     * @param maxFleet
+     * @return
+     */
+    public Fleet getNextFleet(List<Sku> skuList, Fleet maxFleet){
+        List<Fleet> fleetList = fleetService.findAllByOrderByCbmCapacityDesc();
+        Fleet fleetTemp = new Fleet();
         Double tempCbm;
 
-        for(Fleet kendaraan : kendaraanList){
-            if(kendaraan.getCbmCapacity() <= maxKendaraan.getCbmCapacity()){
+        for(Fleet fleet : fleetList){
+            if(fleet.getCbmCapacity() <= maxFleet.getCbmCapacity()){
                 tempCbm = 0.0;
                 for(Sku sku : skuList){
-                    for(Vehicle kendaraan2 : sku.getVehicleList()){
-                        if(kendaraan2.getCbmCapacity()>=kendaraan.getCbmCapacity()){
+                    for(Vehicle vehicle : sku.getVehicleList()){
+                        if(vehicle.getCbmCapacity()>=fleet.getCbmCapacity()){
                             tempCbm += formatNormalFloat(sku.getCbm()*sku.getQuantity());
                             break;
                         }
                     }
                 }
-                if(tempCbm>=kendaraan.getMinCbm()){
-                    tempKendaraan = kendaraan;
-                    return tempKendaraan;
+                if(tempCbm>=fleet.getMinCbm()){
+                    fleetTemp = fleet;
+                    return fleetTemp;
                 }
             }
         }
         return null;
     }
 
-    private Pickup initPengangkutan(Pickup pengangkutan) {
-        pengangkutan.setPickupTotalCbm(0.0f);
-        pengangkutan.setFleetIdNumber("0");
-        pengangkutan.setPickupTotalAmount(0);
-        return pengangkutan;
+    /**
+     * Digunakan untuk menginisialisasi nilai awal dari sebuah pengangkutan
+     * @param pickup
+     * @return
+     */
+    private Pickup initPickup(Pickup pickup) {
+        pickup.setPickupTotalCbm(0.0f);
+        pickup.setFleetIdNumber("0");
+        pickup.setPickupTotalAmount(0);
+        return pickup;
     }
 
-    private boolean cekHabis(List<Sku> skuList) {
-        for(Sku sku : skuList){
-            if(sku.getQuantity()>0)
-                return false;
-        }return true;
-    }
 
     private boolean allItemsHaveBeenRetrieved(){
         return resultList.size() == rowCount;
@@ -373,6 +461,13 @@ public class DatabaseQueryResultProcessor implements ItemProcessor<DatabaseQuery
         return skuList;
     }
 
+    /**
+     * Digunakan untuk menghasilkan penormalan pada hasil operasi pada tipe data float.
+     *      Berdasarkan pengamatan dan percobaan, operasi penjumlahan dengan tipe data Float menyebabkan galat, meskipun dengan nilai yang kecil, namun sangat berpengaruh pada proses rekomendasi ini,
+     *      yang biasanya menyebabkan jumlah cbm yang tidak sesuai setelah melakukan banyak proses operasi aritmatika
+     * @param input
+     * @return
+     */
     public float formatNormalFloat(float input){
         return new BigDecimal(input).setScale(3,BigDecimal.ROUND_HALF_UP).floatValue();
     }
