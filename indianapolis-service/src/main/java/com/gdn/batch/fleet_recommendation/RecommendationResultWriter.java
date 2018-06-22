@@ -20,7 +20,6 @@ public class RecommendationResultWriter implements ItemWriter<List<Recommendatio
 
     @Override
     public void write(List<? extends List<Recommendation>> items) throws Exception {
-        LOGGER.info("Writing to db...");
         RecommendationResult recommendationResult;
         RecommendationFleet recommendationFleet;
         RecommendationDetail recommendationDetail;
