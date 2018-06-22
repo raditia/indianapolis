@@ -72,11 +72,9 @@ public class FleetRecommendationBatchConfig {
         JdbcCursorItemReader<DatabaseQueryResult> reader = new JdbcCursorItemReader<>();
         reader.setDataSource(dataSource);
         reader.setSql(query);
-        warehouseId = warehouseId.replace("\'", "");
-        String finalWarehouseId = warehouseId;
         reader.setPreparedStatementSetter(new PreparedStatementSetter() {
             public void setValues(PreparedStatement ps) throws SQLException {
-                ps.setString(1, finalWarehouseId);
+                ps.setString(1, warehouseId);
                 ps.setTimestamp(2, new Timestamp(DateHelper.tomorrow().getTime()));
                 ps.setString(3, SchedulingStatus.PENDING);
             }
@@ -89,9 +87,7 @@ public class FleetRecommendationBatchConfig {
     @StepScope
     public ItemProcessor<DatabaseQueryResult, List<Recommendation>> dbQueryResultProcessor(@Value("#{jobParameters['warehouse']}") String warehouseId,
                                                                                            @Value("#{jobParameters['rowCount']}") String rowCount){
-        warehouseId = warehouseId.replace("\'", "");
-        String finalWarehouseId = warehouseId;
-        return new DatabaseQueryResultProcessor(finalWarehouseId, rowCount);
+        return new DatabaseQueryResultProcessor(warehouseId, rowCount);
     }
 
     @Bean
