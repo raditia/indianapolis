@@ -68,7 +68,7 @@ public class FleetRecommendationBatchConfig {
     @Bean(destroyMethod = "")
     @StepScope
     public ItemStreamReader<DatabaseQueryResult> dbReader(@Value("#{jobParameters['warehouse']}") String warehouseId){
-        LOGGER.info("Reading...");
+        LOGGER.info("Reading from db...");
         JdbcCursorItemReader<DatabaseQueryResult> reader = new JdbcCursorItemReader<>();
         reader.setDataSource(dataSource);
         reader.setSql(query);
@@ -87,10 +87,11 @@ public class FleetRecommendationBatchConfig {
 
     @Bean(destroyMethod = "")
     @StepScope
-    public ItemProcessor<DatabaseQueryResult, List<Recommendation>> dbQueryResultProcessor(@Value("#{jobParameters['warehouse']}") String warehouseId){
+    public ItemProcessor<DatabaseQueryResult, List<Recommendation>> dbQueryResultProcessor(@Value("#{jobParameters['warehouse']}") String warehouseId,
+                                                                                           @Value("#{jobParameters['rowCount']}") String rowCount){
         warehouseId = warehouseId.replace("\'", "");
         String finalWarehouseId = warehouseId;
-        return new DatabaseQueryResultProcessor(finalWarehouseId);
+        return new DatabaseQueryResultProcessor(finalWarehouseId, rowCount);
     }
 
     @Bean

@@ -26,21 +26,22 @@ public class DatabaseQueryResultProcessor implements ItemProcessor<DatabaseQuery
     @Autowired
     private CffService cffService;
 
-    private int rowCount = 0;
+    private int rowCount;
     private String warehouseId;
 
-    public DatabaseQueryResultProcessor(String warehouseId) {
+    public DatabaseQueryResultProcessor(String warehouseId, String rowCount) {
         this.warehouseId=warehouseId;
+        this.rowCount=Integer.parseInt(rowCount);
+        LOGGER.info("Row count : " + rowCount);
     }
 
     @Override
     public List<Recommendation> process(DatabaseQueryResult databaseQueryResult) throws Exception {
         rowCount = recommendationService.getResultRowCount(warehouseId, DateHelper.tomorrow());
-        LOGGER.info("Row count : " + rowCount);
         resultList.add(databaseQueryResult);
         List<Recommendation> rekomendasiList = new ArrayList<>();
         if(allItemsHaveBeenRetrieved()){
-            LOGGER.info("Processing...");
+            LOGGER.info("Processing data in spring batch...");
             this.skuList=migrateIntoSkuList(resultList);
             rekomendasiList = getThreeRecommendation();
             System.out.println(this.getMaxFleet(this.skuList).getName());

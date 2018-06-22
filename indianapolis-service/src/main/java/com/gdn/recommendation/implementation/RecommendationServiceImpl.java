@@ -65,11 +65,13 @@ public class RecommendationServiceImpl implements RecommendationService {
         List<Warehouse> warehouseListOfCffPickedUpdTomorrow = cffRepository.findDistinctWarehouseAndPickupDateIs(DateHelper.tomorrow());
         for (Warehouse warehouse:warehouseListOfCffPickedUpdTomorrow
              ) {
+            int rowCount = recommendationRepository.getRowCount(warehouse, DateHelper.tomorrow());
             LOGGER.info("Warehouse ID listed on cff to be pickup tomorrow : " + warehouse.getId());
             try {
                 JobParameters fleetRecommendationJobParameters = new JobParametersBuilder()
                         .addLong(UUID.randomUUID().toString(),System.currentTimeMillis())
                         .addString("warehouse", warehouse.getId())
+                        .addString("rowCount", String.valueOf(rowCount))
                         .toJobParameters();
                 JobExecution jobExecution = jobLauncher.run(fleetRecommendationJob, fleetRecommendationJobParameters);
                 batchExecutionSuccessStatus = !jobExecution.getStatus().isUnsuccessful();
