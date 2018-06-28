@@ -1,5 +1,6 @@
 package com.gdn.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -19,8 +20,9 @@ public class PickupDetail {
     @Column(name = "id")
     private String id;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "pickup_id")
+    @JsonBackReference
     private Pickup pickup;
 
     @ManyToOne

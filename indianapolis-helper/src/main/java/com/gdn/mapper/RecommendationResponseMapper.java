@@ -1,4 +1,4 @@
-package mapper;
+package com.gdn.mapper;
 
 import com.gdn.entity.RecommendationResult;
 import com.gdn.response.FleetRecommendationResponse;

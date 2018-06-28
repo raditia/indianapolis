@@ -1,6 +1,7 @@
 package com.gdn.batch.fleet_recommendation;
 
 import com.gdn.entity.*;
+import com.gdn.helper.DateHelper;
 import com.gdn.recommendation.*;
 import com.gdn.recommendation.Pickup;
 import org.slf4j.Logger;
@@ -21,51 +22,10 @@ public class RecommendationResultWriter implements ItemWriter<List<Recommendatio
     public void write(List<? extends List<Recommendation>> items) throws Exception {
         RecommendationResult recommendationResult;
         RecommendationFleet recommendationFleet;
-        List<RecommendationFleet> recommendationFleetList = new ArrayList<>();
         RecommendationDetail recommendationDetail;
-        List<RecommendationDetail> recommendationDetailList = new ArrayList<>();
         for (List<Recommendation> recommendationList:items
              ) {
             for (Recommendation recommendation:recommendationList){
-//                for (Pickup pickup:recommendation.getPickupList()
-//                     ) {
-//                    for (Detail detail:pickup.getDetailList()
-//                         ) {
-//                        recommendationDetail = RecommendationDetail.builder()
-//                                .id("recommendation_detail_" + UUID.randomUUID().toString())
-//                                .sku(CffGood.builder()
-//                                        .id(detail.getSku().getId())
-//                                        .build())
-//                                .pickupPoint(PickupPoint.builder()
-//                                        .id(detail.getSku().getPickupPointId())
-//                                        .build())
-//                                .cbmPickupAmount(detail.getCbmPickup())
-//                                .skuPickupQty(detail.getPickupAmount())
-//                                .merchant(Merchant.builder()
-//                                        .id(detail.getSku().getMerchantId())
-//                                        .build())
-//                                .build();
-//                        recommendationDetailList.add(recommendationDetail);
-//                    }
-//                    recommendationFleet = RecommendationFleet.builder()
-//                            .id("recommendation_fleet_" + UUID.randomUUID().toString())
-//                            .fleet(pickup.getFleet())
-//                            .fleetCbmPickupAmount(pickup.getPickupTotalCbm())
-//                            .fleetSkuPickupQty(pickup.getPickupTotalAmount())
-//                            .recommendationDetailList(recommendationDetailList)
-//                            .build();
-//                    recommendationFleetList.add(recommendationFleet);
-//                }
-//                recommendationService.saveRecommendationResult(RecommendationResult.builder()
-//                        .id("recommendation_result_" + UUID.randomUUID().toString())
-//                        .warehouse(Warehouse.builder()
-//                                .id(recommendation.getWarehouseId())
-//                                .build())
-//                        .pickupDate(tomorrow())
-//                        .totalCbm(recommendation.getCbmTotal())
-//                        .totalSku(recommendation.getSkuAmount())
-//                        .recommendationFleetList(recommendationFleetList)
-//                        .build());
                 recommendationResult = buildRecommendationResult(recommendation);
                 recommendationService.saveRecommendationResult(recommendationResult);
                 for (Pickup pickup:recommendation.getPickupList()){
@@ -83,7 +43,7 @@ public class RecommendationResultWriter implements ItemWriter<List<Recommendatio
     private RecommendationResult buildRecommendationResult(Recommendation recommendation){
         return RecommendationResult.builder()
                 .id(recommendation.getId())
-                .pickupDate(tomorrow())
+                .pickupDate(DateHelper.tomorrow())
                 .totalSku(recommendation.getSkuAmount())
                 .totalCbm(recommendation.getCbmTotal())
                 .warehouse(Warehouse.builder()
@@ -120,12 +80,6 @@ public class RecommendationResultWriter implements ItemWriter<List<Recommendatio
                         .id(detail.getSku().getPickupPointId())
                         .build())
                 .build();
-    }
-
-    private Date tomorrow(){
-        Calendar calendar = Calendar.getInstance();
-        calendar.add(Calendar.DAY_OF_YEAR, 1);
-        return calendar.getTime();
     }
 
 }

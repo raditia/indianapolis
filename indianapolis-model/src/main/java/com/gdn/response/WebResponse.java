@@ -29,6 +29,7 @@ public class WebResponse<Response> {
                 .code(HttpStatus.NOT_FOUND.value())
                 .status(HttpStatus.NOT_FOUND.getReasonPhrase())
                 .message(HttpStatus.NOT_FOUND.getReasonPhrase())
+                .data(null)
                 .build();
     }
 

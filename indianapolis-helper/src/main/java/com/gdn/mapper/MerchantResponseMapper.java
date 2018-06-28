@@ -1,4 +1,4 @@
-package mapper;
+package com.gdn.mapper;
 
 import com.gdn.entity.Merchant;
 import com.gdn.response.MerchantResponse;

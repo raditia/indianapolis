@@ -1,16 +1,15 @@
 package com.gdn.controller.recommendation;
 
 import com.gdn.recommendation.RecommendationService;
-import com.gdn.response.FleetRecommendationResponse;
-import com.gdn.response.RecommendationResponse;
-import com.gdn.response.SchedulingResponse;
-import com.gdn.response.WebResponse;
+import com.gdn.request.PickupChoiceRequest;
+import com.gdn.response.*;
+import com.itextpdf.text.DocumentException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Date;
+import javax.mail.MessagingException;
+import java.io.IOException;
 import java.util.List;
 
 @RestController
@@ -34,18 +33,17 @@ public class RecommendationController {
             method = RequestMethod.GET,
             produces = MediaType.APPLICATION_JSON_VALUE
     )
-    public WebResponse<RecommendationResponse> getAllRecommendationFleetResult(){
-        return recommendationService.findAllRecommendationFleetResult();
+    public WebResponse<RecommendationResponse> getAllRecommendationFleetResult(@RequestParam("warehouseId") String warehouseId){
+        return recommendationService.findAllRecommendationFleetResult(warehouseId);
     }
 
     @RequestMapping(
             value = "/pickup",
-            method = RequestMethod.GET,
+            method = RequestMethod.POST,
             produces = MediaType.APPLICATION_JSON_VALUE
     )
-    public void chooseRecommendationAndInsertToDatabase(@RequestParam("id") String recommendationResultId,
-                                                        @RequestParam("pickupDate") @DateTimeFormat(pattern = "yyyy-MM-dd") Date pickupDate){
-        recommendationService.choosePickupAndSendEmail(recommendationResultId, pickupDate);
+    public WebResponse<List<PickupChoiceResponse>> chooseRecommendationAndInsertToDatabase(@RequestBody PickupChoiceRequest pickupChoiceRequest) throws MessagingException, IOException, DocumentException {
+        return recommendationService.choosePickupAndSendEmail(pickupChoiceRequest);
     }
 
 }

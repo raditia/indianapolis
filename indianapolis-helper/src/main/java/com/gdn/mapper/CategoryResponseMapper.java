@@ -1,4 +1,4 @@
-package mapper;
+package com.gdn.mapper;
 
 import com.gdn.entity.Category;
 import com.gdn.response.CategoryResponse;

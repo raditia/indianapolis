@@ -1,12 +1,15 @@
 package com.gdn.entity;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 @Entity
 @Table(name = "pickup")
@@ -29,5 +32,15 @@ public class Pickup {
 
     @Column(name = "fleet_plate_number")
     private String plateNumber;
+
+    @ManyToOne
+    @JoinColumn(name = "warehouse_id")
+    private Warehouse warehouse;
+
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinColumn(name = "pickup_id")
+    @Builder.Default
+    @JsonManagedReference
+    private List<PickupDetail> pickupDetailList = new ArrayList<>();
 
 }

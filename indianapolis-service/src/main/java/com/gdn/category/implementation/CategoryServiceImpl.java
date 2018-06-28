@@ -4,7 +4,7 @@ import com.gdn.category.CategoryService;
 import com.gdn.repository.CategoryRepository;
 import com.gdn.response.CategoryResponse;
 import com.gdn.response.WebResponse;
-import mapper.CategoryResponseMapper;
+import com.gdn.mapper.CategoryResponseMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
