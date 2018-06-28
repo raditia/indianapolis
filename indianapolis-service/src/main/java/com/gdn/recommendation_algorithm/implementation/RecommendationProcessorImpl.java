@@ -6,7 +6,7 @@ import com.gdn.recommendation.Pickup;
 import com.gdn.recommendation.Recommendation;
 import com.gdn.recommendation.Sku;
 import com.gdn.recommendation_algorithm.FleetProcessorService;
-import com.gdn.recommendation_algorithm.Helper;
+import com.gdn.helper.RecommendationAlgorithmHelper;
 import com.gdn.recommendation_algorithm.PickupProcessorService;
 import com.gdn.recommendation_algorithm.RecommendationProcessorService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,7 +24,8 @@ public class RecommendationProcessorImpl implements RecommendationProcessorServi
     @Autowired
     private PickupProcessorService pickupProcessorService;
 
-    private Helper helper = new Helper();
+    @Autowired
+    private RecommendationAlgorithmHelper recommendationAlgorithmHelper;
 
     /**
      * Digunakan untuk mendapatkan tiga buah rekomendasi
@@ -36,7 +37,7 @@ public class RecommendationProcessorImpl implements RecommendationProcessorServi
     @Override
     public List<Recommendation> getThreeRecommendation(List<DatabaseQueryResult> resultList, String warehouseId){
         List<Recommendation> recommendationList = new ArrayList<>();
-        List<Sku> skuList = helper.migrateIntoSkuList(resultList);
+        List<Sku> skuList = recommendationAlgorithmHelper.migrateIntoSkuList(resultList);
         Integer numberOfRecommendation = 3;
 
         List<Fleet> fleetList = fleetProcessorService.getMaxThree(skuList);
@@ -44,7 +45,7 @@ public class RecommendationProcessorImpl implements RecommendationProcessorServi
             if(numberOfRecommendation <= 0){
                 break;
             }
-            skuList = helper.migrateIntoSkuList(resultList);
+            skuList = recommendationAlgorithmHelper.migrateIntoSkuList(resultList);
 
             Recommendation recommendation;
             recommendation = getRecommendation(skuList, fleet);
@@ -77,10 +78,10 @@ public class RecommendationProcessorImpl implements RecommendationProcessorServi
         Integer numberOfSku = 0;
         Fleet maxFleetTemp = maxFleet;
 
-        while(!helper.isEmpty(skuList)){
+        while(!recommendationAlgorithmHelper.isEmpty(skuList)){
             Pickup pickup = pickupProcessorService.getPickup(skuList, maxFleet);
 
-            cbmTotal = helper.formatNormalFloat(cbmTotal+pickup.getPickupTotalCbm());
+            cbmTotal = recommendationAlgorithmHelper.formatNormalFloat(cbmTotal+pickup.getPickupTotalCbm());
             numberOfSku += pickup.getPickupTotalAmount();
 
             if(pickup.getPickupTotalCbm() > 0) {

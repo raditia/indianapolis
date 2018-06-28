@@ -1,14 +1,16 @@
-package com.gdn.recommendation_algorithm;
+package com.gdn.helper;
 
 import com.gdn.recommendation.DatabaseQueryResult;
 import com.gdn.recommendation.Sku;
 import com.gdn.recommendation.Vehicle;
+import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Helper {
+@Service
+public class RecommendationAlgorithmHelper {
 
     public List<Sku> migrateIntoSkuList(List<DatabaseQueryResult> resultList){
         List<Sku> skuList = new ArrayList<>();

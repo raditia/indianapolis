@@ -6,7 +6,7 @@ import com.gdn.recommendation.Pickup;
 import com.gdn.recommendation.Sku;
 import com.gdn.recommendation.Vehicle;
 import com.gdn.recommendation_algorithm.FleetProcessorService;
-import com.gdn.recommendation_algorithm.Helper;
+import com.gdn.helper.RecommendationAlgorithmHelper;
 import com.gdn.recommendation_algorithm.PickupProcessorService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -20,7 +20,8 @@ public class PickupProcessorImpl implements PickupProcessorService {
     @Autowired
     private FleetProcessorService fleetProcessorService;
 
-    private Helper helper = new Helper();
+    @Autowired
+    private RecommendationAlgorithmHelper recommendationAlgorithmHelper;
 
     /**
      * Digunakan untuk mendapatkan sebuah pengangkutan berdasarkan sku yang ada dan maxFleet
@@ -96,11 +97,11 @@ public class PickupProcessorImpl implements PickupProcessorService {
                 for(Vehicle vehicle : sku.getVehicleList()){
                     if(vehicle.getCbmCapacity()>=fleet.getCbmCapacity()){
                         while(cbm<fleet.getCbmCapacity() && counter>0){
-                            if(helper.formatNormalFloat(cbm+sku.getCbm()) > fleet.getCbmCapacity()){
+                            if(recommendationAlgorithmHelper.formatNormalFloat(cbm+sku.getCbm()) > fleet.getCbmCapacity()){
                                 statusBreak = true;
                                 break;
                             }else{
-                                cbm = helper.formatNormalFloat(cbm+sku.getCbm());
+                                cbm = recommendationAlgorithmHelper.formatNormalFloat(cbm+sku.getCbm());
                                 skuAmount+=1;
                             }
                             counter--;
@@ -111,7 +112,7 @@ public class PickupProcessorImpl implements PickupProcessorService {
                         break;
                     }
                 }
-                detail.setCbmPickup(helper.formatNormalFloat(skuAmount * sku.getCbm()));
+                detail.setCbmPickup(recommendationAlgorithmHelper.formatNormalFloat(skuAmount * sku.getCbm()));
                 detail.setPickupAmount(skuAmount);
                 if(skuAmount >0){
                     detailList.add(detail);
@@ -134,7 +135,7 @@ public class PickupProcessorImpl implements PickupProcessorService {
         Float total = 0.0f;
 
         for(Detail detail : detailList){
-            total = helper.formatNormalFloat(total+detail.getCbmPickup());
+            total = recommendationAlgorithmHelper.formatNormalFloat(total+detail.getCbmPickup());
         }
         return total;
     }

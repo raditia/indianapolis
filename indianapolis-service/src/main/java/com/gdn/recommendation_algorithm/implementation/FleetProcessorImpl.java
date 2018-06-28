@@ -5,7 +5,7 @@ import com.gdn.fleet.FleetService;
 import com.gdn.recommendation.Sku;
 import com.gdn.recommendation.Vehicle;
 import com.gdn.recommendation_algorithm.FleetProcessorService;
-import com.gdn.recommendation_algorithm.Helper;
+import com.gdn.helper.RecommendationAlgorithmHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -19,7 +19,8 @@ public class FleetProcessorImpl implements FleetProcessorService {
     @Autowired
     private FleetService fleetService;
 
-    private Helper helper = new Helper();
+    @Autowired
+    private RecommendationAlgorithmHelper recommendationAlgorithmHelper;
 
     /**
      * Untuk mendapatkan 3 buah kendaraan maksimal yang akan digunakan
@@ -78,7 +79,7 @@ public class FleetProcessorImpl implements FleetProcessorService {
                 for(Sku sku : skuList){
                     for(Vehicle vehicle : sku.getVehicleList()){
                         if(vehicle.getCbmCapacity()>=fleet.getCbmCapacity()){
-                            tempCbm += helper.formatNormalFloat(sku.getCbm()*sku.getQuantity());
+                            tempCbm += recommendationAlgorithmHelper.formatNormalFloat(sku.getCbm()*sku.getQuantity());
                             break;
                         }
                     }
@@ -150,7 +151,7 @@ public class FleetProcessorImpl implements FleetProcessorService {
         for(Sku sku : skuList){
             for(Vehicle vehicle : sku.getVehicleList()){
                 if(fleet.getName().equals(vehicle.getName())){
-                    cbm += helper.formatNormalFloat(sku.getCbm() * sku.getQuantity());
+                    cbm += recommendationAlgorithmHelper.formatNormalFloat(sku.getCbm() * sku.getQuantity());
                 }
             }
         }
