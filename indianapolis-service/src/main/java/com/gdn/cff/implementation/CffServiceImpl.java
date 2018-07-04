@@ -4,7 +4,6 @@ import com.gdn.SchedulingStatus;
 import com.gdn.entity.*;
 import com.gdn.cff.CffService;
 import com.gdn.merchant.MerchantService;
-import com.gdn.pickup_point.PickupPointService;
 import com.gdn.repository.CffRepository;
 import com.gdn.response.CffResponse;
 import com.gdn.response.WebResponse;
@@ -23,8 +22,6 @@ public class CffServiceImpl implements CffService {
     private CffRepository cffRepository;
     @Autowired
     private MerchantService merchantService;
-    @Autowired
-    private PickupPointService pickupPointService;
 
     @Override
     @Transactional(readOnly = true)
@@ -34,7 +31,6 @@ public class CffServiceImpl implements CffService {
 
     @Override
     public WebResponse<CffResponse> saveCff(Cff cff) {
-//        cff.setId("cff_" + UUID.randomUUID().toString());
         cff.setUploadedDate(new Date());
         Merchant merchant = merchantService.getOne(cff.getMerchant().getEmailAddress());
         if(merchant!=null)
@@ -46,25 +42,10 @@ public class CffServiceImpl implements CffService {
              ) {
             cffGood.setId("sku_" + UUID.randomUUID().toString());
         }
-//        PickupPoint pickupPointInDb = pickupPointService
-//                .findByPickupAddressOrLatitudeOrLongitude(
-//                        cff.getPickupPoint().getPickupAddress(),
-//                        cff.getPickupPoint().getLatitude(),
-//                        cff.getPickupPoint().getLongitude());
-//        if(pickupPointInDb!=null) {
-//            cff.getPickupPoint().setId(pickupPointInDb.getId());
-//            System.out.println("Pickup point in db not null");
-//            System.out.println("pickup point in db id : " + pickupPointInDb.getId());
-//            System.out.println("pickup point new id : " + cff.getPickupPoint().getId());
-//        }
-//        else {
-            cff.getPickupPoint().setId("pickup_point_" + UUID.randomUUID().toString());
-//            System.out.println("Pickup point in db null");
-//        }
+        cff.getPickupPoint().setId("pickup_point_" + UUID.randomUUID().toString());
         for (AllowedVehicle allowedVehicle:cff.getPickupPoint().getAllowedVehicleList()
                 ) {
             allowedVehicle.setId("allowed_vehicle_" + UUID.randomUUID().toString());
-//            System.out.println(allowedVehicle.getPickupPoint().getId());
         }
         return WebResponse.OK(CffResponseMapper.toCffResponse(cffRepository.save(cff)));
     }
