@@ -34,7 +34,6 @@ public class DatabaseQueryResultProcessor implements ItemProcessor<DatabaseQuery
 
     @Override
     public List<Recommendation> process(DatabaseQueryResult databaseQueryResult) throws Exception {
-        rowCount = recommendationService.getResultRowCount(warehouseId, DateHelper.tomorrow());
         resultList.add(databaseQueryResult);
         List<Recommendation> recommendationList = new ArrayList<>();
         if(allItemsHaveBeenRetrieved()){

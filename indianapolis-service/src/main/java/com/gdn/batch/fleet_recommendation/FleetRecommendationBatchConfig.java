@@ -9,6 +9,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;
+import org.springframework.batch.core.configuration.annotation.JobScope;
 import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
 import org.springframework.batch.core.configuration.annotation.StepScope;
 import org.springframework.batch.core.launch.support.RunIdIncrementer;
@@ -41,7 +42,7 @@ public class FleetRecommendationBatchConfig {
             "cff_good.cbm, \n" +
             "cff_good.quantity, \n" +
             "allowed_vehicle.vehicle_name, \n" +
-            "fleet.cbm_capacity,\n" +
+            "fleet.cbm_capacity, \n" +
             "cff.warehouse_id AS warehouse_id,\n" +
             "cff.merchant_id AS merchant_id,\n" +
             "pickup_point.id AS pickup_point_id \n" +
@@ -54,11 +55,14 @@ public class FleetRecommendationBatchConfig {
             "merchant\n" +
             "WHERE \n" +
             "cff_good.cff_id=cff.id AND \n" +
-            "cff.pickup_point_id=pickup_point.id AND \n" +
             "allowed_vehicle.pickup_point_id=pickup_point.id AND \n" +
+            "cff.pickup_point_id=pickup_point.id AND \n" +
             "allowed_vehicle.vehicle_name=fleet.name AND\n" +
-            "cff.warehouse_id=? AND cff.pickup_date=? AND cff.status=?\n" +
-            "ORDER BY cff_good.sku ASC, fleet.cbm_capacity DESC";
+            "cff.warehouse_id=? AND \n" +
+            "cff.pickup_date=? AND \n" +
+            "cff.merchant_id=merchant.id AND \n" +
+            "cff.status=?\n" +
+            "ORDER BY cff_good.sku ASC, fleet.cbm_capacity DESC;";
 
     @Qualifier("dataSource")
     @Autowired
@@ -67,7 +71,7 @@ public class FleetRecommendationBatchConfig {
     private DatabaseQueryResultRowMapper databaseQueryResultRowMapper;
 
     @Bean(destroyMethod = "")
-    @StepScope
+    @JobScope
     public ItemStreamReader<DatabaseQueryResult> dbReader(@Value("#{jobParameters['warehouse']}") String warehouseId){
         LOGGER.info("Reading from db...");
         JdbcCursorItemReader<DatabaseQueryResult> reader = new JdbcCursorItemReader<>();
@@ -85,7 +89,7 @@ public class FleetRecommendationBatchConfig {
     }
 
     @Bean(destroyMethod = "")
-    @StepScope
+    @JobScope
     public ItemProcessor<DatabaseQueryResult, List<Recommendation>> dbQueryResultProcessor(@Value("#{jobParameters['warehouse']}") String warehouseId,
                                                                                            @Value("#{jobParameters['rowCount']}") String rowCount){
         return new DatabaseQueryResultProcessor(warehouseId, rowCount);
