@@ -30,6 +30,16 @@ public class CffServiceImpl implements CffService {
     }
 
     @Override
+    public WebResponse<CffResponse> getOneCff(String cffId) {
+        Cff cff = cffRepository.findById(cffId).orElse(null);
+        if(cff == null){
+            return WebResponse.NOT_FOUND();
+        } else{
+            return WebResponse.OK(CffResponseMapper.toCffResponse(cff));
+        }
+    }
+
+    @Override
     public WebResponse<CffResponse> saveCff(Cff cff) {
         cff.setUploadedDate(new Date());
         Merchant merchant = merchantService.getOne(cff.getMerchant().getEmailAddress());

@@ -1,4 +1,4 @@
-package com.gdn.controller.upload_cff;
+package com.gdn.controller.cff;
 
 import com.gdn.cff.CffService;
 import com.gdn.entity.Cff;
@@ -6,16 +6,13 @@ import com.gdn.response.CffResponse;
 import com.gdn.response.WebResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
 @RequestMapping(value = "/api")
-public class UploadCffController {
+public class CffController {
 
     @Autowired
     private CffService cffService;
@@ -37,6 +34,15 @@ public class UploadCffController {
     )
     public WebResponse<List<CffResponse>> getAllCff(){
         return cffService.getAllCff();
+    }
+
+    @RequestMapping(
+            value = "/cff/{id}",
+            method = RequestMethod.GET,
+            produces = MediaType.APPLICATION_JSON_VALUE
+    )
+    public WebResponse<CffResponse> getOneCff(@PathVariable(name = "id") String cffId){
+        return cffService.getOneCff(cffId);
     }
 
 }
