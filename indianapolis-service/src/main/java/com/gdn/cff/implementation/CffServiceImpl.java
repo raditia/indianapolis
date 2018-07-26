@@ -4,6 +4,7 @@ import com.gdn.SchedulingStatus;
 import com.gdn.entity.*;
 import com.gdn.cff.CffService;
 import com.gdn.merchant.MerchantService;
+import com.gdn.pickup_point.PickupPointService;
 import com.gdn.repository.CffRepository;
 import com.gdn.response.CffResponse;
 import com.gdn.response.WebResponse;
@@ -22,6 +23,8 @@ public class CffServiceImpl implements CffService {
     private CffRepository cffRepository;
     @Autowired
     private MerchantService merchantService;
+    @Autowired
+    private PickupPointService pickupPointService;
 
     @Override
     @Transactional(readOnly = true)
@@ -52,23 +55,27 @@ public class CffServiceImpl implements CffService {
              ) {
             cffGood.setId("sku_" + UUID.randomUUID().toString());
         }
-        cff.getPickupPoint().setId("pickup_point_" + UUID.randomUUID().toString());
         for (AllowedVehicle allowedVehicle:cff.getPickupPoint().getAllowedVehicleList()
                 ) {
             allowedVehicle.setId("allowed_vehicle_" + UUID.randomUUID().toString());
         }
+        PickupPoint pickupPoint = pickupPointService.findByPickupAddressOrLatitudeAndLongitude(
+                cff.getPickupPoint().getPickupAddress(),
+                cff.getPickupPoint().getLatitude(),
+                cff.getPickupPoint().getLongitude()
+        );
+        if(pickupPoint!=null)
+            cff.getPickupPoint().setId(pickupPoint.getId());
+        else
+            cff.getPickupPoint().setId("pickup_point_" + UUID.randomUUID().toString());
         return WebResponse.OK(CffResponseMapper.toCffResponse(cffRepository.save(cff)));
     }
 
     @Override
     public Cff updateSchedulingStatus(String id) {
         Cff cff = cffRepository.getOne(id);
-        if(cff!=null){
-            cff.setSchedulingStatus(SchedulingStatus.DONE);
-            return cffRepository.save(cff);
-        } else{
-            return cff;
-        }
+        cff.setSchedulingStatus(SchedulingStatus.DONE);
+        return cffRepository.save(cff);
     }
 
     @Override
