@@ -27,16 +27,6 @@ public class FleetRecommendationJobListener implements JobExecutionListener {
         stopTime = new DateTime();
         LOGGER.info("Job stops at " + stopTime.getHourOfDay() + ":" + startTime.getMinuteOfHour());
         LOGGER.info("Total time taken in millis : " + getTimeInMillis(startTime, stopTime) + " ms");
-
-        if(jobExecution.getStatus() == BatchStatus.COMPLETED) {
-            LOGGER.info("Job Completed!");
-        } else {
-            LOGGER.error("Job not completed!");
-            List<Throwable> exceptionList = jobExecution.getAllFailureExceptions();
-            for (Throwable th : exceptionList){
-                LOGGER.error("Exception error " + th.getLocalizedMessage());
-            }
-        }
     }
 
     private long getTimeInMillis(DateTime start, DateTime stop){

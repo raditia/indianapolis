@@ -14,7 +14,6 @@ import java.util.List;
 
 public interface RecommendationService {
     void executeBatch();
-    int getResultRowCount(String warehouseId, Date pickupDate);
     RecommendationResult saveRecommendationResult(RecommendationResult recommendationResult);
     RecommendationFleet saveRecommendationFleet(RecommendationFleet recommendationFleet);
     RecommendationDetail saveRecommendationDetail(RecommendationDetail recommendationDetail);

@@ -70,7 +70,7 @@ public class FleetRecommendationBatchConfig {
     @Autowired
     private DatabaseQueryResultRowMapper databaseQueryResultRowMapper;
 
-    @Bean(destroyMethod = "")
+    @Bean
     @JobScope
     public ItemStreamReader<DatabaseQueryResult> dbReader(@Value("#{jobParameters['warehouse']}") String warehouseId){
         LOGGER.info("Reading from db...");
@@ -88,7 +88,7 @@ public class FleetRecommendationBatchConfig {
         return reader;
     }
 
-    @Bean(destroyMethod = "")
+    @Bean
     @JobScope
     public ItemProcessor<DatabaseQueryResult, List<Recommendation>> dbQueryResultProcessor(@Value("#{jobParameters['warehouse']}") String warehouseId,
                                                                                            @Value("#{jobParameters['rowCount']}") String rowCount){

@@ -61,7 +61,6 @@ public class RecommendationServiceImpl implements RecommendationService {
     @Scheduled(cron = "${recommendation.cron}")
     @Override
     public void executeBatch() {
-        boolean batchExecutionSuccessStatus;
         List<Warehouse> warehouseListOfCffPickedUpdTomorrow = cffRepository.findDistinctWarehouseAndPickupDateIs(DateHelper.tomorrow());
         for (Warehouse warehouse:warehouseListOfCffPickedUpdTomorrow
              ) {
@@ -73,20 +72,11 @@ public class RecommendationServiceImpl implements RecommendationService {
                         .addString("warehouse", warehouse.getId())
                         .addString("rowCount", String.valueOf(rowCount))
                         .toJobParameters();
-                JobExecution jobExecution = jobLauncher.run(fleetRecommendationJob, fleetRecommendationJobParameters);
-                batchExecutionSuccessStatus = !jobExecution.getStatus().isUnsuccessful();
+                jobLauncher.run(fleetRecommendationJob, fleetRecommendationJobParameters);
             } catch (JobExecutionAlreadyRunningException | JobRestartException | JobInstanceAlreadyCompleteException | JobParametersInvalidException e) {
                 e.printStackTrace();
             }
         }
-    }
-
-    @Override
-    public int getResultRowCount(String warehouseId, Date pickupDate) {
-        return recommendationRepository.getRowCount(Warehouse.builder()
-                .id(warehouseId)
-                .build(),
-                pickupDate);
     }
 
     @Override

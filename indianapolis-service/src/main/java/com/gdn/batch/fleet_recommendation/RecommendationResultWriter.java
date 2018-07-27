@@ -20,19 +20,16 @@ public class RecommendationResultWriter implements ItemWriter<List<Recommendatio
 
     @Override
     public void write(List<? extends List<Recommendation>> items) throws Exception {
-        RecommendationResult recommendationResult;
-        RecommendationFleet recommendationFleet;
-        RecommendationDetail recommendationDetail;
         for (List<Recommendation> recommendationList:items
              ) {
             for (Recommendation recommendation:recommendationList){
-                recommendationResult = buildRecommendationResult(recommendation);
+                RecommendationResult recommendationResult = buildRecommendationResult(recommendation);
                 recommendationService.saveRecommendationResult(recommendationResult);
                 for (Pickup pickup:recommendation.getPickupList()){
-                    recommendationFleet = buildRecommendationFleet(recommendationResult, pickup);
+                    RecommendationFleet recommendationFleet = buildRecommendationFleet(recommendationResult, pickup);
                     recommendationService.saveRecommendationFleet(recommendationFleet);
                     for (Detail detail:pickup.getDetailList()){
-                        recommendationDetail = buildRecommendationDetail(recommendationFleet, detail);
+                        RecommendationDetail recommendationDetail = buildRecommendationDetail(recommendationFleet, detail);
                         recommendationService.saveRecommendationDetail(recommendationDetail);
                     }
                 }

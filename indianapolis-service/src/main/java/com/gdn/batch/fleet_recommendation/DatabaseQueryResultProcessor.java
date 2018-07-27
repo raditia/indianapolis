@@ -17,8 +17,6 @@ public class DatabaseQueryResultProcessor implements ItemProcessor<DatabaseQuery
     private List<DatabaseQueryResult> resultList = new ArrayList<>();
 
     @Autowired
-    private RecommendationService recommendationService;
-    @Autowired
     private CffService cffService;
     @Autowired
     private RecommendationProcessorService recommendationProcessorService;
