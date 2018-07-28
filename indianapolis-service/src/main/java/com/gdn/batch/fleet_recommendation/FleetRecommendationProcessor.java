@@ -3,7 +3,6 @@ package com.gdn.batch.fleet_recommendation;
 import com.gdn.cff.CffService;
 import com.gdn.recommendation.*;
 import com.gdn.recommendation_algorithm.RecommendationProcessorService;
-import com.gdn.helper.DateHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.batch.item.ItemProcessor;
@@ -11,9 +10,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.*;
 
-public class DatabaseQueryResultProcessor implements ItemProcessor<DatabaseQueryResult, List<Recommendation>> {
+public class FleetRecommendationProcessor implements ItemProcessor<DatabaseQueryResult, List<Recommendation>> {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(DatabaseQueryResultProcessor.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(FleetRecommendationProcessor.class);
     private List<DatabaseQueryResult> resultList = new ArrayList<>();
 
     @Autowired
@@ -24,7 +23,7 @@ public class DatabaseQueryResultProcessor implements ItemProcessor<DatabaseQuery
     private int rowCount;
     private String warehouseId;
 
-    public DatabaseQueryResultProcessor(String warehouseId, String rowCount) {
+    public FleetRecommendationProcessor(String warehouseId, String rowCount) {
         this.warehouseId=warehouseId;
         this.rowCount=Integer.parseInt(rowCount);
         LOGGER.info("Row count : " + rowCount);

@@ -11,10 +11,9 @@ import org.springframework.batch.core.Step;
 import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;
 import org.springframework.batch.core.configuration.annotation.JobScope;
 import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
-import org.springframework.batch.core.configuration.annotation.StepScope;
 import org.springframework.batch.core.launch.support.RunIdIncrementer;
 import org.springframework.batch.item.ItemProcessor;
-import org.springframework.batch.item.ItemStreamReader;
+import org.springframework.batch.item.ItemReader;
 import org.springframework.batch.item.ItemWriter;
 import org.springframework.batch.item.database.JdbcCursorItemReader;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,44 +34,18 @@ public class FleetRecommendationBatchConfig {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(FleetRecommendationBatchConfig.class);
 
-    private static final String query = "SELECT \n" +
-            "cff.id AS cff_id, \n" +
-            "cff_good.id AS cff_good_id, \n" +
-            "cff_good.sku, \n" +
-            "cff_good.cbm, \n" +
-            "cff_good.quantity, \n" +
-            "allowed_vehicle.vehicle_name, \n" +
-            "fleet.cbm_capacity, \n" +
-            "cff.warehouse_id AS warehouse_id,\n" +
-            "cff.merchant_id AS merchant_id,\n" +
-            "pickup_point.id AS pickup_point_id \n" +
-            "from \n" +
-            "cff_good, \n" +
-            "allowed_vehicle, \n" +
-            "cff, \n" +
-            "pickup_point, \n" +
-            "fleet,\n" +
-            "merchant\n" +
-            "WHERE \n" +
-            "cff_good.cff_id=cff.id AND \n" +
-            "allowed_vehicle.pickup_point_id=pickup_point.id AND \n" +
-            "cff.pickup_point_id=pickup_point.id AND \n" +
-            "allowed_vehicle.vehicle_name=fleet.name AND\n" +
-            "cff.warehouse_id=? AND \n" +
-            "cff.pickup_date=? AND \n" +
-            "cff.merchant_id=merchant.id AND \n" +
-            "cff.status=?\n" +
-            "ORDER BY cff_good.sku ASC, fleet.cbm_capacity DESC;";
+    @Value(value = "${recommendation.read.query}")
+    private String query;
 
     @Qualifier("dataSource")
     @Autowired
     private DataSource dataSource;
     @Autowired
-    private DatabaseQueryResultRowMapper databaseQueryResultRowMapper;
+    private FleetRecommendationRowMapper fleetRecommendationRowMapper;
 
     @Bean
     @JobScope
-    public ItemStreamReader<DatabaseQueryResult> dbReader(@Value("#{jobParameters['warehouse']}") String warehouseId){
+    public JdbcCursorItemReader<DatabaseQueryResult> dbReader(@Value("#{jobParameters['warehouse']}") String warehouseId){
         LOGGER.info("Reading from db...");
         JdbcCursorItemReader<DatabaseQueryResult> reader = new JdbcCursorItemReader<>();
         reader.setDataSource(dataSource);
@@ -84,7 +57,7 @@ public class FleetRecommendationBatchConfig {
                 ps.setString(3, SchedulingStatus.PENDING);
             }
         });
-        reader.setRowMapper(databaseQueryResultRowMapper);
+        reader.setRowMapper(fleetRecommendationRowMapper);
         return reader;
     }
 
@@ -92,34 +65,34 @@ public class FleetRecommendationBatchConfig {
     @JobScope
     public ItemProcessor<DatabaseQueryResult, List<Recommendation>> dbQueryResultProcessor(@Value("#{jobParameters['warehouse']}") String warehouseId,
                                                                                            @Value("#{jobParameters['rowCount']}") String rowCount){
-        return new DatabaseQueryResultProcessor(warehouseId, rowCount);
+        return new FleetRecommendationProcessor(warehouseId, rowCount);
     }
 
     @Bean
-    public ItemWriter<List<Recommendation>> jsonWriter(){
-        return new RecommendationResultWriter();
+    public ItemWriter<List<Recommendation>> dbWriter(){
+        return new FleetRecommendationWriter();
     }
 
     @Bean
-    public Step fleetRecommendationStep(ItemStreamReader<DatabaseQueryResult> dbReader,
+    public Step fleetRecommendationStep(ItemReader<DatabaseQueryResult> dbReader,
                                         ItemProcessor<DatabaseQueryResult, List<Recommendation>> dbQueryResultProcessor,
-                                        ItemWriter<List<Recommendation>> jsonWriter,
+                                        ItemWriter<List<Recommendation>> dbWriter,
                                         StepBuilderFactory stepBuilderFactory){
         return stepBuilderFactory.get("fleetRecommendationStep")
                 .<DatabaseQueryResult, List<Recommendation>>chunk(50)
                 .reader(dbReader)
                 .processor(dbQueryResultProcessor)
-                .writer(jsonWriter)
+                .writer(dbWriter)
                 .build();
     }
 
     @Bean
     public Job fleetRecommendationJob(Step fleetRecommendationStep,
                                       JobBuilderFactory jobBuilderFactory,
-                                      FleetRecommendationJobListener fleetRecommendationJobListener){
+                                      FleetRecommendationJobExecutionListener fleetRecommendationJobExecutionListener){
         return jobBuilderFactory.get("fleetRecommendationJob")
                 .incrementer(new RunIdIncrementer())
-                .listener(fleetRecommendationJobListener)
+                .listener(fleetRecommendationJobExecutionListener)
                 .flow(fleetRecommendationStep)
                 .end()
                 .build();

@@ -12,8 +12,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 @Configuration
-public class DatabaseQueryResultRowMapper implements RowMapper<DatabaseQueryResult> {
-    private static final Logger LOGGER = LoggerFactory.getLogger(DatabaseQueryResultRowMapper.class);
+public class FleetRecommendationRowMapper implements RowMapper<DatabaseQueryResult> {
+    private static final Logger LOGGER = LoggerFactory.getLogger(FleetRecommendationRowMapper.class);
     @Override
     public DatabaseQueryResult mapRow(ResultSet resultSet, int i) throws SQLException {
         return DatabaseQueryResult.builder()

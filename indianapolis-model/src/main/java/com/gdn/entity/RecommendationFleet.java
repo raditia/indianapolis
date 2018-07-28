@@ -29,7 +29,7 @@ public class RecommendationFleet {
     @JsonManagedReference
     private List<RecommendationDetail> recommendationDetailList = new ArrayList<>();
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne
     @JoinColumn(name = "recommendation_result_id")
     @JsonBackReference
     private RecommendationResult recommendationResult;
