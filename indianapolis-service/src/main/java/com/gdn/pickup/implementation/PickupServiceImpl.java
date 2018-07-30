@@ -27,24 +27,29 @@ public class PickupServiceImpl implements PickupService {
     @Override
     public List<Pickup> savePickup(PickupChoiceRequest pickupChoiceRequest) {
         List<Pickup> pickupList = new ArrayList<>();
-        List<PickupDetail> pickupDetailList;
         RecommendationResult recommendationResult = recommendationResultRepository.getOne(pickupChoiceRequest.getRecommendationResultId());
         List<RecommendationFleet> recommendationFleetList = recommendationResult.getRecommendationFleetList();
         for (RecommendationFleet recommendationFleet:recommendationFleetList
                 ) {
-            pickupDetailList = PickupDetailMapper.toPickupDetailList(recommendationFleet.getRecommendationDetailList());
-            Pickup pickup = Pickup.builder()
-                    .id("pickup_" + UUID.randomUUID().toString())
-                    .pickupDate(pickupChoiceRequest.getPickupDate())
-                    .fleet(recommendationFleet.getFleet())
-                    .plateNumber("plate_number_" + UUID.randomUUID().toString())
-                    .warehouse(recommendationResult.getWarehouse())
-                    .pickupDetailList(pickupDetailList)
-                    .build();
+            Pickup pickup = buildPickup(pickupChoiceRequest, recommendationResult, recommendationFleet);
             pickupList.add(pickup);
             pickupRepository.save(pickup);
         }
         return pickupList;
+    }
+
+    private Pickup buildPickup(PickupChoiceRequest pickupChoiceRequest,
+                               RecommendationResult recommendationResult,
+                               RecommendationFleet recommendationFleet){
+        List<PickupDetail> pickupDetailList = PickupDetailMapper.toPickupDetailList(recommendationFleet.getRecommendationDetailList());
+        return Pickup.builder()
+                .id("pickup_" + UUID.randomUUID().toString())
+                .pickupDate(pickupChoiceRequest.getPickupDate())
+                .fleet(recommendationFleet.getFleet())
+                .plateNumber("plate_number_" + UUID.randomUUID().toString())
+                .warehouse(recommendationResult.getWarehouse())
+                .pickupDetailList(pickupDetailList)
+                .build();
     }
 
 }

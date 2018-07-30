@@ -21,12 +21,12 @@ public class RecommendationDetail {
     @Column(name = "id")
     private String id;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "recommendation_fleet_id")
     @JsonBackReference
     private RecommendationFleet recommendationFleet;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "sku")
     private CffGood sku;
 
@@ -36,11 +36,11 @@ public class RecommendationDetail {
     @Column(name = "cbm_pickup_amount")
     private Float cbmPickupAmount;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "merchant_id")
     private Merchant merchant;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "pickup_point_id")
     private PickupPoint pickupPoint;
 

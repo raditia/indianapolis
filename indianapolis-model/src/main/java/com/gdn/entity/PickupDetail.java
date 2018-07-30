@@ -25,15 +25,15 @@ public class PickupDetail {
     @JsonBackReference
     private Pickup pickup;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "sku_id")
     private CffGood sku;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "merchant_id")
     private Merchant merchant;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "pickup_point_id")
     private PickupPoint pickupPoint;
 

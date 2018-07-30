@@ -31,8 +31,8 @@ public class Fleet {
     @Column(name = "min_cbm_capacity")
     private Float minCbm;
 
-    @ManyToOne
-    @JoinColumn(name = "logisctic_vendor_id")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "logistic_vendor_id")
     private LogisticVendor logisticVendor;
 
 }
