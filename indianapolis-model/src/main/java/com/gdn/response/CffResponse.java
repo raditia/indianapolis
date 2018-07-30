@@ -1,5 +1,6 @@
 package com.gdn.response;
 
+import com.gdn.SchedulingStatus;
 import com.gdn.entity.CffGood;
 import lombok.Builder;
 import lombok.Data;
@@ -25,6 +26,6 @@ public class CffResponse {
 
     private String warehouseName;
 
-    private String schedulingStatus;
+    private SchedulingStatus schedulingStatus;
 
 }

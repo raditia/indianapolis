@@ -13,5 +13,4 @@ public interface CffService {
     WebResponse<CffResponse> getOneCff(String cffId);
     WebResponse<CffResponse> saveCff(Cff cff);
     Cff updateSchedulingStatus(String id);
-    List<Warehouse> findDistinctWarehouseAndPickupDateIs(Date pickupDate);
 }
