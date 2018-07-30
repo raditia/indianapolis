@@ -1,5 +1,6 @@
 package com.gdn.recommendation.implementation;
 
+import com.gdn.SchedulingStatus;
 import com.gdn.email.Email;
 import com.gdn.email.SendEmailService;
 import com.gdn.entity.*;
@@ -61,7 +62,7 @@ public class RecommendationServiceImpl implements RecommendationService {
     @Scheduled(cron = "${recommendation.cron}")
     @Override
     public void executeBatch() {
-        List<Warehouse> warehouseListOfCffPickedUpdTomorrow = cffRepository.findDistinctWarehouseAndPickupDateIs(DateHelper.tomorrow());
+        List<Warehouse> warehouseListOfCffPickedUpdTomorrow = cffRepository.findDistinctWarehouseAndPickupDate(DateHelper.tomorrow());
         for (Warehouse warehouse:warehouseListOfCffPickedUpdTomorrow
              ) {
             int rowCount = recommendationRepository.getRowCount(warehouse, DateHelper.tomorrow());

@@ -27,6 +27,7 @@ import javax.sql.DataSource;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Timestamp;
+import java.sql.Types;
 import java.util.List;
 
 @Configuration
@@ -54,7 +55,7 @@ public class FleetRecommendationBatchConfig {
             public void setValues(PreparedStatement ps) throws SQLException {
                 ps.setString(1, warehouseId);
                 ps.setTimestamp(2, new Timestamp(DateHelper.tomorrow().getTime()));
-                ps.setString(3, SchedulingStatus.PENDING);
+                ps.setObject(3, SchedulingStatus.PENDING, Types.VARCHAR);
             }
         });
         reader.setRowMapper(fleetRecommendationRowMapper);

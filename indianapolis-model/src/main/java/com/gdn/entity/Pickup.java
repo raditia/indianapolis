@@ -26,21 +26,20 @@ public class Pickup {
     @Column(name = "pickup_date")
     private Date pickupDate;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "fleet_id")
     private Fleet fleet;
 
     @Column(name = "fleet_plate_number")
     private String plateNumber;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "warehouse_id")
     private Warehouse warehouse;
 
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE})
     @JoinColumn(name = "pickup_id")
-    @Builder.Default
     @JsonManagedReference
-    private List<PickupDetail> pickupDetailList = new ArrayList<>();
+    private List<PickupDetail> pickupDetailList;
 
 }

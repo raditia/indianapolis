@@ -23,18 +23,17 @@ public class RecommendationFleet {
     @Column(name = "id")
     private String id;
 
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE})
     @JoinColumn(name = "recommendation_fleet_id")
-    @Builder.Default
     @JsonManagedReference
-    private List<RecommendationDetail> recommendationDetailList = new ArrayList<>();
+    private List<RecommendationDetail> recommendationDetailList;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "recommendation_result_id")
     @JsonBackReference
     private RecommendationResult recommendationResult;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "fleet_id")
     private Fleet fleet;
 

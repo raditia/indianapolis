@@ -23,11 +23,10 @@ public class RecommendationResult {
     @Column(name = "id")
     private String id;
 
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE})
     @JoinColumn(name = "recommendation_result_id")
-    @Builder.Default
     @JsonManagedReference
-    private List<RecommendationFleet> recommendationFleetList = new ArrayList<>();
+    private List<RecommendationFleet> recommendationFleetList;
 
     @Column(name = "total_sku")
     private int totalSku;
@@ -38,7 +37,7 @@ public class RecommendationResult {
     @Column(name = "pickup_date")
     private Date pickupDate;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "warehouse_id")
     private Warehouse warehouse;
 

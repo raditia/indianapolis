@@ -5,12 +5,9 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 @Entity
 @Table(name = "pickup_point")
@@ -24,7 +21,7 @@ public class PickupPoint {
     @Column(name = "id")
     private String id;
 
-    @Column(name = "pickup_address")
+    @Column(name = "address")
     private String pickupAddress;
 
     @Column(name = "latitude")
@@ -33,10 +30,8 @@ public class PickupPoint {
     @Column(name = "longitude")
     private Double longitude;
 
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @JoinColumn(name = "pickup_point_id")
-    @Builder.Default
+    @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE}, mappedBy = "pickupPoint")
     @JsonManagedReference
-    private List<AllowedVehicle> allowedVehicleList = new ArrayList<>();
+    private List<AllowedVehicle> allowedVehicleList;
 
 }

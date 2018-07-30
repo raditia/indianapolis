@@ -8,7 +8,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -27,32 +26,36 @@ public class Cff {
     @Column(name = "pickup_date")
     private Date pickupDate;
 
-    @Column(name = "date_uploaded")
+    @Column(name = "uploaded_date")
     private Date uploadedDate;
 
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @JoinColumn(name = "cff_id")
-    @Builder.Default
+    @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE}, mappedBy = "cff")
     @JsonManagedReference
-    private List<CffGood> cffGoodList = new ArrayList<>();
+    private List<CffGood> cffGoodList;
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinColumn(name = "pickup_point_id")
     private PickupPoint pickupPoint;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinColumn(name = "merchant_id")
     private Merchant merchant;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "tp_id")
     private User tp;
 
-    @ManyToOne
+    // Warehouse dan User tidak diberikan parameter cascade.
+    // Alasannya adalah karena User dan Warehouse adalah master data.
+    // Artinya sudah pasti ada di DB sebelum upload CFF.
+    // Kalau diberikan cascade (katakanlah PERSIST), maka saat upload CFF, record di table Warehouse dan User
+    // akan di-override oleh value yang di upload CFF --> THIS IS BAD!
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "warehouse_id")
     private Warehouse warehouse;
 
-    @Column(name = "status")
-    private String schedulingStatus;
+    @Column(name = "scheduling_status")
+    @Enumerated(value = EnumType.STRING)
+    private SchedulingStatus schedulingStatus;
 
 }

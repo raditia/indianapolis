@@ -21,7 +21,7 @@ public class Merchant {
     @Column(name = "id")
     private String id;
 
-    @Column(name = "name", unique = true)
+    @Column(name = "name")
     private String name;
 
     @Column(name = "email_address", unique = true)

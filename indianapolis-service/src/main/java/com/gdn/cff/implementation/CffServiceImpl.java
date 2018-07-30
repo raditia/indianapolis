@@ -45,20 +45,21 @@ public class CffServiceImpl implements CffService {
     @Override
     public WebResponse<CffResponse> saveCff(Cff cff) {
         cff.setUploadedDate(new Date());
+
         Merchant merchant = merchantService.getOne(cff.getMerchant().getEmailAddress());
         if(merchant!=null)
             cff.getMerchant().setId(merchant.getId());
         else
             cff.getMerchant().setId("merchant_" + UUID.randomUUID().toString());
+
         cff.setSchedulingStatus(SchedulingStatus.PENDING);
+
         for (CffGood cffGood:cff.getCffGoodList()
              ) {
             cffGood.setId("sku_" + UUID.randomUUID().toString());
+            cffGood.setCff(cff);
         }
-        for (AllowedVehicle allowedVehicle:cff.getPickupPoint().getAllowedVehicleList()
-                ) {
-            allowedVehicle.setId("allowed_vehicle_" + UUID.randomUUID().toString());
-        }
+
         PickupPoint pickupPoint = pickupPointService.findByPickupAddressOrLatitudeAndLongitude(
                 cff.getPickupPoint().getPickupAddress(),
                 cff.getPickupPoint().getLatitude(),
@@ -68,6 +69,12 @@ public class CffServiceImpl implements CffService {
             cff.getPickupPoint().setId(pickupPoint.getId());
         else
             cff.getPickupPoint().setId("pickup_point_" + UUID.randomUUID().toString());
+
+        for (AllowedVehicle allowedVehicle:cff.getPickupPoint().getAllowedVehicleList()
+                ) {
+            allowedVehicle.setId("allowed_vehicle_" + UUID.randomUUID().toString());
+            allowedVehicle.setPickupPoint(pickupPoint);
+        }
         return WebResponse.OK(CffResponseMapper.toCffResponse(cffRepository.save(cff)));
     }
 
@@ -76,11 +83,6 @@ public class CffServiceImpl implements CffService {
         Cff cff = cffRepository.getOne(id);
         cff.setSchedulingStatus(SchedulingStatus.DONE);
         return cffRepository.save(cff);
-    }
-
-    @Override
-    public List<Warehouse> findDistinctWarehouseAndPickupDateIs(Date pickupDate) {
-        return cffRepository.findDistinctWarehouseAndPickupDateIs(pickupDate);
     }
 
 }
