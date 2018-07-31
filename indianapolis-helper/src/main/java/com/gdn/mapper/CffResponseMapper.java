@@ -10,11 +10,7 @@ import java.util.stream.Collectors;
 public class CffResponseMapper {
 
     public static CffResponse toCffResponse(Cff cff){
-        Float cbmTotal = 0.0f;
-        for (CffGood cffGood:cff.getCffGoodList()
-             ) {
-            cbmTotal+=cffGood.getCbm()*cffGood.getQuantity();
-        }
+        Float cbmTotal = getCbmTotal(cff.getCffGoodList());
         return CffResponse.builder()
                 .pickupPointAddress(cff.getPickupPoint().getPickupAddress())
                 .merchantName(cff.getMerchant().getName())
@@ -25,6 +21,15 @@ public class CffResponseMapper {
                 .warehouseName(cff.getWarehouse().getAddress())
                 .schedulingStatus(cff.getSchedulingStatus())
                 .build();
+    }
+
+    private static Float getCbmTotal(List<CffGood> cffGoodList){
+        Float cbmTotal = 0.0f;
+        for (CffGood cffGood:cffGoodList
+                ) {
+            cbmTotal+=cffGood.getCbm()*cffGood.getQuantity();
+        }
+        return cbmTotal;
     }
 
     public static List<CffResponse> toCffListResponse(List<Cff> cffList){

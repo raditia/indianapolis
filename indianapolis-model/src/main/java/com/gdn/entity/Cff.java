@@ -26,6 +26,7 @@ public class Cff {
     @Column(name = "pickup_date")
     private Date pickupDate;
 
+    // TODO : Tambahkan annotation @CreationTimestamp???
     @Column(name = "uploaded_date")
     private Date uploadedDate;
 
