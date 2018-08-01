@@ -8,7 +8,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -23,8 +22,7 @@ public class RecommendationFleet {
     @Column(name = "id")
     private String id;
 
-    @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE})
-    @JoinColumn(name = "recommendation_fleet_id")
+    @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE}, mappedBy = "recommendationFleet")
     @JsonManagedReference
     private List<RecommendationDetail> recommendationDetailList;
 

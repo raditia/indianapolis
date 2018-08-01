@@ -16,7 +16,4 @@ public class PickupChoiceRequest {
 
     public String recommendationResultId;
 
-    @DateTimeFormat(pattern = "yyyy-MM-dd")
-    public Date pickupDate;
-
 }

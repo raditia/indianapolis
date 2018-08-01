@@ -2,7 +2,7 @@ package com.gdn.mapper;
 
 import com.gdn.email.LogisticVendorEmailBody;
 import com.gdn.email.SkuPickup;
-import com.gdn.entity.Pickup;
+import com.gdn.entity.PickupFleet;
 import com.gdn.entity.PickupDetail;
 
 import java.util.ArrayList;
@@ -12,19 +12,19 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 public class LogisticVendorEmailBodyMapper {
-    public static LogisticVendorEmailBody toLogisticVendorEmailBody(Pickup pickup){
+    public static LogisticVendorEmailBody toLogisticVendorEmailBody(PickupFleet pickupFleet){
         LogisticVendorEmailBody logisticVendorEmailBody;
         Map<String, String> pickupIdAndMerchantNameMap = new HashMap<>();
         List<SkuPickup> skuPickupList = new ArrayList<>();
         logisticVendorEmailBody = LogisticVendorEmailBody.builder()
-                .fleetName(pickup.getFleet().getName())
-                .warehouseDestinationName(pickup.getWarehouse().getAddress())
-                .warehouseDestinationPhoneNumber(pickup.getWarehouse().getPhoneNumber())
+                .fleetName(pickupFleet.getFleet().getName())
+                .warehouseDestinationName(pickupFleet.getPickup().getWarehouse().getAddress())
+                .warehouseDestinationPhoneNumber(pickupFleet.getPickup().getWarehouse().getPhoneNumber())
                 .build();
-        for (PickupDetail pickupDetail:pickup.getPickupDetailList()){
-            if(!pickupIdAndMerchantNameMap.containsKey(pickup.getId())
+        for (PickupDetail pickupDetail: pickupFleet.getPickupDetailList()){
+            if(!pickupIdAndMerchantNameMap.containsKey(pickupFleet.getId())
                     && !pickupIdAndMerchantNameMap.containsValue(pickupDetail.getMerchant().getName())){
-                pickupIdAndMerchantNameMap.put(pickup.getId(), pickupDetail.getMerchant().getName());
+                pickupIdAndMerchantNameMap.put(pickupFleet.getId(), pickupDetail.getMerchant().getName());
                 logisticVendorEmailBody.setMerchantName(pickupDetail.getMerchant().getName());
                 logisticVendorEmailBody.setMerchantPhoneNumber(pickupDetail.getMerchant().getPhoneNumber());
                 logisticVendorEmailBody.setMerchantAddress(pickupDetail.getPickupPoint().getPickupAddress());
@@ -32,7 +32,7 @@ public class LogisticVendorEmailBodyMapper {
                         String.valueOf(pickupDetail.getPickupPoint().getLatitude()) + "," + String.valueOf(pickupDetail.getPickupPoint().getLongitude()));
             }
             SkuPickup skuPickup = SkuPickup.builder()
-                    .sku(pickupDetail.getSku().getSku())
+                    .sku(pickupDetail.getCffGood().getSku())
                     .skuPickupQuantity(pickupDetail.getSkuPickupQuantity())
                     .skuPickupCbmAmount(pickupDetail.getCbmPickupAmount())
                     .build();
@@ -41,8 +41,8 @@ public class LogisticVendorEmailBodyMapper {
         logisticVendorEmailBody.setSkuPickupList(skuPickupList);
         return logisticVendorEmailBody;
     }
-    public static List<LogisticVendorEmailBody> toLogisticVendorEmailBodyList(List<Pickup> pickupList){
-        return pickupList.stream()
+    public static List<LogisticVendorEmailBody> toLogisticVendorEmailBodyList(List<PickupFleet> pickupFleetList){
+        return pickupFleetList.stream()
                 .map(LogisticVendorEmailBodyMapper::toLogisticVendorEmailBody)
                 .collect(Collectors.toList());
     }

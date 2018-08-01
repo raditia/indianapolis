@@ -25,6 +25,12 @@ public class FleetRecommendationWriter implements ItemWriter<List<Recommendation
             for (Recommendation recommendation:recommendationList){
                 List<RecommendationFleet> recommendationFleetList = populateRecommendationFleetList(recommendation);
                 RecommendationResult recommendationResult = buildRecommendationResult(recommendation, recommendationFleetList);
+                for (RecommendationFleet recommendationFleet:recommendationResult.getRecommendationFleetList()){
+                    recommendationFleet.setRecommendationResult(recommendationResult);
+                    for (RecommendationDetail recommendationDetail:recommendationFleet.getRecommendationDetailList()){
+                        recommendationDetail.setRecommendationFleet(recommendationFleet);
+                    }
+                }
                 recommendationResultRepository.save(recommendationResult);
             }
         }
@@ -52,7 +58,7 @@ public class FleetRecommendationWriter implements ItemWriter<List<Recommendation
     private RecommendationDetail buildRecommendationDetail(Detail detail){
         return RecommendationDetail.builder()
                 .id("recommendation_detail_" + UUID.randomUUID().toString())
-                .sku(CffGood.builder()
+                .cffGood(CffGood.builder()
                         .id(detail.getSku().getId())
                         .build())
                 .skuPickupQty(detail.getPickupAmount())

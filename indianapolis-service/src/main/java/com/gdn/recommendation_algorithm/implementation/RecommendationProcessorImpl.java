@@ -62,7 +62,7 @@ public class RecommendationProcessorImpl implements RecommendationProcessorServi
     /**
      * Digunakan untuk mendapatkan 1 set rekomendasi pengangkutan (keseluruhan diperlukan 3 set rekomendasi)
      * Cara : Fungsi ini akan melakukan perulangan selama data list sku belum habis untuk diproses.
-     *          Setiap 1 kali perulangan akan diperoleh satu pengangkutan dengan menggunakan method getPickup
+     *          Setiap 1 kali perulangan akan diperoleh satu pengangkutan dengan menggunakan method getPickupFleet
      *          Selain itu akan dihitung cbmTotal yang sudah masuk dalam rekomendasi, dan jumlah SKU nya.
      *          Pada saat perulangan, ada kalanya ditemukan kondisi dimana sebuah sku memiliki cbm yang lebih besar dari kapasitas cbm maxKendaraan,
      *          yang dapat menyebabkan infinity loop. Hal ini dapat diatasi dengan mengganti maxFleet dengan kendaraan dengan kapasitas diatasnya.

@@ -1,9 +1,9 @@
 package com.gdn.recommendation.implementation;
 
-import com.gdn.SchedulingStatus;
 import com.gdn.email.Email;
 import com.gdn.email.SendEmailService;
 import com.gdn.entity.*;
+import com.gdn.mapper.PickupChoiceResponseMapper;
 import com.gdn.pickup.PickupService;
 import com.gdn.recommendation.RecommendationService;
 import com.gdn.repository.*;
@@ -12,7 +12,6 @@ import com.gdn.response.PickupChoiceResponse;
 import com.gdn.response.RecommendationResponse;
 import com.gdn.response.WebResponse;
 import com.gdn.helper.DateHelper;
-import com.gdn.mapper.PickupChoiceResponseMapper;
 import com.gdn.mapper.RecommendationResponseMapper;
 import com.itextpdf.text.DocumentException;
 import org.slf4j.Logger;
@@ -29,9 +28,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.mail.MessagingException;
 import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
@@ -62,7 +58,7 @@ public class RecommendationServiceImpl implements RecommendationService {
         for (Warehouse warehouse:warehouseListOfCffPickedUpdTomorrow
              ) {
             int rowCount = recommendationRepository.getRowCount(warehouse, DateHelper.tomorrow());
-            LOGGER.info("Warehouse ID listed on cff to be pickup tomorrow : " + warehouse.getId());
+            LOGGER.info("Warehouse ID listed on cff to be pickupFleet tomorrow : " + warehouse.getId());
             try {
                 JobParameters fleetRecommendationJobParameters = new JobParametersBuilder()
                         .addLong(UUID.randomUUID().toString(),System.currentTimeMillis())
@@ -87,27 +83,33 @@ public class RecommendationServiceImpl implements RecommendationService {
     }
 
     @Override
-    public WebResponse<List<PickupChoiceResponse>> choosePickupAndSendEmail(PickupChoiceRequest pickupChoiceRequest) throws MessagingException, IOException, DocumentException {
-        RecommendationResult recommendationResult = recommendationResultRepository.getOne(pickupChoiceRequest.getRecommendationResultId());
-
-        List<Pickup> pickupList = pickupService.savePickup(pickupChoiceRequest);
-//        List<PickupDetail> pickupDetailList = new ArrayList<>();
-//        pickupList.forEach(pickup -> pickupDetailList.addAll(pickup.getPickupDetailList()));
-//
-//        SimpleDateFormat pickupDateFormatter = new SimpleDateFormat("dd-MM-yyyy");
-//        String pickupDate = pickupDateFormatter.format(pickupChoiceRequest.getPickupDate());
-//
-//        sendEmailToWarehouse(recommendationResult, pickupDate, pickupList);
-//        sendEmailToMerchant(recommendationResult, pickupDate, pickupDetailList);
-//        sendEmailToLogisticVendor(recommendationResult, pickupDate, pickupList);
-//        sendEmailToTradePartnership(recommendationResult, pickupDate, pickupDetailList);
-        recommendationResultRepository.deleteAllByWarehouse(recommendationResult.getWarehouse());
-        return WebResponse.OK(PickupChoiceResponseMapper.toPickupChoiceResponseList(pickupList));
+    @Transactional
+    public WebResponse<PickupChoiceResponse> saveChosenRecommendation(PickupChoiceRequest pickupChoiceRequest) {
+        Pickup savedRecommendationChoice = pickupService.savePickup(pickupChoiceRequest);
+        recommendationResultRepository.deleteAllByWarehouse(savedRecommendationChoice.getWarehouse());
+        return WebResponse.OK(PickupChoiceResponseMapper.toPickupChoiceResponse(savedRecommendationChoice));
     }
+
+//    @Override
+//    public WebResponse<PickupChoiceResponse> choosePickupAndSendEmail(PickupChoiceRequest pickupChoiceRequest) throws MessagingException, IOException, DocumentException {
+//        RecommendationResult recommendationResult = recommendationResultRepository.getOne(pickupChoiceRequest.getRecommendationResultId());
+////        List<PickupDetail> pickupDetailList = new ArrayList<>();
+////        pickupFleetList.forEach(pickupFleet -> pickupDetailList.addAll(pickupFleet.getPickupDetailList()));
+////
+////        SimpleDateFormat pickupDateFormatter = new SimpleDateFormat("dd-MM-yyyy");
+////        String pickupDate = pickupDateFormatter.format(pickupChoiceRequest.getPickupDate());
+////
+////        sendEmailToWarehouse(recommendationResult, pickupDate, pickupFleetList);
+////        sendEmailToMerchant(recommendationResult, pickupDate, pickupDetailList);
+////        sendEmailToLogisticVendor(recommendationResult, pickupDate, pickupFleetList);
+////        sendEmailToTradePartnership(recommendationResult, pickupDate, pickupDetailList);
+//        recommendationResultRepository.deleteAllByWarehouse(recommendationResult.getWarehouse());
+//        return WebResponse.OK(PickupChoiceResponseMapper.toPickupChoiceResponse(pickupFleetList));
+//    }
 
     private void sendEmailToWarehouse(RecommendationResult recommendationResult,
                                       String pickupDate,
-                                      List<Pickup> pickupList) throws DocumentException, MessagingException, IOException {
+                                      List<PickupFleet> pickupFleetList) throws DocumentException, MessagingException, IOException {
         sendEmailService
                 .sendEmail(Email.builder()
                         .emailAddressDestination(sendEmailService
@@ -117,7 +119,7 @@ public class RecommendationServiceImpl implements RecommendationService {
                                 .getWarehouseEmailContent(
                                         recommendationResult.getWarehouse(),
                                         pickupDate,
-                                        pickupList))
+                                        pickupFleetList))
                         .pickupDate(pickupDate)
                         .build());
     }
@@ -147,8 +149,8 @@ public class RecommendationServiceImpl implements RecommendationService {
 
     private void sendEmailToLogisticVendor(RecommendationResult recommendationResult,
                                            String pickupDate,
-                                           List<Pickup> pickupList) throws DocumentException, MessagingException, IOException {
-        List<LogisticVendor> logisticVendorList = sendEmailService.getLogisticVendorList(pickupList);
+                                           List<PickupFleet> pickupFleetList) throws DocumentException, MessagingException, IOException {
+        List<LogisticVendor> logisticVendorList = sendEmailService.getLogisticVendorList(pickupFleetList);
         for (LogisticVendor logisticVendor:logisticVendorList){
             sendEmailService
                     .sendEmail(Email.builder()

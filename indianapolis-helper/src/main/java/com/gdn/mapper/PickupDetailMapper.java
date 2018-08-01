@@ -15,7 +15,7 @@ public class PickupDetailMapper {
                 .cbmPickupAmount(recommendationDetail.getCbmPickupAmount())
                 .skuPickupQuantity(recommendationDetail.getSkuPickupQty())
                 .merchant(recommendationDetail.getMerchant())
-                .sku(recommendationDetail.getSku())
+                .cffGood(recommendationDetail.getCffGood())
                 .pickupPoint(recommendationDetail.getPickupPoint())
                 .build();
     }

@@ -61,9 +61,9 @@ public class RecommendationAlgorithmHelper {
     }
 
     /**
-     * Digunakan untuk melakukan pengecekan terhadap list sku.
-     * Cara : melakukan pengaksesan terhadap setiap sku dan melakukan pengecekan terhadap jumlah atau quantity
-     *          sku tersebut. Fungsi ini memastika bahwa semua quantity sku adalah 0
+     * Digunakan untuk melakukan pengecekan terhadap list cffGood.
+     * Cara : melakukan pengaksesan terhadap setiap cffGood dan melakukan pengecekan terhadap jumlah atau quantity
+     *          cffGood tersebut. Fungsi ini memastika bahwa semua quantity cffGood adalah 0
      * @param skuList
      * @return
      */

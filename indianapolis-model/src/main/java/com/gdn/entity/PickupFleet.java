@@ -1,5 +1,6 @@
 package com.gdn.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -7,24 +8,19 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 @Entity
-@Table(name = "pickup")
+@Table(name = "pickup_fleet")
 @Data
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class Pickup {
+public class PickupFleet {
 
     @Id
     @Column(name = "id")
     private String id;
-
-    @Column(name = "pickup_date")
-    private Date pickupDate;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "fleet_id")
@@ -34,11 +30,11 @@ public class Pickup {
     private String plateNumber;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "warehouse_id")
-    private Warehouse warehouse;
-
-    @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE})
     @JoinColumn(name = "pickup_id")
+    @JsonBackReference
+    private Pickup pickup;
+
+    @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE}, mappedBy = "pickupFleet")
     @JsonManagedReference
     private List<PickupDetail> pickupDetailList;
 

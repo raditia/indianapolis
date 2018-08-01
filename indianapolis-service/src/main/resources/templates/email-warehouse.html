@@ -24,15 +24,15 @@
                     <tr>
                         <td style="padding-top: 10px">
                             <table width="100%">
-                                <th:block th:each="pickup : ${pickupList}">
+                                <th:block th:each="pickupFleet : ${pickupFleetList}">
                                     <tbody class="row">
                                         <tr>
-                                            <td style="font-weight: 500; font-size: 14px;">Logistic Vendor : <a th:text="${pickup.fleet.logisticVendor.name}" style="font-weight: 600; color: #000000"></a> </td>
+                                            <td style="font-weight: 500; font-size: 14px;">Logistic Vendor : <a th:text="${pickupFleet.fleet.logisticVendor.name}" style="font-weight: 600; color: #000000"></a> </td>
                                         </tr>
                                         <tr>
-                                            <td style="font-weight: 500; font-size: 14px;">Fleet : <a th:text="${pickup.fleet.name}" style="font-weight: 600; color: #000000"></a> </td>
+                                            <td style="font-weight: 500; font-size: 14px;">Fleet : <a th:text="${pickupFleet.fleet.name}" style="font-weight: 600; color: #000000"></a> </td>
                                         </tr>
-                                        <th:block th:each="sku : ${pickup.pickupDetailList}">
+                                        <th:block th:each="sku : ${pickupFleet.pickupDetailList}">
                                             <tr>
                                                 <td style="font-weight: 400; font-size: 12px; padding-left: 16px"> SKU : <a th:text="${sku.sku.sku}" style="font-weight: 600; color: #000000"></a></td>
                                             </tr>

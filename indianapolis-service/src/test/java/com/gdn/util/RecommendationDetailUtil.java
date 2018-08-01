@@ -9,7 +9,7 @@ public class RecommendationDetailUtil {
     public static RecommendationDetail recommendationDetailMinusRecommendationFleet = RecommendationDetail.builder()
             .id("id")
             .merchant(MerchantUtil.merchantCompleteAttribute)
-            .sku(CffGoodUtil.cffGoodMinusCff1)
+            .cffGood(CffGoodUtil.cffGoodMinusCff1)
             .pickupPoint(PickupPointUtil.pickupPointCompleteAttribute)
             .skuPickupQty(0)
             .cbmPickupAmount(0.0f)

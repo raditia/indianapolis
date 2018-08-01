@@ -32,7 +32,7 @@ public class PickupProcessorImpl implements PickupProcessorService {
      *        Setaip pengangkutan memiliki atribut berupa kendaraan, detail sku yang diangkut, total cbm, dan jumlah total sku yang diangkut.
      * @param skuList list Sku yang akan di proses
      * @param maxFleet kendaraan dengan cbm max yang akan berangkat
-     * @return Pickup
+     * @return PickupFleet
      */
     @Override
     public Pickup getPickup(List<Sku> skuList, Fleet maxFleet) {
@@ -57,7 +57,7 @@ public class PickupProcessorImpl implements PickupProcessorService {
     /**
      * Digunakan untuk menginisialisasi nilai awal dari sebuah pengangkutan
      * @param pickup yang akan di init
-     * @return Pickup
+     * @return PickupFleet
      */
     private Pickup initPickup(Pickup pickup) {
         pickup.setPickupTotalCbm(0.0f);
@@ -159,9 +159,9 @@ public class PickupProcessorImpl implements PickupProcessorService {
     /**
      * Digunakan untuk memperbaui data pada sku list. Dengan ini apabila setelah dilakukan pengangkutan (pick up) maka sku list diupdate.
      * Sku yang telah ada di pengangkutan akan dihapus dari sku list.
-     * Cara : dilakukan pengaksesan terhadap seluruh sku list. Jika ditemukan sku yang ada pada detailSku (sudah di pick up) maka akan dikurangi jumlahnya sebanyak yang di pickup.
+     * Cara : dilakukan pengaksesan terhadap seluruh sku list. Jika ditemukan sku yang ada pada detailSku (sudah di pick up) maka akan dikurangi jumlahnya sebanyak yang di pickupFleet.
      * @param skuList yang akan di update
-     * @param detailList yang sudah di pickup
+     * @param detailList yang sudah di pickupFleet
      */
     private void updateSkuList(List<Sku> skuList, List<Detail> detailList) {
         for(Sku sku: skuList){

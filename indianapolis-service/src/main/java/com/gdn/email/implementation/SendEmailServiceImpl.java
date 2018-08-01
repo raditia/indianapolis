@@ -6,27 +6,21 @@ import com.gdn.entity.*;
 import com.gdn.mapper.LogisticVendorEmailBodyMapper;
 import com.gdn.repository.CffRepository;
 import com.gdn.repository.PickupDetailRepository;
-import com.gdn.repository.PickupRepository;
+import com.gdn.repository.PickupFleetRepository;
 import com.gdn.helper.DateHelper;
-import com.itextpdf.text.Chunk;
-import com.itextpdf.text.Document;
 import com.itextpdf.text.DocumentException;
-import com.itextpdf.text.Paragraph;
-import com.itextpdf.text.pdf.PdfWriter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
-import org.springframework.util.FileCopyUtils;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 import org.xhtmlrenderer.pdf.ITextRenderer;
 
 import javax.activation.DataHandler;
 import javax.activation.DataSource;
-import javax.activation.FileDataSource;
 import javax.mail.*;
 import javax.mail.internet.*;
 import javax.mail.util.ByteArrayDataSource;
@@ -44,7 +38,7 @@ public class SendEmailServiceImpl implements SendEmailService {
     private String password;
 
     @Autowired
-    private PickupRepository pickupRepository;
+    private PickupFleetRepository pickupFleetRepository;
     @Autowired
     private PickupDetailRepository pickupDetailRepository;
     @Autowired
@@ -55,12 +49,12 @@ public class SendEmailServiceImpl implements SendEmailService {
     private Properties emailProperties;
 
     @Override
-    public List<LogisticVendor> getLogisticVendorList(List<Pickup> pickupList) {
+    public List<LogisticVendor> getLogisticVendorList(List<PickupFleet> pickupFleetList) {
         List<LogisticVendor> logisticVendorList = new ArrayList<>();
         LogisticVendor logisticVendor;
-        for (Pickup pickup : pickupList
+        for (PickupFleet pickupFleet : pickupFleetList
                 ) {
-            logisticVendor = pickup.getFleet().getLogisticVendor();
+            logisticVendor = pickupFleet.getFleet().getLogisticVendor();
             if (!logisticVendorList.contains(logisticVendor)) {
                 logisticVendorList.add(logisticVendor);
             }
@@ -84,7 +78,7 @@ public class SendEmailServiceImpl implements SendEmailService {
         List<User> tpList = new ArrayList<>();
         User tp;
         for (PickupDetail pickupDetail:pickupDetailList){
-            tp = pickupDetail.getSku().getCff().getTp();
+            tp = pickupDetail.getCffGood().getCff().getTp();
             if(!tpList.contains(tp))
                 tpList.add(tp);
         }
@@ -97,32 +91,32 @@ public class SendEmailServiceImpl implements SendEmailService {
     }
 
     @Override
-    public List<Context> getWarehouseEmailContent(Warehouse warehouse, String pickupDate, List<Pickup> pickupList) {
+    public List<Context> getWarehouseEmailContent(Warehouse warehouse, String pickupDate, List<PickupFleet> pickupFleetList) {
         Context context = new Context();
         context.setVariable("warehouseName", warehouse.getAddress());
         context.setVariable("pickupDate", pickupDate);
-        context.setVariable("pickupList", pickupList);
+        context.setVariable("pickupList", pickupFleetList);
         return Collections.singletonList(context);
     }
 
     @Override
     public List<Context> getLogisticVendorEmailContent(Warehouse warehouse, LogisticVendor logisticVendor, String pickupDate) {
-        List<Pickup> pickupList = pickupRepository.findAllByWarehouseAndFleetLogisticVendor(warehouse, logisticVendor);
+        List<PickupFleet> pickupFleetList = pickupFleetRepository.findAllByPickupWarehouseAndFleetLogisticVendor(warehouse, logisticVendor);
         Context context = new Context();
         context.setVariable("logisticVendorName", logisticVendor.getName());
         context.setVariable("pickupDate", pickupDate);
         context.setVariable("warehouseName", warehouse.getAddress());
-        context.setVariable("logisticVendorEmailBodyList", LogisticVendorEmailBodyMapper.toLogisticVendorEmailBodyList(pickupList));
+        context.setVariable("logisticVendorEmailBodyList", LogisticVendorEmailBodyMapper.toLogisticVendorEmailBodyList(pickupFleetList));
         return Collections.singletonList(context);
     }
 
     @Override
     public List<Context> getMerchantEmailContent(Warehouse warehouse, Merchant merchant) {
-        List<Pickup> pickupList = pickupRepository.findAllByWarehouse(warehouse);
+        List<PickupFleet> pickupFleetList = pickupFleetRepository.findAllByPickupWarehouse(warehouse);
         List<Context> contextList = new ArrayList<>();
-        for (Pickup pickup:pickupList
+        for (PickupFleet pickupFleet : pickupFleetList
              ) {
-            List<PickupDetail> pickupDetailList = pickupDetailRepository.findAllByPickupAndMerchant(pickup, merchant);
+            List<PickupDetail> pickupDetailList = pickupDetailRepository.findAllByPickupFleetAndMerchant(pickupFleet, merchant);
             populateContext(contextList, pickupDetailList);
         }
         return contextList;
@@ -130,14 +124,14 @@ public class SendEmailServiceImpl implements SendEmailService {
 
     @Override
     public List<Context> getTpEmailContent(Warehouse warehouse, User tp) {
-        List<Pickup> pickupList = pickupRepository.findAllByWarehouse(warehouse);
+        List<PickupFleet> pickupFleetList = pickupFleetRepository.findAllByPickupWarehouse(warehouse);
         List<Context> contextList = new ArrayList<>();
         List<PickupDetail> pickupDetailList;
         List<Cff> cffList;
-        for (Pickup pickup:pickupList){
+        for (PickupFleet pickupFleet : pickupFleetList){
             cffList = cffRepository.findAllByTpAndPickupDateAndWarehouse(tp, DateHelper.tomorrow(), warehouse);
             for (Cff cff:cffList){
-                pickupDetailList = pickupDetailRepository.findAllByPickupAndSkuCff(pickup, cff);
+                pickupDetailList = pickupDetailRepository.findAllByPickupFleetAndCffGoodCff(pickupFleet, cff);
                 populateContext(contextList, pickupDetailList);
             }
         }
@@ -147,14 +141,14 @@ public class SendEmailServiceImpl implements SendEmailService {
     private void populateContext(List<Context> contextList, List<PickupDetail> pickupDetailList) {
         for (PickupDetail pickupDetail:pickupDetailList){
             Context context = new Context();
-            context.setVariable("cffId", pickupDetail.getSku().getCff().getId());
-            context.setVariable("sku", pickupDetail.getSku().getSku());
+            context.setVariable("cffId", pickupDetail.getCffGood().getCff().getId());
+            context.setVariable("sku", pickupDetail.getCffGood().getSku());
             context.setVariable("skuPickupQuantity", pickupDetail.getSkuPickupQuantity());
             context.setVariable("merchantName", pickupDetail.getMerchant().getName());
-            context.setVariable("skuLength", pickupDetail.getSku().getLength());
-            context.setVariable("skuWidth", pickupDetail.getSku().getWidth());
-            context.setVariable("skuHeight", pickupDetail.getSku().getHeight());
-            context.setVariable("skuWeight", pickupDetail.getSku().getWeight());
+            context.setVariable("skuLength", pickupDetail.getCffGood().getLength());
+            context.setVariable("skuWidth", pickupDetail.getCffGood().getWidth());
+            context.setVariable("skuHeight", pickupDetail.getCffGood().getHeight());
+            context.setVariable("skuWeight", pickupDetail.getCffGood().getWeight());
             contextList.add(context);
         }
     }

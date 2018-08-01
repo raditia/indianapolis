@@ -1,7 +1,6 @@
 package com.gdn.entity;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.gdn.recommendation.Sku;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -27,8 +26,8 @@ public class RecommendationDetail {
     private RecommendationFleet recommendationFleet;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "sku")
-    private CffGood sku;
+    @JoinColumn(name = "cff_good")
+    private CffGood cffGood;
 
     @Column(name = "sku_pickup_qty")
     private int skuPickupQty;

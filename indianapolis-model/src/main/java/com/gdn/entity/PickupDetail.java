@@ -21,13 +21,13 @@ public class PickupDetail {
     private String id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "pickup_id")
+    @JoinColumn(name = "pickup_fleet_id")
     @JsonBackReference
-    private Pickup pickup;
+    private PickupFleet pickupFleet;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "sku_id")
-    private CffGood sku;
+    @JoinColumn(name = "cff_good_id")
+    private CffGood cffGood;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "merchant_id")
@@ -37,7 +37,7 @@ public class PickupDetail {
     @JoinColumn(name = "pickup_point_id")
     private PickupPoint pickupPoint;
 
-    @Column(name = "sku_pickup_quantity")
+    @Column(name = "cff_good_pickup_quantity")
     private int skuPickupQuantity;
 
     @Column(name = "cbm_pickup_amount")

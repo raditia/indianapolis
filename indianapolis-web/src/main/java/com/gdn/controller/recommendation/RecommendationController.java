@@ -1,5 +1,6 @@
 package com.gdn.controller.recommendation;
 
+import com.gdn.pickup.PickupService;
 import com.gdn.recommendation.RecommendationService;
 import com.gdn.request.PickupChoiceRequest;
 import com.gdn.response.*;
@@ -42,8 +43,8 @@ public class RecommendationController {
             method = RequestMethod.POST,
             produces = MediaType.APPLICATION_JSON_VALUE
     )
-    public WebResponse<List<PickupChoiceResponse>> chooseRecommendationAndInsertToDatabase(@RequestBody PickupChoiceRequest pickupChoiceRequest) throws MessagingException, IOException, DocumentException {
-        return recommendationService.choosePickupAndSendEmail(pickupChoiceRequest);
+    public WebResponse<PickupChoiceResponse> chooseRecommendationAndInsertToDatabase(@RequestBody PickupChoiceRequest pickupChoiceRequest) throws MessagingException, IOException, DocumentException {
+        return recommendationService.saveChosenRecommendation(pickupChoiceRequest);
     }
 
 }
