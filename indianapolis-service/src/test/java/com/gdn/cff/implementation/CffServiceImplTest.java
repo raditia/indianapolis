@@ -2,26 +2,28 @@ package com.gdn.cff.implementation;
 
 import com.gdn.SchedulingStatus;
 import com.gdn.entity.*;
-import com.gdn.helper.DateHelper;
 import com.gdn.mapper.CffResponseMapper;
 import com.gdn.repository.CffRepository;
 import com.gdn.repository.MerchantRepository;
 import com.gdn.repository.PickupPointRepository;
 import com.gdn.response.CffResponse;
 import com.gdn.response.WebResponse;
+import com.gdn.util.CffUtil;
+import com.gdn.util.MerchantUtil;
+import com.gdn.util.PickupPointUtil;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import org.mockito.*;
 
-import java.util.ArrayList;
+import javax.persistence.EntityNotFoundException;
 import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.hamcrest.core.IsNull.notNullValue;
+import static org.hamcrest.core.IsNull.nullValue;
 import static org.junit.Assert.*;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.times;
@@ -39,74 +41,6 @@ public class CffServiceImplTest {
     @InjectMocks
     private CffServiceImpl cffService;
 
-    private CffGood cffGood1 = CffGood.builder()
-            .id("1")
-            .sku("sku1")
-            .cbm(0.0f)
-            .length(0.0f)
-            .width(0.0f)
-            .height(0.0f)
-            .weight(0.0f)
-            .build();
-    private CffGood cffGood2 = CffGood.builder()
-            .id("2")
-            .sku("sku2")
-            .cbm(0.0f)
-            .length(0.0f)
-            .width(0.0f)
-            .height(0.0f)
-            .weight(0.0f)
-            .build();
-    private List<CffGood> cffGoodList = new ArrayList<CffGood>(){{
-        add(cffGood1);
-        add(cffGood2);
-    }};
-
-    private Merchant merchant = Merchant.builder()
-            .id("1")
-            .name("merchant")
-            .build();
-
-    private UserRole userRole = UserRole.builder()
-            .id("1")
-            .build();
-    private User user = User.builder()
-            .id("1")
-            .userRole(userRole)
-            .build();
-
-    private Warehouse warehouse = Warehouse.builder()
-            .id("1")
-            .address("cawang")
-            .build();
-
-    private AllowedVehicle allowedVehicle = AllowedVehicle.builder()
-            .id("1")
-            .build();
-    private List<AllowedVehicle> allowedVehicleList = new ArrayList<AllowedVehicle>(){{
-        add(allowedVehicle);
-    }};
-
-    private PickupPoint pickupPoint = PickupPoint.builder()
-            .id("1")
-            .allowedVehicleList(allowedVehicleList)
-            .build();
-
-    private Cff cff = Cff.builder()
-            .id("1")
-            .uploadedDate(new Date())
-            .pickupDate(DateHelper.tomorrow())
-            .cffGoodList(cffGoodList)
-            .merchant(merchant)
-            .warehouse(warehouse)
-            .pickupPoint(pickupPoint)
-            .tp(user)
-            .schedulingStatus(SchedulingStatus.PENDING)
-            .build();
-    private List<Cff> cffList = new ArrayList<Cff>(){{
-        add(cff);
-    }};
-
     @Before
     public void setUp() throws Exception {
         MockitoAnnotations.initMocks(this);
@@ -114,13 +48,13 @@ public class CffServiceImplTest {
 
     @Test
     public void getAllCffExists() {
-        given(cffRepository.findAllByOrderByWarehouseAsc()).willReturn(cffList);
+        given(cffRepository.findAllByOrderByWarehouseAsc()).willReturn(CffUtil.cffListCompleteAttribute);
 
         WebResponse<List<CffResponse>> expectedResponse = cffService.getAllCff();
 
         assertThat(expectedResponse, notNullValue());
         assertThat(expectedResponse.getData().isEmpty(), equalTo(false));
-        assertThat(expectedResponse, equalTo(WebResponse.OK(CffResponseMapper.toCffListResponse(cffList))));
+        assertThat(expectedResponse, equalTo(WebResponse.OK(CffResponseMapper.toCffListResponse(CffUtil.cffListCompleteAttribute))));
         assertThat(expectedResponse.getCode(), equalTo(200));
         assertThat(expectedResponse.getStatus(), equalTo("OK"));
         assertThat(expectedResponse.getMessage(), equalTo("OK"));
@@ -130,17 +64,141 @@ public class CffServiceImplTest {
 
     @Test
     public void getOneCffExists() {
-        given(cffRepository.getOne("1")).willReturn(cff);
+        given(cffRepository.getOne(CffUtil.cffCompleteAttribute.getId())).willReturn(CffUtil.cffCompleteAttribute);
 
-        WebResponse<CffResponse> expectedResponse = cffService.getOneCff("1");
+        WebResponse<CffResponse> expectedResponse = cffService.getOneCff(CffUtil.cffCompleteAttribute.getId());
 
         assertThat(expectedResponse, notNullValue());
-        assertThat(expectedResponse, equalTo(WebResponse.OK(CffResponseMapper.toCffResponse(cff))));
+        assertThat(expectedResponse, equalTo(WebResponse.OK(CffResponseMapper.toCffResponse(CffUtil.cffCompleteAttribute))));
         assertThat(expectedResponse.getCode(), equalTo(200));
         assertThat(expectedResponse.getStatus(), equalTo("OK"));
         assertThat(expectedResponse.getMessage(), equalTo("OK"));
 
-        verify(cffRepository, times(1)).getOne("1");
+        verify(cffRepository, times(1)).getOne(CffUtil.cffCompleteAttribute.getId());
+    }
+
+    @Test
+    public void getOneCffNotExists() {
+        given(cffRepository.getOne("cff id not exists")).willThrow(EntityNotFoundException.class);
+
+        WebResponse<CffResponse> expectedResponse = cffService.getOneCff("cff id not exists");
+
+        assertThat(expectedResponse, notNullValue());
+        assertThat(expectedResponse, equalTo(WebResponse.NOT_FOUND()));
+
+        verify(cffRepository, times(1)).getOne("cff id not exists");
+    }
+
+    @Test
+    public void updateSchedulingStatusSuccess() {
+        Cff existingCffInDb = CffUtil.cffCompleteAttribute;
+        given(cffRepository.getOne(existingCffInDb.getId())).willReturn(existingCffInDb);
+        existingCffInDb.setSchedulingStatus(SchedulingStatus.DONE);
+        given(cffRepository.save(existingCffInDb)).willReturn(existingCffInDb);
+
+        Cff expectedResponse = cffService.updateSchedulingStatus(existingCffInDb.getId());
+
+        assertThat(expectedResponse, notNullValue());
+        assertThat(expectedResponse, equalTo(existingCffInDb));
+
+        verify(cffRepository, times(1)).getOne(existingCffInDb.getId());
+        verify(cffRepository, times(1)).save(existingCffInDb);
+    }
+
+    @Test
+    public void saveCffNewMerchantNewPickupPoint() {
+        Cff uploadCff = CffUtil.uploadCffNewMerchantNewPickupPoint;
+        uploadCff.setUploadedDate(new Date());
+
+        given(merchantRepository.findByEmailAddress(MerchantUtil.newMerchantUploadCff.getEmailAddress())).willReturn(null);
+        String newMerchantId = "merchant_" + UUID.randomUUID().toString();
+        uploadCff.getMerchant().setId(newMerchantId);
+
+        uploadCff.setSchedulingStatus(SchedulingStatus.PENDING);
+
+        for (CffGood cffGood:uploadCff.getCffGoodList()){
+            cffGood.setId("cff_good_" + UUID.randomUUID().toString());
+            cffGood.setCff(uploadCff);
+        }
+
+        given(pickupPointRepository
+                .findByPickupAddressOrLatitudeAndLongitude(
+                        PickupPointUtil.newPickupPointUploadCff.getPickupAddress(),
+                        PickupPointUtil.newPickupPointUploadCff.getLatitude(),
+                        PickupPointUtil.newPickupPointUploadCff.getLongitude()))
+                .willReturn(null);
+        String newPickupPointId = "pickup_point_" + UUID.randomUUID().toString();
+        uploadCff.getPickupPoint().setId(newPickupPointId);
+
+        for (AllowedVehicle allowedVehicle:uploadCff.getPickupPoint().getAllowedVehicleList()
+                ) {
+            allowedVehicle.setId("allowed_vehicle_" + UUID.randomUUID().toString());
+            allowedVehicle.setPickupPoint(uploadCff.getPickupPoint());
+        }
+
+        given(cffRepository.save(uploadCff)).willReturn(uploadCff);
+
+        WebResponse<CffResponse> expectedResponse = cffService.saveCff(uploadCff);
+
+        assertThat(expectedResponse, notNullValue());
+        assertThat(expectedResponse, equalTo(WebResponse.OK(CffResponseMapper.toCffResponse(uploadCff))));
+
+        InOrder inOrder = Mockito.inOrder(merchantRepository, pickupPointRepository, cffRepository);
+        inOrder.verify(merchantRepository, times(1))
+                .findByEmailAddress(MerchantUtil.newMerchantUploadCff.getEmailAddress());
+        inOrder.verify(pickupPointRepository, times(1))
+                .findByPickupAddressOrLatitudeAndLongitude(
+                        PickupPointUtil.newPickupPointUploadCff.getPickupAddress(),
+                        PickupPointUtil.newPickupPointUploadCff.getLatitude(),
+                        PickupPointUtil.newPickupPointUploadCff.getLongitude());
+        inOrder.verify(cffRepository, times(1)).save(uploadCff);
+    }
+
+    @Test
+    public void saveCffExistingMerchantExistingPickupPoint() {
+        Cff uploadCff = CffUtil.uploadCffExistingMerchantExistingPickupPoint;
+        uploadCff.setUploadedDate(new Date());
+
+        given(merchantRepository.findByEmailAddress(MerchantUtil.existingMerchantUploadCff.getEmailAddress())).willReturn(MerchantUtil.merchantCompleteAttribute);
+        uploadCff.getMerchant().setId(MerchantUtil.merchantCompleteAttribute.getId());
+
+        uploadCff.setSchedulingStatus(SchedulingStatus.PENDING);
+
+        for (CffGood cffGood:uploadCff.getCffGoodList()){
+            cffGood.setId("cff_good_" + UUID.randomUUID().toString());
+            cffGood.setCff(uploadCff);
+        }
+
+        given(pickupPointRepository
+                .findByPickupAddressOrLatitudeAndLongitude(
+                        PickupPointUtil.existingPickupPointUploadCff.getPickupAddress(),
+                        PickupPointUtil.existingPickupPointUploadCff.getLatitude(),
+                        PickupPointUtil.existingPickupPointUploadCff.getLongitude()))
+                .willReturn(PickupPointUtil.pickupPointCompleteAttribute);
+        uploadCff.getPickupPoint().setId(PickupPointUtil.existingPickupPointUploadCff.getId());
+
+        for (AllowedVehicle allowedVehicle:uploadCff.getPickupPoint().getAllowedVehicleList()
+                ) {
+            allowedVehicle.setId("allowed_vehicle_" + UUID.randomUUID().toString());
+            allowedVehicle.setPickupPoint(uploadCff.getPickupPoint());
+        }
+
+        given(cffRepository.save(uploadCff)).willReturn(uploadCff);
+
+        WebResponse<CffResponse> expectedResponse = cffService.saveCff(uploadCff);
+
+        assertThat(expectedResponse, notNullValue());
+        assertThat(expectedResponse, equalTo(WebResponse.OK(CffResponseMapper.toCffResponse(uploadCff))));
+
+        InOrder inOrder = Mockito.inOrder(merchantRepository, pickupPointRepository, cffRepository);
+        inOrder.verify(merchantRepository, times(1))
+                .findByEmailAddress(MerchantUtil.existingMerchantUploadCff.getEmailAddress());
+        inOrder.verify(pickupPointRepository, times(1))
+                .findByPickupAddressOrLatitudeAndLongitude(
+                        PickupPointUtil.existingPickupPointUploadCff.getPickupAddress(),
+                        PickupPointUtil.existingPickupPointUploadCff.getLatitude(),
+                        PickupPointUtil.existingPickupPointUploadCff.getLongitude());
+        inOrder.verify(cffRepository, times(1)).save(uploadCff);
     }
 
     @After

@@ -14,9 +14,6 @@ import java.util.List;
 
 public interface RecommendationService {
     void executeBatch();
-    RecommendationResult saveRecommendationResult(RecommendationResult recommendationResult);
-    RecommendationFleet saveRecommendationFleet(RecommendationFleet recommendationFleet);
-    RecommendationDetail saveRecommendationDetail(RecommendationDetail recommendationDetail);
     WebResponse<RecommendationResponse> findAllRecommendationFleetResult(String warehouseId);
     WebResponse<List<PickupChoiceResponse>> choosePickupAndSendEmail(PickupChoiceRequest pickupChoiceRequest) throws MessagingException, IOException, DocumentException;
 }

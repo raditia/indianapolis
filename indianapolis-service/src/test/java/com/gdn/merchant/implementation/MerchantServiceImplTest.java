@@ -63,6 +63,11 @@ public class MerchantServiceImplTest {
         verify(merchantRepository, times(1)).findAll();
     }
 
+    @After
+    public void tearDown() throws Exception {
+        verifyNoMoreInteractions(merchantRepository);
+    }
+
     @Test
     public void getAllMerchantNotExists() {
 
@@ -103,8 +108,5 @@ public class MerchantServiceImplTest {
         verify(merchantRepository, times(1)).findByEmailAddress("email tidak ada");
     }
 
-    @After
-    public void tearDown() throws Exception {
-        verifyNoMoreInteractions(merchantRepository);
-    }
+
 }

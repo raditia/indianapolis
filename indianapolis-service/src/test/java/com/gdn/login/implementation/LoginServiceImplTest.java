@@ -1,12 +1,11 @@
 package com.gdn.login.implementation;
 
-import com.gdn.entity.User;
-import com.gdn.entity.UserRole;
 import com.gdn.mapper.LoginResponseMapper;
 import com.gdn.repository.UserRepository;
 import com.gdn.request.LoginRequest;
 import com.gdn.response.LoginResponse;
 import com.gdn.response.WebResponse;
+import com.gdn.util.UserUtil;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -28,20 +27,13 @@ public class LoginServiceImplTest {
     @InjectMocks
     private LoginServiceImpl loginService;
 
-    private UserRole userRole = UserRole.builder()
-            .id("id")
-            .role("role")
+    private LoginRequest correctLoginRequest = LoginRequest.builder()
+            .email("user 1 email")
+            .password("user 1 password")
             .build();
-    private User user = User.builder()
-            .id("id")
-            .name("axell")
-            .emailAddress("email")
-            .password("123")
-            .userRole(userRole)
-            .build();
-    private LoginRequest loginRequest = LoginRequest.builder()
-            .email("email")
-            .password("123")
+    LoginRequest wrongLoginRequest = LoginRequest.builder()
+            .email("email salah")
+            .password("password salah")
             .build();
 
     @Before
@@ -51,28 +43,24 @@ public class LoginServiceImplTest {
 
     @Test
     public void loginWithEmailAndPasswordSuccess() {
-        given(userRepository.findByEmailAddressAndPassword(loginRequest.getEmail(), loginRequest.getPassword())).willReturn(user);
+        given(userRepository.findByEmailAddressAndPassword(correctLoginRequest.getEmail(), correctLoginRequest.getPassword())).willReturn(UserUtil.userCompleteAttribute);
 
-        WebResponse<LoginResponse> expectedResponse = loginService.loginWithEmailAndPassword(loginRequest);
+        WebResponse<LoginResponse> expectedResponse = loginService.loginWithEmailAndPassword(correctLoginRequest);
 
         assertThat(expectedResponse, notNullValue());
-        assertThat(expectedResponse, equalTo(WebResponse.OK(LoginResponseMapper.toLoginResponse(user))));
+        assertThat(expectedResponse, equalTo(WebResponse.OK(LoginResponseMapper.toLoginResponse(UserUtil.userCompleteAttribute))));
         assertThat(expectedResponse.getCode(), equalTo(200));
         assertThat(expectedResponse.getStatus(), equalTo("OK"));
         assertThat(expectedResponse.getMessage(), equalTo("OK"));
 
-        verify(userRepository, times(1)).findByEmailAddressAndPassword(loginRequest.getEmail(), loginRequest.getPassword());
+        verify(userRepository, times(1)).findByEmailAddressAndPassword(correctLoginRequest.getEmail(), correctLoginRequest.getPassword());
     }
 
     @Test
     public void loginWithEmailAndPasswordFailed() {
-        LoginRequest loginRequest = LoginRequest.builder()
-                .email("email salah")
-                .password("password salah")
-                .build();
-        given(userRepository.findByEmailAddressAndPassword(loginRequest.getEmail(), loginRequest.getPassword())).willReturn(null);
+        given(userRepository.findByEmailAddressAndPassword(wrongLoginRequest.getEmail(), wrongLoginRequest.getPassword())).willReturn(null);
 
-        WebResponse<LoginResponse> expectedResponse = loginService.loginWithEmailAndPassword(loginRequest);
+        WebResponse<LoginResponse> expectedResponse = loginService.loginWithEmailAndPassword(wrongLoginRequest);
 
         assertThat(expectedResponse, notNullValue());
         assertThat(expectedResponse, equalTo(WebResponse.NOT_FOUND()));
@@ -81,7 +69,7 @@ public class LoginServiceImplTest {
         assertThat(expectedResponse.getMessage(), equalTo("Not Found"));
         assertThat(expectedResponse.getData(), nullValue());
 
-        verify(userRepository, times(1)).findByEmailAddressAndPassword(loginRequest.getEmail(), loginRequest.getPassword());
+        verify(userRepository, times(1)).findByEmailAddressAndPassword(wrongLoginRequest.getEmail(), wrongLoginRequest.getPassword());
     }
 
     @After

@@ -49,10 +49,6 @@ public class RecommendationServiceImpl implements RecommendationService {
     @Autowired
     private RecommendationResultRepository recommendationResultRepository;
     @Autowired
-    private RecommendationFleetRepository recommendationFleetRepository;
-    @Autowired
-    private RecommendationDetailRepository recommendationDetailRepository;
-    @Autowired
     private CffRepository cffRepository;
     @Autowired
     private PickupService pickupService;
@@ -81,21 +77,6 @@ public class RecommendationServiceImpl implements RecommendationService {
     }
 
     @Override
-    public RecommendationResult saveRecommendationResult(RecommendationResult recommendationResult) {
-        return recommendationResultRepository.save(recommendationResult);
-    }
-
-    @Override
-    public RecommendationFleet saveRecommendationFleet(RecommendationFleet recommendationFleet) {
-        return recommendationFleetRepository.save(recommendationFleet);
-    }
-
-    @Override
-    public RecommendationDetail saveRecommendationDetail(RecommendationDetail recommendationDetail) {
-        return recommendationDetailRepository.save(recommendationDetail);
-    }
-
-    @Override
     public WebResponse<RecommendationResponse> findAllRecommendationFleetResult(String warehouseId) {
         return WebResponse
                 .OK(RecommendationResponseMapper.toRecommendationResponse(
@@ -106,22 +87,20 @@ public class RecommendationServiceImpl implements RecommendationService {
     }
 
     @Override
-    @Transactional
     public WebResponse<List<PickupChoiceResponse>> choosePickupAndSendEmail(PickupChoiceRequest pickupChoiceRequest) throws MessagingException, IOException, DocumentException {
         RecommendationResult recommendationResult = recommendationResultRepository.getOne(pickupChoiceRequest.getRecommendationResultId());
 
         List<Pickup> pickupList = pickupService.savePickup(pickupChoiceRequest);
-        List<PickupDetail> pickupDetailList = new ArrayList<>();
-        pickupList.forEach(pickup -> pickupDetailList.addAll(pickup.getPickupDetailList()));
-
-        SimpleDateFormat pickupDateFormatter = new SimpleDateFormat("dd-MM-yyyy");
-        String pickupDate = pickupDateFormatter.format(pickupChoiceRequest.getPickupDate());
-
-        sendEmailToWarehouse(recommendationResult, pickupDate, pickupList);
-        sendEmailToMerchant(recommendationResult, pickupDate, pickupDetailList);
-        sendEmailToLogisticVendor(recommendationResult, pickupDate, pickupList);
-        sendEmailToTradePartnership(recommendationResult, pickupDate, pickupDetailList);
-        
+//        List<PickupDetail> pickupDetailList = new ArrayList<>();
+//        pickupList.forEach(pickup -> pickupDetailList.addAll(pickup.getPickupDetailList()));
+//
+//        SimpleDateFormat pickupDateFormatter = new SimpleDateFormat("dd-MM-yyyy");
+//        String pickupDate = pickupDateFormatter.format(pickupChoiceRequest.getPickupDate());
+//
+//        sendEmailToWarehouse(recommendationResult, pickupDate, pickupList);
+//        sendEmailToMerchant(recommendationResult, pickupDate, pickupDetailList);
+//        sendEmailToLogisticVendor(recommendationResult, pickupDate, pickupList);
+//        sendEmailToTradePartnership(recommendationResult, pickupDate, pickupDetailList);
         recommendationResultRepository.deleteAllByWarehouse(recommendationResult.getWarehouse());
         return WebResponse.OK(PickupChoiceResponseMapper.toPickupChoiceResponseList(pickupList));
     }

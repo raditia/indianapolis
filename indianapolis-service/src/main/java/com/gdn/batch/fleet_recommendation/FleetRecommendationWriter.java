@@ -4,6 +4,7 @@ import com.gdn.entity.*;
 import com.gdn.helper.DateHelper;
 import com.gdn.recommendation.*;
 import com.gdn.recommendation.Pickup;
+import com.gdn.repository.RecommendationResultRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.batch.item.ItemWriter;
@@ -16,7 +17,7 @@ public class FleetRecommendationWriter implements ItemWriter<List<Recommendation
     private static final Logger LOGGER = LoggerFactory.getLogger(FleetRecommendationWriter.class);
 
     @Autowired
-    private RecommendationService recommendationService;
+    private RecommendationResultRepository recommendationResultRepository;
 
     @Override
     public void write(List<? extends List<Recommendation>> items) throws Exception {
@@ -24,7 +25,7 @@ public class FleetRecommendationWriter implements ItemWriter<List<Recommendation
             for (Recommendation recommendation:recommendationList){
                 List<RecommendationFleet> recommendationFleetList = populateRecommendationFleetList(recommendation);
                 RecommendationResult recommendationResult = buildRecommendationResult(recommendation, recommendationFleetList);
-                recommendationService.saveRecommendationResult(recommendationResult);
+                recommendationResultRepository.save(recommendationResult);
             }
         }
     }

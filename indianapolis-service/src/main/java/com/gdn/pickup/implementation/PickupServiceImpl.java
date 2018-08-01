@@ -24,6 +24,7 @@ public class PickupServiceImpl implements PickupService {
     @Autowired
     private PickupRepository pickupRepository;
 
+    // TODO : coba di refactor lagi method ini karena sulit di unit testing-nya di bagian ID
     @Override
     public List<Pickup> savePickup(PickupChoiceRequest pickupChoiceRequest) {
         List<Pickup> pickupList = new ArrayList<>();
