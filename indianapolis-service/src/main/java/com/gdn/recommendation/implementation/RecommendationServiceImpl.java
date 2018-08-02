@@ -3,12 +3,9 @@ package com.gdn.recommendation.implementation;
 import com.gdn.email.Email;
 import com.gdn.email.SendEmailService;
 import com.gdn.entity.*;
-import com.gdn.mapper.PickupChoiceResponseMapper;
 import com.gdn.pickup.PickupService;
 import com.gdn.recommendation.RecommendationService;
 import com.gdn.repository.*;
-import com.gdn.request.PickupChoiceRequest;
-import com.gdn.response.PickupChoiceResponse;
 import com.gdn.response.RecommendationResponse;
 import com.gdn.response.WebResponse;
 import com.gdn.helper.DateHelper;
@@ -24,7 +21,6 @@ import org.springframework.batch.core.repository.JobRestartException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import javax.mail.MessagingException;
 import java.io.IOException;
@@ -47,17 +43,15 @@ public class RecommendationServiceImpl implements RecommendationService {
     @Autowired
     private CffRepository cffRepository;
     @Autowired
-    private PickupService pickupService;
-    @Autowired
     private SendEmailService sendEmailService;
 
     @Scheduled(cron = "${recommendation.cron}")
     @Override
     public void executeBatch() {
-        List<Warehouse> warehouseListOfCffPickedUpdTomorrow = cffRepository.findDistinctWarehouseAndPickupDate(DateHelper.tomorrow());
+        List<Warehouse> warehouseListOfCffPickedUpdTomorrow = cffRepository.findDistinctWarehouseAndPickupDate(DateHelper.setDay(2));
         for (Warehouse warehouse:warehouseListOfCffPickedUpdTomorrow
              ) {
-            int rowCount = recommendationRepository.getRowCount(warehouse, DateHelper.tomorrow());
+            int rowCount = recommendationRepository.getRowCount(warehouse, DateHelper.setDay(2));
             LOGGER.info("Warehouse ID listed on cff to be pickupFleet tomorrow : " + warehouse.getId());
             try {
                 JobParameters fleetRecommendationJobParameters = new JobParametersBuilder()
@@ -82,13 +76,13 @@ public class RecommendationServiceImpl implements RecommendationService {
                                                 .build())));
     }
 
-    @Override
-    @Transactional
-    public WebResponse<PickupChoiceResponse> saveChosenRecommendation(PickupChoiceRequest pickupChoiceRequest) {
-        Pickup savedRecommendationChoice = pickupService.savePickup(pickupChoiceRequest);
-        recommendationResultRepository.deleteAllByWarehouse(savedRecommendationChoice.getWarehouse());
-        return WebResponse.OK(PickupChoiceResponseMapper.toPickupChoiceResponse(savedRecommendationChoice));
-    }
+//    @Override
+//    @Transactional
+//    public WebResponse<PickupChoiceResponse> saveChosenRecommendation(PickupChoiceRequest pickupChoiceRequest) {
+//        Pickup savedRecommendationChoice = pickupService.savePickup(pickupChoiceRequest);
+//        recommendationResultRepository.deleteAllByWarehouse(savedRecommendationChoice.getWarehouse());
+//        return WebResponse.OK(PickupChoiceResponseMapper.toPickupChoiceResponse(savedRecommendationChoice));
+//    }
 
 //    @Override
 //    public WebResponse<PickupChoiceResponse> choosePickupAndSendEmail(PickupChoiceRequest pickupChoiceRequest) throws MessagingException, IOException, DocumentException {

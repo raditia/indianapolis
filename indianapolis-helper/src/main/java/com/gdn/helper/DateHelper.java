@@ -4,9 +4,9 @@ import java.util.Calendar;
 import java.util.Date;
 
 public class DateHelper {
-    public static Date tomorrow(){
+    public static Date setDay(int amountOfDayAddedFromToday){
         Calendar calendar = Calendar.getInstance();
-        calendar.add(Calendar.DAY_OF_YEAR, 1);
+        calendar.add(Calendar.DAY_OF_YEAR, amountOfDayAddedFromToday);
         calendar.set(Calendar.HOUR_OF_DAY, 7);
         calendar.set(Calendar.MINUTE, 0);
         calendar.set(Calendar.SECOND, 0);

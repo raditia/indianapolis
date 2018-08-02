@@ -10,7 +10,7 @@ public class RecommendationResultUtil {
     public static RecommendationResult recommendationResultCompleteAttribute = RecommendationResult.builder()
             .id("id")
             .warehouse(WarehouseUtil.warehouseMinusWarehouseCategoryList)
-            .pickupDate(DateHelper.tomorrow())
+            .pickupDate(DateHelper.setDay(2))
             .totalCbm(0.0f)
             .totalSku(0)
             .recommendationFleetList(RecommendationFleetUtil.recommendationFleetListMinusRecommendationResult)

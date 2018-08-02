@@ -19,6 +19,8 @@ public class RecommendationController {
 
     @Autowired
     private RecommendationService recommendationService;
+    @Autowired
+    private PickupService pickupService;
 
     @RequestMapping(
             value = "/execute",
@@ -44,7 +46,7 @@ public class RecommendationController {
             produces = MediaType.APPLICATION_JSON_VALUE
     )
     public WebResponse<PickupChoiceResponse> chooseRecommendationAndInsertToDatabase(@RequestBody PickupChoiceRequest pickupChoiceRequest) throws MessagingException, IOException, DocumentException {
-        return recommendationService.saveChosenRecommendation(pickupChoiceRequest);
+        return pickupService.savePickup(pickupChoiceRequest);
     }
 
 }

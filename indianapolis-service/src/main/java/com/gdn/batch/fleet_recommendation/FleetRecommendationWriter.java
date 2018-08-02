@@ -87,7 +87,7 @@ public class FleetRecommendationWriter implements ItemWriter<List<Recommendation
                                                            List<RecommendationFleet> recommendationFleetList){
         return RecommendationResult.builder()
                 .id(recommendation.getId())
-                .pickupDate(DateHelper.tomorrow())
+                .pickupDate(DateHelper.setDay(2))
                 .totalSku(recommendation.getSkuAmount())
                 .totalCbm(recommendation.getCbmTotal())
                 .warehouse(Warehouse.builder()

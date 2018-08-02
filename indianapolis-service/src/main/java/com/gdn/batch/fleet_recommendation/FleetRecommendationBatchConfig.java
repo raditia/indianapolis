@@ -54,7 +54,7 @@ public class FleetRecommendationBatchConfig {
         reader.setPreparedStatementSetter(new PreparedStatementSetter() {
             public void setValues(PreparedStatement ps) throws SQLException {
                 ps.setString(1, warehouseId);
-                ps.setTimestamp(2, new Timestamp(DateHelper.tomorrow().getTime()));
+                ps.setTimestamp(2, new Timestamp(DateHelper.setDay(2).getTime()));
                 ps.setObject(3, SchedulingStatus.PENDING, Types.VARCHAR);
             }
         });
