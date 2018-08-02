@@ -22,8 +22,6 @@ public class CffResponse {
 
     private Float cbmTotal;
 
-    private Date pickupDate;
-
     private String warehouseName;
 
     private SchedulingStatus schedulingStatus;

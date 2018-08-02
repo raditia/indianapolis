@@ -35,9 +35,8 @@ public class PickupServiceImpl implements PickupService {
                 pickupDetail.setPickupFleet(pickupFleet);
             }
         }
-        WebResponse<PickupChoiceResponse> savingPickupResponse = WebResponse.OK(PickupChoiceResponseMapper.toPickupChoiceResponse(pickupRepository.save(pickup)));
         recommendationResultRepository.deleteAllByWarehouse(chosenRecommendation.getWarehouse());
-        return savingPickupResponse;
+        return WebResponse.OK(PickupChoiceResponseMapper.toPickupChoiceResponse(pickupRepository.save(pickup)));
     }
 
 }

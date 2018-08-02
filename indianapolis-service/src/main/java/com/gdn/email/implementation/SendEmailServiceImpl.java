@@ -129,7 +129,12 @@ public class SendEmailServiceImpl implements SendEmailService {
         List<PickupDetail> pickupDetailList;
         List<Cff> cffList;
         for (PickupFleet pickupFleet : pickupFleetList){
-            cffList = cffRepository.findAllByTpAndPickupDateAndWarehouse(tp, DateHelper.setDay(2), warehouse);
+            cffList = cffRepository
+                    .findAllByTpAndWarehouseAndUploadedDateBetween(
+                            tp,
+                            warehouse,
+                            DateHelper.setTime(1),
+                            DateHelper.setTime(16));
             for (Cff cff:cffList){
                 pickupDetailList = pickupDetailRepository.findAllByPickupFleetAndCffGoodCff(pickupFleet, cff);
                 populateContext(contextList, pickupDetailList);

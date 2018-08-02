@@ -3,12 +3,10 @@ package com.gdn.recommendation.implementation;
 import com.gdn.email.Email;
 import com.gdn.email.SendEmailService;
 import com.gdn.entity.*;
-import com.gdn.pickup.PickupService;
 import com.gdn.recommendation.RecommendationService;
 import com.gdn.repository.*;
 import com.gdn.response.RecommendationResponse;
 import com.gdn.response.WebResponse;
-import com.gdn.helper.DateHelper;
 import com.gdn.mapper.RecommendationResponseMapper;
 import com.itextpdf.text.DocumentException;
 import org.slf4j.Logger;
@@ -48,10 +46,10 @@ public class RecommendationServiceImpl implements RecommendationService {
     @Scheduled(cron = "${recommendation.cron}")
     @Override
     public void executeBatch() {
-        List<Warehouse> warehouseListOfCffPickedUpdTomorrow = cffRepository.findDistinctWarehouseAndPickupDate(DateHelper.setDay(2));
+        List<Warehouse> warehouseListOfCffPickedUpdTomorrow = cffRepository.findDistinctWarehouse();
         for (Warehouse warehouse:warehouseListOfCffPickedUpdTomorrow
              ) {
-            int rowCount = recommendationRepository.getRowCount(warehouse, DateHelper.setDay(2));
+            int rowCount = recommendationRepository.getRowCount(warehouse);
             LOGGER.info("Warehouse ID listed on cff to be pickupFleet tomorrow : " + warehouse.getId());
             try {
                 JobParameters fleetRecommendationJobParameters = new JobParametersBuilder()

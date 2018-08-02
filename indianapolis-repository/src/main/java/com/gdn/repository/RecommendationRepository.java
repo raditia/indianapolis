@@ -26,9 +26,7 @@ public interface RecommendationRepository extends JpaRepository<CffGood, String>
             "c.pickupPoint=pp.id AND " +
             "av.vehicleName=f.name AND " +
             "c.warehouse=:warehouseId AND " +
-            "c.pickupDate=:pickupDate AND " +
             "c.merchant=m.id AND " +
             "c.schedulingStatus='PENDING'")
-    int getRowCount(@Param("warehouseId") Warehouse warehouse,
-                    @Param("pickupDate") Date pickupDate);
+    int getRowCount(@Param("warehouseId") Warehouse warehouse);
 }

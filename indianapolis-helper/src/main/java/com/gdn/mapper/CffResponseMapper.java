@@ -17,7 +17,6 @@ public class CffResponseMapper {
                 .cffId(cff.getId())
                 .cffGoodList(cff.getCffGoodList())
                 .cbmTotal(cbmTotal)
-                .pickupDate(cff.getPickupDate())
                 .warehouseName(cff.getWarehouse().getAddress())
                 .schedulingStatus(cff.getSchedulingStatus())
                 .build();
