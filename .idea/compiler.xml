@@ -11,6 +11,7 @@
         <module name="indianapolis-model" />
         <module name="indianapolis-repository" />
         <module name="indianapolis-service" />
+        <module name="indianapolis-util" />
         <module name="indianapolis-web" />
       </profile>
     </annotationProcessing>
@@ -21,6 +22,7 @@
       <module name="indianapolis-parent" target="1.8" />
       <module name="indianapolis-repository" target="1.8" />
       <module name="indianapolis-service" target="1.8" />
+      <module name="indianapolis-util" target="1.8" />
       <module name="indianapolis-web" target="1.8" />
     </bytecodeTargetLevel>
   </component>

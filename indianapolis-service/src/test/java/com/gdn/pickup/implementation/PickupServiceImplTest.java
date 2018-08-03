@@ -1,5 +1,8 @@
 package com.gdn.pickup.implementation;
 
+import com.gdn.PickupChoiceRequestUtil;
+import com.gdn.PickupUtil;
+import com.gdn.RecommendationResultUtil;
 import com.gdn.entity.PickupDetail;
 import com.gdn.entity.PickupFleet;
 import com.gdn.mapper.PickupChoiceResponseMapper;
@@ -9,9 +12,6 @@ import com.gdn.repository.PickupRepository;
 import com.gdn.repository.RecommendationResultRepository;
 import com.gdn.response.PickupChoiceResponse;
 import com.gdn.response.WebResponse;
-import com.gdn.util.PickupChoiceRequestUtil;
-import com.gdn.util.PickupUtil;
-import com.gdn.util.RecommendationResultUtil;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;

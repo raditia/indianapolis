@@ -59,6 +59,10 @@
             <artifactId>flying-saucer-pdf-itext5</artifactId>
         </dependency>
         <dependency>
+            <groupId>com.gdn</groupId>
+            <artifactId>indianapolis-util</artifactId>
+        </dependency>
+        <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
         </dependency>

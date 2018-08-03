@@ -1,11 +1,11 @@
 package com.gdn.login.implementation;
 
+import com.gdn.UserUtil;
 import com.gdn.mapper.LoginResponseMapper;
 import com.gdn.repository.UserRepository;
 import com.gdn.request.LoginRequest;
 import com.gdn.response.LoginResponse;
 import com.gdn.response.WebResponse;
-import com.gdn.util.UserUtil;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;

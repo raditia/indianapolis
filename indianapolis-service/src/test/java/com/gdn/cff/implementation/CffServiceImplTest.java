@@ -1,5 +1,8 @@
 package com.gdn.cff.implementation;
 
+import com.gdn.CffUtil;
+import com.gdn.MerchantUtil;
+import com.gdn.PickupPointUtil;
 import com.gdn.SchedulingStatus;
 import com.gdn.entity.*;
 import com.gdn.mapper.CffResponseMapper;
@@ -8,9 +11,6 @@ import com.gdn.repository.MerchantRepository;
 import com.gdn.repository.PickupPointRepository;
 import com.gdn.response.CffResponse;
 import com.gdn.response.WebResponse;
-import com.gdn.util.CffUtil;
-import com.gdn.util.MerchantUtil;
-import com.gdn.util.PickupPointUtil;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -23,7 +23,6 @@ import java.util.UUID;
 
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.hamcrest.core.IsNull.notNullValue;
-import static org.hamcrest.core.IsNull.nullValue;
 import static org.junit.Assert.*;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.times;

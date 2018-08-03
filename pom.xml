@@ -13,6 +13,7 @@
         <module>indianapolis-repository</module>
         <module>indianapolis-helper</module>
         <module>indianapolis-helper</module>
+        <module>indianapolis-util</module>
     </modules>
     <packaging>pom</packaging>
 
@@ -107,6 +108,12 @@
 				<groupId>com.gdn</groupId>
 				<artifactId>indianapolis-web</artifactId>
 				<version>0.0.1-SNAPSHOT</version>
+			</dependency>
+			<dependency>
+				<groupId>com.gdn</groupId>
+				<artifactId>indianapolis-util</artifactId>
+				<version>0.0.1-SNAPSHOT</version>
+				<scope>test</scope>
 			</dependency>
 			<dependency>
 				<groupId>org.projectlombok</groupId>

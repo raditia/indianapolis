@@ -1,10 +1,10 @@
 package com.gdn.category.implementation;
 
+import com.gdn.CategoryUtil;
 import com.gdn.mapper.CategoryResponseMapper;
 import com.gdn.repository.CategoryRepository;
 import com.gdn.response.CategoryResponse;
 import com.gdn.response.WebResponse;
-import com.gdn.util.CategoryUtil;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;

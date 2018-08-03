@@ -1,5 +1,6 @@
 package com.gdn.recommendation.implementation;
 
+import com.gdn.RecommendationResultUtil;
 import com.gdn.entity.Warehouse;
 import com.gdn.mapper.RecommendationResponseMapper;
 import com.gdn.pickup.PickupService;
@@ -8,7 +9,6 @@ import com.gdn.repository.RecommendationRepository;
 import com.gdn.repository.RecommendationResultRepository;
 import com.gdn.response.RecommendationResponse;
 import com.gdn.response.WebResponse;
-import com.gdn.util.RecommendationResultUtil;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;

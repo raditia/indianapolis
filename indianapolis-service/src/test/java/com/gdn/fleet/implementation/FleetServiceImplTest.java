@@ -1,11 +1,11 @@
 package com.gdn.fleet.implementation;
 
+import com.gdn.FleetUtil;
 import com.gdn.entity.Fleet;
 import com.gdn.mapper.FleetResponseMapper;
 import com.gdn.repository.FleetRepository;
 import com.gdn.response.FleetResponse;
 import com.gdn.response.WebResponse;
-import com.gdn.util.FleetUtil;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
