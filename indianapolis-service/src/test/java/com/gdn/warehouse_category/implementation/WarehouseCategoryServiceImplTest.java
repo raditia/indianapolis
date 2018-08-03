@@ -3,7 +3,7 @@ package com.gdn.warehouse_category.implementation;
 import com.gdn.entity.Category;
 import com.gdn.entity.Warehouse;
 import com.gdn.entity.WarehouseCategory;
-import com.gdn.mapper.WarehouseCategoryMapper;
+import com.gdn.mapper.WarehouseCategoryResponseMapper;
 import com.gdn.repository.WarehouseCategoryRepository;
 import com.gdn.response.WarehouseCategoryResponse;
 import com.gdn.response.WebResponse;
@@ -63,7 +63,7 @@ public class WarehouseCategoryServiceImplTest {
 
         assertThat(expectedResponse, notNullValue());
         assertThat(expectedResponse.getData().isEmpty(), equalTo(false));
-        assertThat(expectedResponse, equalTo(WebResponse.OK(WarehouseCategoryMapper.toWarehouseCategoryResponseList(warehouseCategoryList))));
+        assertThat(expectedResponse, equalTo(WebResponse.OK(WarehouseCategoryResponseMapper.toWarehouseCategoryResponseList(warehouseCategoryList))));
         assertThat(expectedResponse.getCode(), equalTo(200));
         assertThat(expectedResponse.getStatus(), equalTo("OK"));
         assertThat(expectedResponse.getMessage(), equalTo("OK"));

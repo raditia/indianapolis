@@ -4,7 +4,7 @@ import com.gdn.repository.WarehouseCategoryRepository;
 import com.gdn.response.WarehouseCategoryResponse;
 import com.gdn.response.WebResponse;
 import com.gdn.warehouse_category.WarehouseCategoryService;
-import com.gdn.mapper.WarehouseCategoryMapper;
+import com.gdn.mapper.WarehouseCategoryResponseMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -18,7 +18,7 @@ public class WarehouseCategoryServiceImpl implements WarehouseCategoryService {
 
     @Override
     public WebResponse<List<WarehouseCategoryResponse>> findAllWarehouseCategory() {
-        return WebResponse.OK(WarehouseCategoryMapper.toWarehouseCategoryResponseList(warehouseCategoryRepository.findAll()));
+        return WebResponse.OK(WarehouseCategoryResponseMapper.toWarehouseCategoryResponseList(warehouseCategoryRepository.findAll()));
     }
 
 }

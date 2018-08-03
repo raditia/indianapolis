@@ -6,7 +6,7 @@ import com.gdn.response.WarehouseCategoryResponse;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class WarehouseCategoryMapper {
+public class WarehouseCategoryResponseMapper {
 
     public static WarehouseCategoryResponse toWarehouseCategoryResponse(WarehouseCategory warehouseCategory){
         return WarehouseCategoryResponse.builder()
@@ -19,7 +19,7 @@ public class WarehouseCategoryMapper {
 
     public static List<WarehouseCategoryResponse> toWarehouseCategoryResponseList(List<WarehouseCategory> warehouseCategoryList){
         return warehouseCategoryList.stream()
-                .map(WarehouseCategoryMapper::toWarehouseCategoryResponse)
+                .map(WarehouseCategoryResponseMapper::toWarehouseCategoryResponse)
                 .collect(Collectors.toList());
     }
 
