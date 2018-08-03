@@ -24,7 +24,6 @@ public class DateHelperTest {
 
     @Before
     public void setUp() throws Exception {
-        MockitoAnnotations.initMocks(this);
         PowerMockito.mockStatic(DateHelper.class);
     }
 

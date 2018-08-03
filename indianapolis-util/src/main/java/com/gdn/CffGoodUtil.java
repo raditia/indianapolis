@@ -30,6 +30,7 @@ public class CffGoodUtil {
         add(cffGoodMinusCff1);
         add(cffGoodMinusCff2);
     }};
+    public static Float cffGoodsCbmTotal = (cffGoodMinusCff1.getCbm()*cffGoodMinusCff1.getQuantity()) + (cffGoodMinusCff2.getCbm()*cffGoodMinusCff2.getQuantity());
 
     public static CffGood cffGoodUploadCff = CffGood.builder()
             .sku("sku1")

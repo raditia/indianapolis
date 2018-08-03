@@ -21,6 +21,9 @@ public class FleetUtil {
             .minCbm(0.51f)
             .price(0.0)
             .build();
+    public static List<Fleet> fleetListMotorOnly = new ArrayList<Fleet>(){{
+        add(fleetMotorCompleteAttribute);
+    }};
     public static List<Fleet> descendingFleetListCompleteAttribute = new ArrayList<Fleet>(){{
         add(fleetVanCompleteAttribute);
         add(fleetMotorCompleteAttribute);
