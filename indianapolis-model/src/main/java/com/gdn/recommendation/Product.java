@@ -11,7 +11,7 @@ import java.util.List;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class Sku {
+public class Product {
     private String id, name;
     private int quantity;
     private Float cbm;

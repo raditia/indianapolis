@@ -48,26 +48,26 @@ public class FleetRecommendationWriter implements ItemWriter<List<Recommendation
 
     private List<RecommendationDetail> populateRecommendationDetailList(Pickup pickup){
         List<RecommendationDetail> recommendationDetailList = new ArrayList<>();
-        for (Detail detail:pickup.getDetailList()){
+        for (DetailPickup detail:pickup.getDetailPickupList()){
             RecommendationDetail recommendationDetail = buildRecommendationDetail(detail);
             recommendationDetailList.add(recommendationDetail);
         }
         return recommendationDetailList;
     }
 
-    private RecommendationDetail buildRecommendationDetail(Detail detail){
+    private RecommendationDetail buildRecommendationDetail(DetailPickup detail){
         return RecommendationDetail.builder()
                 .id("recommendation_detail_" + UUID.randomUUID().toString())
                 .cffGood(CffGood.builder()
-                        .id(detail.getSku().getId())
+                        .id(detail.getProduct().getId())
                         .build())
                 .skuPickupQty(detail.getPickupAmount())
-                .cbmPickupAmount(detail.getCbmPickup())
+                .cbmPickupAmount(detail.getPickupCbm())
                 .merchant(Merchant.builder()
-                        .id(detail.getSku().getMerchantId())
+                        .id(detail.getProduct().getMerchantId())
                         .build())
                 .pickupPoint(PickupPoint.builder()
-                        .id(detail.getSku().getPickupPointId())
+                        .id(detail.getProduct().getPickupPointId())
                         .build())
                 .build();
     }
@@ -88,7 +88,7 @@ public class FleetRecommendationWriter implements ItemWriter<List<Recommendation
         return RecommendationResult.builder()
                 .id(recommendation.getId())
                 .pickupDate(DateHelper.setDay(2))
-                .totalSku(recommendation.getSkuAmount())
+                .totalSku(recommendation.getProductAmount())
                 .totalCbm(recommendation.getCbmTotal())
                 .warehouse(Warehouse.builder()
                         .id(recommendation.getWarehouseId())

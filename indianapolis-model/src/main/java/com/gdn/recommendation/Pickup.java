@@ -13,7 +13,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class Pickup {
-    private List<Detail> detailList;
+    private List<DetailPickup> detailPickupList;
     private Fleet fleet;
     private String fleetIdNumber;
     private int pickupTotalAmount;

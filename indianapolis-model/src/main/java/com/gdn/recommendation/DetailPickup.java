@@ -9,8 +9,8 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class Detail {
-    private Sku sku;
-    private Float cbmPickup;
+public class DetailPickup {
+    private Product product;
+    private Float pickupCbm;
     private int pickupAmount;
 }

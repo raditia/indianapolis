@@ -1,17 +1,15 @@
 package com.gdn.recommendation_algorithm.implementation;
 
 import com.gdn.entity.Fleet;
-import com.gdn.recommendation.DatabaseQueryResult;
-import com.gdn.recommendation.Pickup;
-import com.gdn.recommendation.Recommendation;
-import com.gdn.recommendation.Sku;
+import com.gdn.recommendation.*;
 import com.gdn.recommendation_algorithm.FleetProcessorService;
-import com.gdn.helper.RecommendationAlgorithmHelper;
+import com.gdn.recommendation_algorithm.Helper;
 import com.gdn.recommendation_algorithm.PickupProcessorService;
 import com.gdn.recommendation_algorithm.RecommendationProcessorService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.xml.soap.Detail;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -24,77 +22,47 @@ public class RecommendationProcessorImpl implements RecommendationProcessorServi
     @Autowired
     private PickupProcessorService pickupProcessorService;
 
-    @Autowired
-    private RecommendationAlgorithmHelper recommendationAlgorithmHelper;
+    private Helper helper = new Helper();
 
-    /**
-     * Digunakan untuk mendapatkan tiga buah rekomendasi
-     * Cara : melakukan 3 x perulangan terhadap 3 maximal kendaraan
-     * Input : List semua SKU
-     * Output : List rekomendasi
-     * @return List<Recommendation>
-     */
     @Override
-    public List<Recommendation> getThreeRecommendation(List<DatabaseQueryResult> resultList, String warehouseId){
-        List<Recommendation> recommendationList = new ArrayList<>();
-        List<Sku> skuList = recommendationAlgorithmHelper.migrateIntoSkuList(resultList);
-        Integer numberOfRecommendation = 3;
+    public List<Recommendation> getThreeRecommendation(List<DatabaseQueryResult> productResultList, String warehouseId){
+        List<Recommendation> threeRecommendations = new ArrayList<>();
+        List<Product> productList;
 
-        List<Fleet> fleetList = fleetProcessorService.getMaxThree(skuList);
-        for(Fleet fleet : fleetList){
-            if(numberOfRecommendation <= 0){
-                break;
-            }
-            skuList = recommendationAlgorithmHelper.migrateIntoSkuList(resultList);
-
-            Recommendation recommendation;
-            recommendation = getRecommendation(skuList, fleet);
-            recommendation.setId("recommendation_result_" + UUID.randomUUID().toString());
-            recommendation.setWarehouseId(warehouseId);
-            recommendationList.add(recommendation);
-            numberOfRecommendation-=1;
+        List<Fleet> topThreeFleetsWillUsed = fleetProcessorService.getTopThreeFleetsWillUsed(productResultList);
+        for(Fleet topFleetWillUsed : topThreeFleetsWillUsed){
+            productList = helper.migrateIntoProductList(productResultList);
+            Recommendation recommendation = getRecommendationByTopFleet(productList, topFleetWillUsed, warehouseId);
+            threeRecommendations.add(recommendation);
         }
 
-        return recommendationList;
+        return threeRecommendations;
     }
 
-
-    /**
-     * Digunakan untuk mendapatkan 1 set rekomendasi pengangkutan (keseluruhan diperlukan 3 set rekomendasi)
-     * Cara : Fungsi ini akan melakukan perulangan selama data list sku belum habis untuk diproses.
-     *          Setiap 1 kali perulangan akan diperoleh satu pengangkutan dengan menggunakan method getPickupFleet
-     *          Selain itu akan dihitung cbmTotal yang sudah masuk dalam rekomendasi, dan jumlah SKU nya.
-     *          Pada saat perulangan, ada kalanya ditemukan kondisi dimana sebuah sku memiliki cbm yang lebih besar dari kapasitas cbm maxKendaraan,
-     *          yang dapat menyebabkan infinity loop. Hal ini dapat diatasi dengan mengganti maxFleet dengan kendaraan dengan kapasitas diatasnya.
-     *          Setelah hal tersebut teratasi, maxFleet akan dikembalikan pada kendaraan semula.
-     *          Sebuah rekomendasi memiliki beberapa pengangkutan (berbeda" kendaraan), totalCbm, dan jumlah sku.
-     * @param maxFleet kendaraan dengan cbm max yang akan berangkat
-     * @return Recommendation
-     */
-    private Recommendation getRecommendation(List<Sku> skuList, Fleet maxFleet){
-        Recommendation recommendation = new Recommendation();
+    private Recommendation getRecommendationByTopFleet(List<Product> productList, Fleet topFleetWillUsed, String warehouseId){
         List<Pickup> pickupList = new ArrayList<>();
         Float cbmTotal = 0.0f;
-        Integer numberOfSku = 0;
-        Fleet maxFleetTemp = maxFleet;
+        Integer productAmount = 0;
+        Fleet fleetWithMaxCbmCapacityWillUsed = topFleetWillUsed;
 
-        while(!recommendationAlgorithmHelper.isEmpty(skuList)){
-            Pickup pickup = pickupProcessorService.getPickup(skuList, maxFleet);
-
-            cbmTotal = recommendationAlgorithmHelper.formatNormalFloat(cbmTotal+pickup.getPickupTotalCbm());
-            numberOfSku += pickup.getPickupTotalAmount();
-
-            if(pickup.getPickupTotalCbm() > 0) {
-                pickupList.add(pickup);
-                maxFleet = maxFleetTemp;
+        while(!helper.empty(productList)){
+            Pickup nextPickup = pickupProcessorService.getNextPickup(productList, topFleetWillUsed);
+            if(nextPickup.getPickupTotalAmount() > 0) {
+                pickupList.add(nextPickup);
+                cbmTotal = helper.formatNormalFloat(cbmTotal+nextPickup.getPickupTotalCbm());
+                productAmount += nextPickup.getPickupTotalAmount();
+                topFleetWillUsed = fleetWithMaxCbmCapacityWillUsed;
             } else {
-                maxFleet = fleetProcessorService.getUp(maxFleet);
+                topFleetWillUsed = fleetProcessorService.getFleetWithMoreCbmCapacity(topFleetWillUsed);
             }
-
         }
-        recommendation.setPickupList(pickupList);
-        recommendation.setCbmTotal(cbmTotal);
-        recommendation.setSkuAmount(numberOfSku);
-        return recommendation;
+
+        return Recommendation.builder()
+                .id("recommendation_result_" + UUID.randomUUID().toString())
+                .pickupList(pickupList)
+                .cbmTotal(cbmTotal)
+                .productAmount(productAmount)
+                .warehouseId(warehouseId)
+                .build();
     }
 }
