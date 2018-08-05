@@ -15,6 +15,6 @@ public class Recommendation {
     private String id;
     private List<Pickup> pickupList;
     private Float cbmTotal;
-    private Integer skuAmount;
+    private Integer productAmount;
     private String warehouseId;
 }

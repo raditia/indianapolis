@@ -38,7 +38,7 @@ public class FleetRecommendationBatchConfig {
     private static final String query = "SELECT \n" +
             "cff.id AS cff_id, \n" +
             "cff_good.id AS cff_good_id, \n" +
-            "cff_good.sku, \n" +
+            "cff_good.product, \n" +
             "cff_good.cbm, \n" +
             "cff_good.quantity, \n" +
             "allowed_vehicle.vehicle_name, \n" +
@@ -58,7 +58,7 @@ public class FleetRecommendationBatchConfig {
             "allowed_vehicle.pickup_point_id=pickup_point.id AND \n" +
             "allowed_vehicle.vehicle_name=fleet.name AND\n" +
             "cff.warehouse_id=? AND cff.pickup_date=? AND cff.status=?\n" +
-            "ORDER BY cff_good.sku ASC, fleet.cbm_capacity DESC";
+            "ORDER BY cff_good.product ASC, fleet.cbm_capacity DESC";
 
     @Qualifier("dataSource")
     @Autowired

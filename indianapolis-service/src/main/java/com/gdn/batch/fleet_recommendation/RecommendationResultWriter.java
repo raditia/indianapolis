@@ -29,20 +29,20 @@ public class RecommendationResultWriter implements ItemWriter<List<Recommendatio
             for (Recommendation recommendation:recommendationList){
 //                for (Pickup pickup:recommendation.getPickupList()
 //                     ) {
-//                    for (Detail detail:pickup.getDetailList()
+//                    for (DetailPickup detail:pickup.getDetailPickupList()
 //                         ) {
 //                        recommendationDetail = RecommendationDetail.builder()
 //                                .id("recommendation_detail_" + UUID.randomUUID().toString())
-//                                .sku(CffGood.builder()
-//                                        .id(detail.getSku().getId())
+//                                .product(CffGood.builder()
+//                                        .id(detail.getProduct().getId())
 //                                        .build())
 //                                .pickupPoint(PickupPoint.builder()
-//                                        .id(detail.getSku().getPickupPointId())
+//                                        .id(detail.getProduct().getPickupPointId())
 //                                        .build())
-//                                .cbmPickupAmount(detail.getCbmPickup())
+//                                .cbmPickupAmount(detail.getPickupCbm())
 //                                .skuPickupQty(detail.getPickupAmount())
 //                                .merchant(Merchant.builder()
-//                                        .id(detail.getSku().getMerchantId())
+//                                        .id(detail.getProduct().getMerchantId())
 //                                        .build())
 //                                .build();
 //                        recommendationDetailList.add(recommendationDetail);
@@ -71,8 +71,8 @@ public class RecommendationResultWriter implements ItemWriter<List<Recommendatio
                 for (Pickup pickup:recommendation.getPickupList()){
                     recommendationFleet = buildRecommendationFleet(recommendationResult, pickup);
                     recommendationService.saveRecommendationFleet(recommendationFleet);
-                    for (Detail detail:pickup.getDetailList()){
-                        recommendationDetail = buildRecommendationDetail(recommendationFleet, detail);
+                    for (DetailPickup detailPickup :pickup.getDetailPickupList()){
+                        recommendationDetail = buildRecommendationDetail(recommendationFleet, detailPickup);
                         recommendationService.saveRecommendationDetail(recommendationDetail);
                     }
                 }
@@ -84,7 +84,7 @@ public class RecommendationResultWriter implements ItemWriter<List<Recommendatio
         return RecommendationResult.builder()
                 .id(recommendation.getId())
                 .pickupDate(tomorrow())
-                .totalSku(recommendation.getSkuAmount())
+                .totalSku(recommendation.getProductAmount())
                 .totalCbm(recommendation.getCbmTotal())
                 .warehouse(Warehouse.builder()
                         .id(recommendation.getWarehouseId())
@@ -104,20 +104,20 @@ public class RecommendationResultWriter implements ItemWriter<List<Recommendatio
     }
 
     private RecommendationDetail buildRecommendationDetail(RecommendationFleet recommendationFleet,
-                                                           Detail detail){
+                                                           DetailPickup detailPickup){
         return RecommendationDetail.builder()
                 .id("recommendation_detail_" + UUID.randomUUID().toString())
                 .recommendationFleet(recommendationFleet)
                 .sku(CffGood.builder()
-                        .id(detail.getSku().getId())
+                        .id(detailPickup.getProduct().getId())
                         .build())
-                .skuPickupQty(detail.getPickupAmount())
-                .cbmPickupAmount(detail.getCbmPickup())
+                .skuPickupQty(detailPickup.getPickupAmount())
+                .cbmPickupAmount(detailPickup.getPickupCbm())
                 .merchant(Merchant.builder()
-                        .id(detail.getSku().getMerchantId())
+                        .id(detailPickup.getProduct().getMerchantId())
                         .build())
                 .pickupPoint(PickupPoint.builder()
-                        .id(detail.getSku().getPickupPointId())
+                        .id(detailPickup.getProduct().getPickupPointId())
                         .build())
                 .build();
     }

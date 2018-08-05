@@ -20,7 +20,7 @@ public class CffGood {
     @Column(name = "id")
     private String id;
 
-    @Column(name = "sku")
+    @Column(name = "product")
     private String sku;
 
     @Column(name = "length")

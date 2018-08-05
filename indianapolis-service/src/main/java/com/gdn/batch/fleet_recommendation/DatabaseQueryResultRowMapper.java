@@ -20,7 +20,7 @@ public class DatabaseQueryResultRowMapper implements RowMapper<DatabaseQueryResu
                 .cffId(resultSet.getString("cff_id"))
                 .cffGoods(DatabaseQueryCffGoods.builder()
                         .id(resultSet.getString("cff_good_id"))
-                        .sku(resultSet.getString("sku"))
+                        .sku(resultSet.getString("product"))
                         .cbm(resultSet.getFloat("cbm"))
                         .quantity(resultSet.getInt("quantity"))
                         .build())
