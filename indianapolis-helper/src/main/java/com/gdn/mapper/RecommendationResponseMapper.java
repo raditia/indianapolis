@@ -17,7 +17,7 @@ public class RecommendationResponseMapper {
              ) {
             warehouse = recommendationResult.getWarehouse().getAddress();
             cbmTotal = recommendationResult.getTotalCbm();
-            fleetRecommendationResponseList.add(FleetRecommendationResponseMapper.toRecommendationResponse(recommendationResult));
+            fleetRecommendationResponseList.add(FleetRecommendationResponseMapper.toFleetRecommendationResponse(recommendationResult));
         }
         return RecommendationResponse.builder()
                 .warehouseName(warehouse)

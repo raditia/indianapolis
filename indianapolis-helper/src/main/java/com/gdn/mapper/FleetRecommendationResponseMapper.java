@@ -9,7 +9,7 @@ import java.util.List;
 
 public class FleetRecommendationResponseMapper {
 
-    public static FleetRecommendationResponse toRecommendationResponse(RecommendationResult recommendationResult){
+    public static FleetRecommendationResponse toFleetRecommendationResponse(RecommendationResult recommendationResult){
         List<String> fleetNameList = new ArrayList<>();
         for (RecommendationFleet recommendationFleet:recommendationResult.getRecommendationFleetList()
              ) {
