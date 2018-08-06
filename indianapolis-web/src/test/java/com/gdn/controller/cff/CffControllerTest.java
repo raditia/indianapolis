@@ -6,7 +6,9 @@ import com.gdn.cff.CffService;
 import com.gdn.entity.AllowedVehicle;
 import com.gdn.entity.Cff;
 import com.gdn.entity.CffGood;
+import com.gdn.mapper.CffMapper;
 import com.gdn.mapper.CffResponseMapper;
+import com.gdn.request.CffRequest;
 import com.gdn.response.WebResponse;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -104,27 +106,12 @@ public class CffControllerTest {
         verify(cffService, times(1)).getOneCff(cffIdNotExists);
     }
 
-    // TODO : ENTAH KENAPA INI TEST GAK BISA -___-
     @Test
-    public void saveCff_OK() throws Exception {
-        Cff uploadCff = CffUtil.uploadCffExistingMerchantExistingPickupPoint;
-        uploadCff.setUploadedDate(new Date());
-        uploadCff.setSchedulingStatus(SchedulingStatus.PENDING);
-        uploadCff.getMerchant().setId(MerchantUtil.merchantCompleteAttribute.getId());
-        for (CffGood cffGood:uploadCff.getCffGoodList()
-                ) {
-            cffGood.setId("cff_good_" + UUID.randomUUID().toString());
-//            cffGood.setCff(uploadCff);
-        }
-        uploadCff.getPickupPoint().setId(PickupPointUtil.pickupPointCompleteAttribute.getId());
-        for (AllowedVehicle allowedVehicle:uploadCff.getPickupPoint().getAllowedVehicleList()){
-            allowedVehicle.setId("allowed_vehicle_" + UUID.randomUUID().toString());
-//            allowedVehicle.setPickupPoint(uploadCff.getPickupPoint());
-        }
+    public void saveCffNewMerchantNewPickupPoint_OK() throws Exception {
+        CffRequest uploadCff = CffRequestUtil.cffRequestCompleteAttributeNewMerchantNewPickupPoint;
         String request = objectMapper.writeValueAsString(uploadCff);
-        System.out.println(request);
-        given(cffService.saveCff(CffUtil.uploadCffExistingMerchantExistingPickupPoint))
-                .willReturn(WebResponse.OK(CffResponseMapper.toCffResponse(uploadCff)));
+        given(cffService.saveCff(uploadCff))
+                .willReturn(WebResponse.OK(CffResponseUtil.cffResponseAfterUploadCff));
         mockMvc.perform(post("/api/cff")
                 .accept(MediaType.APPLICATION_JSON_VALUE)
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
@@ -133,16 +120,16 @@ public class CffControllerTest {
                 .andExpect(jsonPath("$.status", equalTo("OK")))
                 .andExpect(jsonPath("$.message", equalTo("OK")))
                 .andExpect(jsonPath("$.data", notNullValue()))
-                .andExpect(jsonPath("$.data.merchantName", equalTo(CffUtil.uploadCffExistingMerchantExistingPickupPoint.getMerchant().getName())))
-                .andExpect(jsonPath("$.data.cffId", equalTo(CffUtil.uploadCffExistingMerchantExistingPickupPoint.getId())))
-                .andExpect(jsonPath("$.data.cffGoodList[0].id", equalTo(CffUtil.uploadCffExistingMerchantExistingPickupPoint.getCffGoodList().get(0).getId())))
-                .andExpect(jsonPath("$.data.cffGoodList[0].sku", equalTo(CffUtil.uploadCffExistingMerchantExistingPickupPoint.getCffGoodList().get(0).getSku())))
-                .andExpect(jsonPath("$.data.cffGoodList[0].length", equalTo((double) CffUtil.uploadCffExistingMerchantExistingPickupPoint.getCffGoodList().get(0).getLength())))
-                .andExpect(jsonPath("$.data.cffGoodList[0].width", equalTo((double) CffUtil.uploadCffExistingMerchantExistingPickupPoint.getCffGoodList().get(0).getWidth())))
-                .andExpect(jsonPath("$.data.cffGoodList[0].height", equalTo((double) CffUtil.uploadCffExistingMerchantExistingPickupPoint.getCffGoodList().get(0).getHeight())))
-                .andExpect(jsonPath("$.data.cffGoodList[0].weight", equalTo((double) CffUtil.uploadCffExistingMerchantExistingPickupPoint.getCffGoodList().get(0).getWeight())))
-                .andExpect(jsonPath("$.data.cffGoodList[0].cbm", equalTo(new BigDecimal(CffUtil.uploadCffExistingMerchantExistingPickupPoint.getCffGoodList().get(0).getCbm()).setScale(3,BigDecimal.ROUND_HALF_UP).doubleValue())))
-                .andExpect(jsonPath("$.data.cffGoodList[0].quantity", equalTo(CffUtil.uploadCffExistingMerchantExistingPickupPoint.getCffGoodList().get(0).getQuantity())));
+                .andExpect(jsonPath("$.data.merchantName", equalTo(CffRequestUtil.cffRequestCompleteAttributeNewMerchantNewPickupPoint.getMerchant().getName())))
+                .andExpect(jsonPath("$.data.cffId", equalTo(CffRequestUtil.cffRequestCompleteAttributeNewMerchantNewPickupPoint.getId())))
+                .andExpect(jsonPath("$.data.cffGoodList[0].id", equalTo(CffGoodUtil.cffGoodMinusCff1.getId())))
+                .andExpect(jsonPath("$.data.cffGoodList[0].sku", equalTo(CffGoodUtil.cffGoodMinusCff1.getSku())))
+                .andExpect(jsonPath("$.data.cffGoodList[0].length", equalTo((double) CffGoodUtil.cffGoodMinusCff1.getLength())))
+                .andExpect(jsonPath("$.data.cffGoodList[0].width", equalTo((double) CffGoodUtil.cffGoodMinusCff1.getWidth())))
+                .andExpect(jsonPath("$.data.cffGoodList[0].height", equalTo((double) CffGoodUtil.cffGoodMinusCff1.getHeight())))
+                .andExpect(jsonPath("$.data.cffGoodList[0].weight", equalTo((double) CffGoodUtil.cffGoodMinusCff1.getWeight())))
+                .andExpect(jsonPath("$.data.cffGoodList[0].cbm", equalTo(new BigDecimal(CffGoodUtil.cffGoodMinusCff1.getCbm()).setScale(3,BigDecimal.ROUND_HALF_UP).doubleValue())))
+                .andExpect(jsonPath("$.data.cffGoodList[0].quantity", equalTo(CffGoodUtil.cffGoodMinusCff1.getQuantity())));
         verify(cffService, times(1)).saveCff(uploadCff);
     }
 }
