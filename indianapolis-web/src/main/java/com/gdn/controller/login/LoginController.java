@@ -19,6 +19,7 @@ public class LoginController {
 
     @RequestMapping(
             method = RequestMethod.POST,
+            consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE
     )
     public WebResponse<LoginResponse> loginWithEmailAndPassword(@RequestBody LoginRequest loginRequest){

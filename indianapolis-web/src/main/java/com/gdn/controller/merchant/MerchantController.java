@@ -1,6 +1,5 @@
 package com.gdn.controller.merchant;
 
-import com.gdn.entity.Merchant;
 import com.gdn.merchant.MerchantService;
 import com.gdn.response.MerchantResponse;
 import com.gdn.response.WebResponse;
