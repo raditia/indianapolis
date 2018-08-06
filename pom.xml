@@ -12,7 +12,6 @@
 		<module>indianapolis-web</module>
         <module>indianapolis-repository</module>
         <module>indianapolis-helper</module>
-        <module>indianapolis-helper</module>
         <module>indianapolis-util</module>
     </modules>
     <packaging>pom</packaging>
