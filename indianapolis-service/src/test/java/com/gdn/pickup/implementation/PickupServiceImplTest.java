@@ -1,11 +1,11 @@
 package com.gdn.pickup.implementation;
 
 import com.gdn.PickupChoiceRequestUtil;
+import com.gdn.PickupChoiceResponseUtil;
 import com.gdn.PickupUtil;
 import com.gdn.RecommendationResultUtil;
 import com.gdn.entity.PickupDetail;
 import com.gdn.entity.PickupFleet;
-import com.gdn.mapper.PickupChoiceResponseMapper;
 import com.gdn.entity.Pickup;
 import com.gdn.mapper.PickupMapper;
 import com.gdn.repository.PickupRepository;
@@ -63,7 +63,7 @@ public class PickupServiceImplTest {
         recommendationResultRepository.deleteAllByWarehouse(RecommendationResultUtil.recommendationResultCompleteAttribute.getWarehouse());
 
         assertThat(expectedResponse, notNullValue());
-        assertThat(expectedResponse, equalTo(WebResponse.OK(PickupChoiceResponseMapper.toPickupChoiceResponse(pickup))));
+        assertThat(expectedResponse, equalTo(WebResponse.OK(PickupChoiceResponseUtil.pickupChoiceResponseCompleteAttribute)));
 
         InOrder inOrder = Mockito.inOrder(recommendationResultRepository, pickupRepository);
         inOrder.verify(recommendationResultRepository, times(1)).getOne(PickupChoiceRequestUtil.pickupChoiceRequestCompleteAttribute.getRecommendationResultId());

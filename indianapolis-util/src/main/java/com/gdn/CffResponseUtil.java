@@ -18,4 +18,6 @@ public class CffResponseUtil {
     public static List<CffResponse> cffResponseListCompleteAttribute = new ArrayList<CffResponse>(){{
         add(cffResponseCompleteAttribute);
     }};
+    public static String newMerchantId = "new merchant id";
+    public static String newPickupPointId = "new pickup point id";
 }

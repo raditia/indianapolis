@@ -1,9 +1,7 @@
 package com.gdn.warehouse_category.implementation;
 
-import com.gdn.entity.Category;
-import com.gdn.entity.Warehouse;
-import com.gdn.entity.WarehouseCategory;
-import com.gdn.mapper.WarehouseCategoryResponseMapper;
+import com.gdn.WarehouseCategoryResponseUtil;
+import com.gdn.WarehouseCategoryUtil;
 import com.gdn.repository.WarehouseCategoryRepository;
 import com.gdn.response.WarehouseCategoryResponse;
 import com.gdn.response.WebResponse;
@@ -14,7 +12,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-import java.util.ArrayList;
+
 import java.util.List;
 
 import static org.hamcrest.core.IsEqual.equalTo;
@@ -33,23 +31,6 @@ public class WarehouseCategoryServiceImplTest {
     @InjectMocks
     private WarehouseCategoryServiceImpl warehouseCategoryService;
 
-    private Warehouse warehouse = Warehouse.builder()
-            .id("warehouse_cawang")
-            .address("cawang")
-            .build();
-    private Category category = Category.builder()
-            .id("category_elektronik")
-            .name("elektronik")
-            .build();
-    private WarehouseCategory warehouseCategory = WarehouseCategory.builder()
-            .id("warehouse_cawang")
-            .category(category)
-            .warehouse(warehouse)
-            .build();
-    private List<WarehouseCategory> warehouseCategoryList = new ArrayList<WarehouseCategory>(){{
-        add(warehouseCategory);
-    }};
-
     @Before
     public void setUp() throws Exception {
         MockitoAnnotations.initMocks(this);
@@ -57,13 +38,13 @@ public class WarehouseCategoryServiceImplTest {
 
     @Test
     public void findAllWarehouseCategorySuccess() {
-        given(warehouseCategoryRepository.findAll()).willReturn(warehouseCategoryList);
+        given(warehouseCategoryRepository.findAll()).willReturn(WarehouseCategoryUtil.warehouseCategoryListCompleteAttribute);
 
         WebResponse<List<WarehouseCategoryResponse>> expectedResponse = warehouseCategoryService.findAllWarehouseCategory();
 
         assertThat(expectedResponse, notNullValue());
         assertThat(expectedResponse.getData().isEmpty(), equalTo(false));
-        assertThat(expectedResponse, equalTo(WebResponse.OK(WarehouseCategoryResponseMapper.toWarehouseCategoryResponseList(warehouseCategoryList))));
+        assertThat(expectedResponse, equalTo(WebResponse.OK(WarehouseCategoryResponseUtil.warehouseCategoryResponseListCompleteAttribute)));
         assertThat(expectedResponse.getCode(), equalTo(200));
         assertThat(expectedResponse.getStatus(), equalTo("OK"));
         assertThat(expectedResponse.getMessage(), equalTo("OK"));

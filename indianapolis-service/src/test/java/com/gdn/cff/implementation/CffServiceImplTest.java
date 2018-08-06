@@ -1,9 +1,6 @@
 package com.gdn.cff.implementation;
 
-import com.gdn.CffUtil;
-import com.gdn.MerchantUtil;
-import com.gdn.PickupPointUtil;
-import com.gdn.SchedulingStatus;
+import com.gdn.*;
 import com.gdn.entity.*;
 import com.gdn.mapper.CffResponseMapper;
 import com.gdn.repository.CffRepository;
@@ -53,7 +50,7 @@ public class CffServiceImplTest {
 
         assertThat(expectedResponse, notNullValue());
         assertThat(expectedResponse.getData().isEmpty(), equalTo(false));
-        assertThat(expectedResponse, equalTo(WebResponse.OK(CffResponseMapper.toCffListResponse(CffUtil.cffListCompleteAttribute))));
+        assertThat(expectedResponse, equalTo(WebResponse.OK(CffResponseUtil.cffResponseListCompleteAttribute)));
         assertThat(expectedResponse.getCode(), equalTo(200));
         assertThat(expectedResponse.getStatus(), equalTo("OK"));
         assertThat(expectedResponse.getMessage(), equalTo("OK"));
@@ -68,7 +65,7 @@ public class CffServiceImplTest {
         WebResponse<CffResponse> expectedResponse = cffService.getOneCff(CffUtil.cffCompleteAttribute.getId());
 
         assertThat(expectedResponse, notNullValue());
-        assertThat(expectedResponse, equalTo(WebResponse.OK(CffResponseMapper.toCffResponse(CffUtil.cffCompleteAttribute))));
+        assertThat(expectedResponse, equalTo(WebResponse.OK(CffResponseUtil.cffResponseCompleteAttribute)));
         assertThat(expectedResponse.getCode(), equalTo(200));
         assertThat(expectedResponse.getStatus(), equalTo("OK"));
         assertThat(expectedResponse.getMessage(), equalTo("OK"));
@@ -104,13 +101,18 @@ public class CffServiceImplTest {
         verify(cffRepository, times(1)).save(existingCffInDb);
     }
 
+    // Disini tetap memakai CffResponseMapper (gak pakai util), alasannya adalah
+    // karena di CffService itu generate random UUID untuk cffGood dan allowedVehicle
+    // Assert-nya sulit karena kan random UUID itu
     @Test
     public void saveCffNewMerchantNewPickupPoint() {
         Cff uploadCff = CffUtil.uploadCffNewMerchantNewPickupPoint;
         uploadCff.setUploadedDate(new Date());
 
-        given(merchantRepository.findByEmailAddress(MerchantUtil.newMerchantUploadCff.getEmailAddress())).willReturn(null);
-        String newMerchantId = "merchant_" + UUID.randomUUID().toString();
+        given(merchantRepository
+                .findByEmailAddress(MerchantUtil.newMerchantUploadCff.getEmailAddress()))
+                .willReturn(null);
+        String newMerchantId = CffResponseUtil.newMerchantId;
         uploadCff.getMerchant().setId(newMerchantId);
 
         uploadCff.setSchedulingStatus(SchedulingStatus.PENDING);
@@ -126,7 +128,7 @@ public class CffServiceImplTest {
                         PickupPointUtil.newPickupPointUploadCff.getLatitude(),
                         PickupPointUtil.newPickupPointUploadCff.getLongitude()))
                 .willReturn(null);
-        String newPickupPointId = "pickup_point_" + UUID.randomUUID().toString();
+        String newPickupPointId = CffResponseUtil.newPickupPointId;
         uploadCff.getPickupPoint().setId(newPickupPointId);
 
         for (AllowedVehicle allowedVehicle:uploadCff.getPickupPoint().getAllowedVehicleList()
@@ -158,7 +160,9 @@ public class CffServiceImplTest {
         Cff uploadCff = CffUtil.uploadCffExistingMerchantExistingPickupPoint;
         uploadCff.setUploadedDate(new Date());
 
-        given(merchantRepository.findByEmailAddress(MerchantUtil.existingMerchantUploadCff.getEmailAddress())).willReturn(MerchantUtil.merchantCompleteAttribute);
+        given(merchantRepository
+                .findByEmailAddress(MerchantUtil.existingMerchantUploadCff.getEmailAddress()))
+                .willReturn(MerchantUtil.merchantCompleteAttribute);
         uploadCff.getMerchant().setId(MerchantUtil.merchantCompleteAttribute.getId());
 
         uploadCff.setSchedulingStatus(SchedulingStatus.PENDING);
