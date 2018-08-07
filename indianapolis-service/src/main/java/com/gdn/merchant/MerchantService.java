@@ -8,5 +8,4 @@ import java.util.List;
 
 public interface MerchantService {
     WebResponse<List<MerchantResponse>> getAllMerchant();
-    Merchant getOne(String email);
 }

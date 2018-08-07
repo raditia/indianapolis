@@ -58,45 +58,5 @@ public class MerchantServiceImplTest {
         verifyNoMoreInteractions(merchantRepository);
     }
 
-    @Test
-    public void getAllMerchantNotExists() {
-
-        // Not yet implemented in the real code
-
-//        given(merchantRepository.findAll()).willReturn(new ArrayList<>());
-//
-//        WebResponse<List<MerchantResponse>> expectedResponse = merchantService.getAllMerchant();
-//
-//        assertThat(expectedResponse, notNullValue());
-//        assertThat(expectedResponse.getData().isEmpty(), equalTo(true));
-//        assertThat(expectedResponse.getData(), nullValue());
-//        assertThat(expectedResponse, equalTo(WebResponse.NOT_FOUND()));
-//        assertThat(expectedResponse.getCode(), equalTo(404));
-//        assertThat(expectedResponse.getStatus(), equalTo("Not Found"));
-//        assertThat(expectedResponse.getMessage(), equalTo("Not Found"));
-    }
-
-    @Test
-    public void getOneExists() {
-        given(merchantRepository.findByEmailAddress(MerchantUtil.merchantCompleteAttribute.getEmailAddress())).willReturn(MerchantUtil.merchantCompleteAttribute);
-
-        Merchant expectedResponse = merchantService.getOne(MerchantUtil.merchantCompleteAttribute.getEmailAddress());
-
-        assertThat(expectedResponse, notNullValue());
-        assertThat(expectedResponse, equalTo(MerchantUtil.merchantCompleteAttribute));
-
-        verify(merchantRepository, times(1)).findByEmailAddress(MerchantUtil.merchantCompleteAttribute.getEmailAddress());
-    }
-
-    @Test
-    public void getOneNotExists() {
-        given(merchantRepository.findByEmailAddress("email tidak ada")).willReturn(null);
-
-        Merchant expectedResponse = merchantService.getOne("email tidak ada");
-
-        assertThat(expectedResponse, nullValue());
-        verify(merchantRepository, times(1)).findByEmailAddress("email tidak ada");
-    }
-
 
 }
