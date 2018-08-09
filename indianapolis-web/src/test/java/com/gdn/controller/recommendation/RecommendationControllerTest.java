@@ -5,6 +5,7 @@ import com.gdn.*;
 import com.gdn.pickup.PickupService;
 import com.gdn.recommendation.RecommendationService;
 import com.gdn.response.WebResponse;
+import com.gdn.warehouse.WarehouseService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,6 +37,8 @@ public class RecommendationControllerTest {
     private RecommendationService recommendationService;
     @MockBean
     private PickupService pickupService;
+    @MockBean
+    private WarehouseService warehouseService;
 
     private ObjectMapper objectMapper = new ObjectMapper();
 
@@ -81,5 +84,20 @@ public class RecommendationControllerTest {
                 .andExpect(jsonPath("$.data.fleetList[0].fleetName", equalTo(PickupChoiceResponseUtil.pickupChoiceResponseCompleteAttribute.getFleetList().get(0).getFleetName())))
                 .andExpect(jsonPath("$.data.fleetList[0].logisticVendorName", equalTo(PickupChoiceResponseUtil.pickupChoiceResponseCompleteAttribute.getFleetList().get(0).getLogisticVendorName())));
         verify(pickupService, times(1)).savePickup(PickupChoiceRequestUtil.pickupChoiceRequestCompleteAttribute);
+    }
+
+    @Test
+    public void findDistinctAllWarehouseInRecommendationResult() throws Exception {
+        given(warehouseService.findDistinctAllWarehouseInRecommendationResult())
+                .willReturn(WebResponse.OK(WarehouseResponseUtil.warehouseResponseListCompleteAttribute));
+        mockMvc.perform(get("/api/recommendation/warehouse")
+                .contentType(MediaType.APPLICATION_JSON_VALUE))
+                .andExpect(jsonPath("$.code", equalTo(200)))
+                .andExpect(jsonPath("$.status", equalTo("OK")))
+                .andExpect(jsonPath("$.message", equalTo("OK")))
+                .andExpect(jsonPath("$.data", notNullValue()))
+                .andExpect(jsonPath("$.data[0].id", equalTo(WarehouseUtil.warehouseMinusWarehouseCategoryList.getId())))
+                .andExpect(jsonPath("$.data[0].address", equalTo(WarehouseUtil.warehouseMinusWarehouseCategoryList.getAddress())));
+        verify(warehouseService, times(1)).findDistinctAllWarehouseInRecommendationResult();
     }
 }

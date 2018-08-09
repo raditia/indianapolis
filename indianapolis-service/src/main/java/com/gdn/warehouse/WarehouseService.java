@@ -7,4 +7,5 @@ import java.util.List;
 
 public interface WarehouseService {
     WebResponse<List<WarehouseResponse>> findAllWarehouse();
+    WebResponse<List<WarehouseResponse>> findDistinctAllWarehouseInRecommendationResult();
 }
