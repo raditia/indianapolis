@@ -9,6 +9,7 @@ public class PickupFleetUtil {
     public static PickupFleet pickupFleetMinusPickup = PickupFleet.builder()
             .id("1")
             .fleet(RecommendationFleetUtil.recommendationFleetMinusRecommendationResult.getFleet())
+            .logisticVendor(LogisticVendorUtil.logisticVendorCompleteAttribute)
             .plateNumber("1")
             .pickupDetailList(PickupDetailUtil.pickupDetailListMinusPickupFleet)
             .build();

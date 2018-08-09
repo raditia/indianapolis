@@ -1,9 +1,6 @@
 package com.gdn.pickup.implementation;
 
-import com.gdn.PickupChoiceRequestUtil;
-import com.gdn.PickupChoiceResponseUtil;
-import com.gdn.PickupUtil;
-import com.gdn.RecommendationResultUtil;
+import com.gdn.*;
 import com.gdn.entity.PickupDetail;
 import com.gdn.entity.PickupFleet;
 import com.gdn.entity.Pickup;
@@ -50,7 +47,7 @@ public class PickupServiceImplTest {
         given(recommendationResultRepository
                 .getOne(PickupChoiceRequestUtil.pickupChoiceRequestCompleteAttribute.getRecommendationResultId()))
                 .willReturn(RecommendationResultUtil.recommendationResultCompleteAttribute);
-        given(PickupMapper.toPickup(RecommendationResultUtil.recommendationResultCompleteAttribute)).willReturn(PickupUtil.pickupCompleteAttribute);
+        given(PickupMapper.toPickup(RecommendationResultUtil.recommendationResultCompleteAttribute, FleetChoiceRequestUtil.fleetChoiceRequestList)).willReturn(PickupUtil.pickupCompleteAttribute);
         Pickup pickup = PickupUtil.pickupCompleteAttribute;
         for (PickupFleet pickupFleet:pickup.getPickupFleetList()){
             pickupFleet.setPickup(pickup);

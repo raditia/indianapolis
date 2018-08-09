@@ -1,5 +1,6 @@
 package com.gdn.mapper;
 
+import com.gdn.FleetChoiceRequestUtil;
 import com.gdn.PickupFleetUtil;
 import com.gdn.RecommendationFleetUtil;
 import com.gdn.entity.PickupFleet;
@@ -30,25 +31,25 @@ public class PickupFleetMapperTest {
 
     @Test
     public void toPickupFleet() {
-        given(PickupFleetMapper.toPickupFleet(RecommendationFleetUtil.recommendationFleetMinusRecommendationResult))
+        given(PickupFleetMapper.toPickupFleet(RecommendationFleetUtil.recommendationFleetMinusRecommendationResult, FleetChoiceRequestUtil.fleetChoiceRequestMotorBes))
                 .willReturn(PickupFleetUtil.pickupFleetMinusPickup);
-        PickupFleet expectedResponse = PickupFleetMapper.toPickupFleet(RecommendationFleetUtil.recommendationFleetMinusRecommendationResult);
+        PickupFleet expectedResponse = PickupFleetMapper.toPickupFleet(RecommendationFleetUtil.recommendationFleetMinusRecommendationResult, FleetChoiceRequestUtil.fleetChoiceRequestMotorBes);
         assertThat(expectedResponse, notNullValue());
         assertThat(expectedResponse, equalTo(PickupFleetUtil.pickupFleetMinusPickup));
         verifyStatic(PickupFleetMapper.class, times(1));
-        PickupFleetMapper.toPickupFleet(RecommendationFleetUtil.recommendationFleetMinusRecommendationResult);
+        PickupFleetMapper.toPickupFleet(RecommendationFleetUtil.recommendationFleetMinusRecommendationResult, FleetChoiceRequestUtil.fleetChoiceRequestMotorBes);
     }
 
     @Test
     public void toPickupFleetList() {
-        given(PickupFleetMapper.toPickupFleetList(RecommendationFleetUtil.recommendationFleetListMinusRecommendationResult))
+        given(PickupFleetMapper.toPickupFleetList(RecommendationFleetUtil.recommendationFleetListMinusRecommendationResult, FleetChoiceRequestUtil.fleetChoiceRequestList))
                 .willReturn(PickupFleetUtil.pickupFleetListMinusPickup);
-        List<PickupFleet> expectedResponse = PickupFleetMapper.toPickupFleetList(RecommendationFleetUtil.recommendationFleetListMinusRecommendationResult);
+        List<PickupFleet> expectedResponse = PickupFleetMapper.toPickupFleetList(RecommendationFleetUtil.recommendationFleetListMinusRecommendationResult, FleetChoiceRequestUtil.fleetChoiceRequestList);
         assertThat(expectedResponse, notNullValue());
         assertThat(expectedResponse.isEmpty(), equalTo(false));
         assertThat(expectedResponse, equalTo(PickupFleetUtil.pickupFleetListMinusPickup));
         verifyStatic(PickupFleetMapper.class, times(1));
-        PickupFleetMapper.toPickupFleetList(RecommendationFleetUtil.recommendationFleetListMinusRecommendationResult);
+        PickupFleetMapper.toPickupFleetList(RecommendationFleetUtil.recommendationFleetListMinusRecommendationResult, FleetChoiceRequestUtil.fleetChoiceRequestList);
     }
 
 }

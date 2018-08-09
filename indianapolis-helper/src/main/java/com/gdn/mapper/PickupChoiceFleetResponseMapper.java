@@ -10,6 +10,7 @@ public class PickupChoiceFleetResponseMapper {
     public static PickupChoiceFleetResponse toPickupChoiceFleetResponse(PickupFleet pickupFleet){
         return PickupChoiceFleetResponse.builder()
                 .fleetName(pickupFleet.getFleet().getName())
+                .logisticVendorName(pickupFleet.getLogisticVendor().getName())
                 .build();
     }
     public static List<PickupChoiceFleetResponse> toPickupChoiceFleetResponseList(List<PickupFleet> pickupFleetList){

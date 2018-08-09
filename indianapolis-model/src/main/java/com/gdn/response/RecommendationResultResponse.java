@@ -7,10 +7,10 @@ import java.util.List;
 
 @Data
 @Builder
-public class FleetRecommendationResponse {
+public class RecommendationResultResponse {
 
     private String id;
 
-    private List<String> fleetName;
+    private List<RecommendationResultFleetResponse> fleetResponseList;
 
 }

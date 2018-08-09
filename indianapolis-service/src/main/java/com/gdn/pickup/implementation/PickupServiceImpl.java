@@ -28,7 +28,7 @@ public class PickupServiceImpl implements PickupService {
     @Transactional
     public WebResponse<PickupChoiceResponse> savePickup(PickupChoiceRequest pickupChoiceRequest) {
         RecommendationResult chosenRecommendation = recommendationResultRepository.getOne(pickupChoiceRequest.getRecommendationResultId());
-        Pickup pickup = PickupMapper.toPickup(chosenRecommendation);
+        Pickup pickup = PickupMapper.toPickup(chosenRecommendation, pickupChoiceRequest.getFleetChoiceRequestList());
         for (PickupFleet pickupFleet:pickup.getPickupFleetList()){
             pickupFleet.setPickup(pickup);
             for (PickupDetail pickupDetail:pickupFleet.getPickupDetailList()){
