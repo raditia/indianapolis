@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Entity
 @Table(name = "fleet")
@@ -31,8 +32,7 @@ public class Fleet {
     @Column(name = "min_cbm_capacity")
     private Float minCbm;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "logistic_vendor_id")
-    private LogisticVendor logisticVendor;
+    @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE}, mappedBy = "fleet")
+    private List<LogisticVendorFleet> logisticVendorFleetList;
 
 }

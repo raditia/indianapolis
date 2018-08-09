@@ -15,18 +15,12 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.math.BigDecimal;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.TimeZone;
 
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.notNullValue;
-import static org.junit.Assert.*;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -58,8 +52,9 @@ public class RecommendationControllerTest {
                 .andExpect(jsonPath("$.data", notNullValue()))
                 .andExpect(jsonPath("$.data.warehouseName", equalTo(RecommendationResponseUtil.recommendationResponseCompleteAttribute.getWarehouseName())))
                 .andExpect(jsonPath("$.data.cbmTotal", equalTo(new BigDecimal(RecommendationResponseUtil.recommendationResponseCompleteAttribute.getCbmTotal()).setScale(3,BigDecimal.ROUND_HALF_UP).doubleValue())))
-                .andExpect(jsonPath("$.data.fleetRecommendationResponseList[0].id", equalTo(RecommendationResponseUtil.recommendationResponseCompleteAttribute.getFleetRecommendationResponseList().get(0).getId())))
-                .andExpect(jsonPath("$.data.fleetRecommendationResponseList[0].fleetName", equalTo(RecommendationResponseUtil.recommendationResponseCompleteAttribute.getFleetRecommendationResponseList().get(0).getFleetName())));
+                .andExpect(jsonPath("$.data.recommendationResultResponseList[0].id", equalTo(RecommendationResponseUtil.recommendationResponseCompleteAttribute.getRecommendationResultResponseList().get(0).getId())))
+                .andExpect(jsonPath("$.data.recommendationResultResponseList[0].fleetResponseList[0].fleetId", equalTo(RecommendationResponseUtil.recommendationResponseCompleteAttribute.getRecommendationResultResponseList().get(0).getFleetResponseList().get(0).getFleetId())))
+                .andExpect(jsonPath("$.data.recommendationResultResponseList[0].fleetResponseList[0].fleetName", equalTo(RecommendationResponseUtil.recommendationResponseCompleteAttribute.getRecommendationResultResponseList().get(0).getFleetResponseList().get(0).getFleetName())));
         verify(recommendationService, times(1)).findAllRecommendationFleetResult(WarehouseUtil.warehouseMinusWarehouseCategoryList.getId());
     }
 
@@ -83,7 +78,8 @@ public class RecommendationControllerTest {
                 .andExpect(jsonPath("$.status", equalTo("OK")))
                 .andExpect(jsonPath("$.message", equalTo("OK")))
                 .andExpect(jsonPath("$.data", notNullValue()))
-                .andExpect(jsonPath("$.data.fleetList[0].fleetName", equalTo(PickupChoiceResponseUtil.pickupChoiceResponseCompleteAttribute.getFleetList().get(0).getFleetName())));
+                .andExpect(jsonPath("$.data.fleetList[0].fleetName", equalTo(PickupChoiceResponseUtil.pickupChoiceResponseCompleteAttribute.getFleetList().get(0).getFleetName())))
+                .andExpect(jsonPath("$.data.fleetList[0].logisticVendorName", equalTo(PickupChoiceResponseUtil.pickupChoiceResponseCompleteAttribute.getFleetList().get(0).getLogisticVendorName())));
         verify(pickupService, times(1)).savePickup(PickupChoiceRequestUtil.pickupChoiceRequestCompleteAttribute);
     }
 }

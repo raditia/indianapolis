@@ -13,6 +13,6 @@ public class RecommendationResponse {
 
     private Float cbmTotal;
 
-    private List<FleetRecommendationResponse> fleetRecommendationResponseList;
+    private List<RecommendationResultResponse> recommendationResultResponseList;
 
 }

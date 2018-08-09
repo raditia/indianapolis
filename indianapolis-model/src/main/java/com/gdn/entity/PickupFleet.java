@@ -26,6 +26,10 @@ public class PickupFleet {
     @JoinColumn(name = "fleet_id")
     private Fleet fleet;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "logistic_vendor_id")
+    private LogisticVendor logisticVendor;
+
     @Column(name = "fleet_plate_number")
     private String plateNumber;
 

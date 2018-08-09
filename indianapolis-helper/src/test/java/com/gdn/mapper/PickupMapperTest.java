@@ -1,5 +1,6 @@
 package com.gdn.mapper;
 
+import com.gdn.FleetChoiceRequestUtil;
 import com.gdn.PickupUtil;
 import com.gdn.RecommendationResultUtil;
 import com.gdn.entity.Pickup;
@@ -30,12 +31,12 @@ public class PickupMapperTest {
 
     @Test
     public void toPickup() {
-        given(PickupMapper.toPickup(RecommendationResultUtil.recommendationResultCompleteAttribute))
+        given(PickupMapper.toPickup(RecommendationResultUtil.recommendationResultCompleteAttribute, FleetChoiceRequestUtil.fleetChoiceRequestList))
                 .willReturn(PickupUtil.pickupCompleteAttribute);
-        Pickup expectedResponse = PickupMapper.toPickup(RecommendationResultUtil.recommendationResultCompleteAttribute);
+        Pickup expectedResponse = PickupMapper.toPickup(RecommendationResultUtil.recommendationResultCompleteAttribute, FleetChoiceRequestUtil.fleetChoiceRequestList);
         assertThat(expectedResponse, notNullValue());
         assertThat(expectedResponse, equalTo(PickupUtil.pickupCompleteAttribute));
         verifyStatic(PickupMapper.class, times(1));
-        PickupMapper.toPickup(RecommendationResultUtil.recommendationResultCompleteAttribute);
+        PickupMapper.toPickup(RecommendationResultUtil.recommendationResultCompleteAttribute, FleetChoiceRequestUtil.fleetChoiceRequestList);
     }
 }
