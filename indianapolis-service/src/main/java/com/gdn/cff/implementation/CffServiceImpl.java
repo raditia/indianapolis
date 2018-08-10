@@ -3,9 +3,11 @@ package com.gdn.cff.implementation;
 import com.gdn.SchedulingStatus;
 import com.gdn.entity.*;
 import com.gdn.cff.CffService;
+import com.gdn.mapper.CffMapper;
 import com.gdn.repository.CffRepository;
 import com.gdn.repository.MerchantRepository;
 import com.gdn.repository.PickupPointRepository;
+import com.gdn.request.CffRequest;
 import com.gdn.response.CffResponse;
 import com.gdn.response.WebResponse;
 import com.gdn.mapper.CffResponseMapper;
@@ -41,6 +43,33 @@ public class CffServiceImpl implements CffService {
         }
     }
 
+    @Override
+    public WebResponse<CffResponse> saveCff(CffRequest cffRequest) {
+        Cff cff = CffMapper.toCff(cffRequest);
+
+        cff.setUploadedDate(new Date());
+
+        cff.getMerchant().setId(getMerchantId(cff.getMerchant()));
+
+        cff.setSchedulingStatus(SchedulingStatus.PENDING);
+
+        for (CffGood cffGood:cff.getCffGoodList()
+                ) {
+            cffGood.setId("cff_good_" + UUID.randomUUID().toString());
+            cffGood.setCff(cff);
+        }
+
+        cff.getPickupPoint().setId(getPickupPointId(cff.getPickupPoint()));
+
+        for (AllowedVehicle allowedVehicle:cff.getPickupPoint().getAllowedVehicleList()
+                ) {
+            allowedVehicle.setId("allowed_vehicle_" + UUID.randomUUID().toString());
+            allowedVehicle.setPickupPoint(cff.getPickupPoint());
+        }
+
+        return WebResponse.OK(CffResponseMapper.toCffResponse(cffRepository.save(cff)));
+    }
+
     private String getMerchantId(Merchant merchant){
         Merchant newMerchant = merchantRepository.findByEmailAddress(merchant.getEmailAddress());
         if(newMerchant!=null)
@@ -59,31 +88,6 @@ public class CffServiceImpl implements CffService {
             return newPickupPoint.getId();
         else
             return "pickup_point_" + UUID.randomUUID().toString();
-    }
-
-    @Override
-    public WebResponse<CffResponse> saveCff(Cff cff) {
-        cff.setUploadedDate(new Date());
-
-        cff.getMerchant().setId(getMerchantId(cff.getMerchant()));
-
-        cff.setSchedulingStatus(SchedulingStatus.PENDING);
-
-        for (CffGood cffGood:cff.getCffGoodList()
-             ) {
-            cffGood.setId("cff_good_" + UUID.randomUUID().toString());
-            cffGood.setCff(cff);
-        }
-
-        cff.getPickupPoint().setId(getPickupPointId(cff.getPickupPoint()));
-
-        for (AllowedVehicle allowedVehicle:cff.getPickupPoint().getAllowedVehicleList()
-                ) {
-            allowedVehicle.setId("allowed_vehicle_" + UUID.randomUUID().toString());
-            allowedVehicle.setPickupPoint(cff.getPickupPoint());
-        }
-
-        return WebResponse.OK(CffResponseMapper.toCffResponse(cffRepository.save(cff)));
     }
 
     @Override

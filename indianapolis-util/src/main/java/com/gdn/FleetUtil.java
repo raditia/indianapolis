@@ -10,9 +10,9 @@ public class FleetUtil {
             .id("1")
             .name("motor")
             .cbmCapacity(0.5f)
-            .logisticVendor(LogisticVendorUtil.logisticVendorCompleteAttribute)
             .minCbm(0.0f)
             .price(0.0)
+            .logisticVendorFleetList(LogisticVendorFleetUtil.logisticVendorFleetListLogisticVendorOnly)
             .build();
     public static Fleet fleetVanCompleteAttribute = Fleet.builder()
             .id("2")
@@ -20,6 +20,7 @@ public class FleetUtil {
             .cbmCapacity(1.5f)
             .minCbm(0.51f)
             .price(0.0)
+            .logisticVendorFleetList(LogisticVendorFleetUtil.logisticVendorFleetListLogisticVendorOnly)
             .build();
     private static Fleet fleetDouble = Fleet.builder()
             .id("3")

@@ -9,4 +9,6 @@ public class PickupChoiceFleetResponse {
 
     private String fleetName;
 
+    private String logisticVendorName;
+
 }

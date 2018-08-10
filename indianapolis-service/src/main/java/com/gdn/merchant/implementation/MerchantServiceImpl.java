@@ -1,6 +1,5 @@
 package com.gdn.merchant.implementation;
 
-import com.gdn.entity.Merchant;
 import com.gdn.merchant.MerchantService;
 import com.gdn.repository.MerchantRepository;
 import com.gdn.response.MerchantResponse;
@@ -20,11 +19,6 @@ public class MerchantServiceImpl implements MerchantService {
     @Override
     public WebResponse<List<MerchantResponse>> getAllMerchant() {
         return WebResponse.OK(MerchantResponseMapper.toMerchantResponseList(merchantRepository.findAll()));
-    }
-
-    @Override
-    public Merchant getOne(String email) {
-        return merchantRepository.findByEmailAddress(email);
     }
 
 }

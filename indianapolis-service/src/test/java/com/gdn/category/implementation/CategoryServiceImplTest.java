@@ -1,7 +1,7 @@
 package com.gdn.category.implementation;
 
+import com.gdn.CategoryResponseUtil;
 import com.gdn.CategoryUtil;
-import com.gdn.mapper.CategoryResponseMapper;
 import com.gdn.repository.CategoryRepository;
 import com.gdn.response.CategoryResponse;
 import com.gdn.response.WebResponse;
@@ -43,7 +43,7 @@ public class CategoryServiceImplTest {
 
         assertThat(expectedResponse, notNullValue());
         assertThat(expectedResponse.getData().isEmpty(), equalTo(false));
-        assertThat(expectedResponse, equalTo(WebResponse.OK(CategoryResponseMapper.toCategoryListResponse(CategoryUtil.categoryListMinusWarehouseCategory))));
+        assertThat(expectedResponse, equalTo(WebResponse.OK(CategoryResponseUtil.categoryResponseListCompleteAttribute)));
         assertThat(expectedResponse.getCode(), equalTo(200));
         assertThat(expectedResponse.getStatus(), equalTo("OK"));
         assertThat(expectedResponse.getMessage(), equalTo("OK"));

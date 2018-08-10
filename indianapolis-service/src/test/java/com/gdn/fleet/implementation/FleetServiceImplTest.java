@@ -1,8 +1,8 @@
 package com.gdn.fleet.implementation;
 
+import com.gdn.FleetResponseUtil;
 import com.gdn.FleetUtil;
 import com.gdn.entity.Fleet;
-import com.gdn.mapper.FleetResponseMapper;
 import com.gdn.repository.FleetRepository;
 import com.gdn.response.FleetResponse;
 import com.gdn.response.WebResponse;
@@ -73,7 +73,7 @@ public class FleetServiceImplTest {
         assertThat(expectedResponse.getStatus(), equalTo("OK"));
         assertThat(expectedResponse.getMessage(), equalTo("OK"));
         assertThat(expectedResponse.getData().isEmpty(), equalTo(false));
-        assertThat(expectedResponse, equalTo(WebResponse.OK(FleetResponseMapper.toFleetResponseList(FleetUtil.descendingFleetListCompleteAttribute))));
+        assertThat(expectedResponse, equalTo(WebResponse.OK(FleetResponseUtil.descendingFleetResponseListCompleteAttribute)));
 
         verify(fleetRepository, times(1)).findDistinctByNameOrderByCbmCapacityDesc();
     }
