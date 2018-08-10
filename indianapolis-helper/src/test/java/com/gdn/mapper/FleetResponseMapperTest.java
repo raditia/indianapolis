@@ -29,7 +29,7 @@ public class FleetResponseMapperTest {
     @Test
     public void toFleetResponse() {
         given(FleetResponseMapper.toFleetResponse(FleetUtil.fleetMotorCompleteAttribute))
-                .willReturn(FleetResponseUtil.fleetResponseCompleteAttribute);
+                .willReturn(FleetResponseUtil.fleetResponseMotorCompleteAttribute);
         FleetResponse expectedResponse = FleetResponseMapper.toFleetResponse(FleetUtil.fleetMotorCompleteAttribute);
         assertThat(expectedResponse, notNullValue());
         assertThat(expectedResponse, equalTo(FleetResponseMapper.toFleetResponse(FleetUtil.fleetMotorCompleteAttribute)));
@@ -38,10 +38,10 @@ public class FleetResponseMapperTest {
     @Test
     public void toFleetResponseList() {
         given(FleetResponseMapper.toFleetResponseList(FleetUtil.fleetListMotorOnly))
-                .willReturn(FleetResponseUtil.fleetResponseListCompleteAttribute);
+                .willReturn(FleetResponseUtil.descendingFleetResponseListCompleteAttribute);
         List<FleetResponse> expectedResponse = FleetResponseMapper.toFleetResponseList(FleetUtil.fleetListMotorOnly);
         assertThat(expectedResponse, notNullValue());
         assertThat(expectedResponse.isEmpty(), equalTo(false));
-        assertThat(expectedResponse, equalTo(FleetResponseUtil.fleetResponseListCompleteAttribute));
+        assertThat(expectedResponse, equalTo(FleetResponseUtil.descendingFleetResponseListCompleteAttribute));
     }
 }

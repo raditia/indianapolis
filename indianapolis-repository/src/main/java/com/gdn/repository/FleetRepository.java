@@ -11,7 +11,7 @@ import java.util.List;
 public interface FleetRepository extends JpaRepository<Fleet, String> {
     List<Fleet> findAllByOrderByCbmCapacityDesc();
 
-    @Query("SELECT DISTINCT f.name, f.cbmCapacity, f.id, f.price, f.minCbm, f.logisticVendor FROM Fleet f order by f.cbmCapacity DESC")
+    @Query("SELECT DISTINCT f FROM Fleet f order by f.cbmCapacity DESC")
     List<Fleet> findDistinctByNameOrderByCbmCapacityDesc();
 
     List<Fleet> findAllByOrderByCbmCapacityAsc();

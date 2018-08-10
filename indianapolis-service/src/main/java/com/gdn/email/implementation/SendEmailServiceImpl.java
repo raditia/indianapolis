@@ -51,14 +51,14 @@ public class SendEmailServiceImpl implements SendEmailService {
     @Override
     public List<LogisticVendor> getLogisticVendorList(List<PickupFleet> pickupFleetList) {
         List<LogisticVendor> logisticVendorList = new ArrayList<>();
-        LogisticVendor logisticVendor;
-        for (PickupFleet pickupFleet : pickupFleetList
-                ) {
-            logisticVendor = pickupFleet.getFleet().getLogisticVendor();
-            if (!logisticVendorList.contains(logisticVendor)) {
-                logisticVendorList.add(logisticVendor);
-            }
-        }
+//        LogisticVendor logisticVendor;
+//        for (PickupFleet pickupFleet : pickupFleetList
+//                ) {
+////            logisticVendor = pickupFleet.getFleet().getLogisticVendor();
+//            if (!logisticVendorList.contains(logisticVendor)) {
+//                logisticVendorList.add(logisticVendor);
+//            }
+//        }
         return logisticVendorList;
     }
 
@@ -101,7 +101,7 @@ public class SendEmailServiceImpl implements SendEmailService {
 
     @Override
     public List<Context> getLogisticVendorEmailContent(Warehouse warehouse, LogisticVendor logisticVendor, String pickupDate) {
-        List<PickupFleet> pickupFleetList = pickupFleetRepository.findAllByPickupWarehouseAndFleetLogisticVendor(warehouse, logisticVendor);
+        List<PickupFleet> pickupFleetList = pickupFleetRepository.findAllByPickupWarehouseAndLogisticVendor(warehouse, logisticVendor);
         Context context = new Context();
         context.setVariable("logisticVendorName", logisticVendor.getName());
         context.setVariable("pickupDate", pickupDate);

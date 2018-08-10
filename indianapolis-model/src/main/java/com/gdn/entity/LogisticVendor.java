@@ -30,4 +30,7 @@ public class LogisticVendor {
     @Column(name = "email_address")
     private String emailAddress;
 
+    @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE}, mappedBy = "logisticVendor")
+    private List<LogisticVendorFleet> logisticVendorFleetList;
+
 }

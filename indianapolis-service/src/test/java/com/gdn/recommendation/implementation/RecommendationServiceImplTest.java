@@ -1,8 +1,8 @@
 package com.gdn.recommendation.implementation;
 
+import com.gdn.RecommendationResponseUtil;
 import com.gdn.RecommendationResultUtil;
 import com.gdn.entity.Warehouse;
-import com.gdn.mapper.RecommendationResponseMapper;
 import com.gdn.pickup.PickupService;
 import com.gdn.repository.CffRepository;
 import com.gdn.repository.RecommendationRepository;
@@ -58,7 +58,7 @@ public class RecommendationServiceImplTest {
         WebResponse<RecommendationResponse> expectedResponse = recommendationService.findAllRecommendationFleetResult(warehouse.getId());
 
         assertThat(expectedResponse, notNullValue());
-        assertThat(expectedResponse, equalTo(WebResponse.OK(RecommendationResponseMapper.toRecommendationResponse(RecommendationResultUtil.recommendationResultListCompleteAttribute))));
+        assertThat(expectedResponse, equalTo(WebResponse.OK(RecommendationResponseUtil.recommendationResponseCompleteAttribute)));
 
         verify(recommendationResultRepository, times(1)).findByWarehouse(warehouse);
     }
