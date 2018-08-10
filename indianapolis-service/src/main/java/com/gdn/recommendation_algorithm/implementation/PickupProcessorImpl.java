@@ -11,6 +11,7 @@ import com.gdn.recommendation_algorithm.PickupProcessorService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,8 +20,6 @@ public class PickupProcessorImpl implements PickupProcessorService {
 
     @Autowired
     private FleetProcessorService fleetProcessorService;
-
-    private Helper helper = new Helper();
 
     @Override
     public Pickup getNextPickup(List<Product> productList, Fleet topFleetWillUsed) {
@@ -88,16 +87,14 @@ public class PickupProcessorImpl implements PickupProcessorService {
 
     private Float getPickupTotalCbm(List<DetailPickup> detailPickupList) {
         Float total = 0.0f;
-
         for(DetailPickup detailPickup : detailPickupList){
-            total = helper.formatNormalFloat(total+ detailPickup.getPickupCbm());
+            total = Helper.formatNormalFloat(total+ detailPickup.getPickupCbm());
         }
         return total;
     }
 
     private Integer getPickupTotalAmount(List<DetailPickup> detailPickupList) {
         Integer counter = 0;
-
         for(DetailPickup detailPickup : detailPickupList){
             counter+= detailPickup.getPickupAmount();
         }

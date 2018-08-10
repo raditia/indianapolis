@@ -22,8 +22,6 @@ public class RecommendationProcessorImpl implements RecommendationProcessorServi
     @Autowired
     private PickupProcessorService pickupProcessorService;
 
-    private Helper helper = new Helper();
-
     @Override
     public List<Recommendation> getThreeRecommendation(List<DatabaseQueryResult> productResultList, String warehouseId){
         List<Recommendation> threeRecommendations = new ArrayList<>();
@@ -31,7 +29,7 @@ public class RecommendationProcessorImpl implements RecommendationProcessorServi
 
         List<Fleet> topThreeFleetsWillUsed = fleetProcessorService.getTopThreeFleetsWillUsed(productResultList);
         for(Fleet topFleetWillUsed : topThreeFleetsWillUsed){
-            productList = helper.migrateIntoProductList(productResultList);
+            productList = Helper.migrateIntoProductList(productResultList);
             Recommendation recommendation = getRecommendationByTopFleet(productList, topFleetWillUsed, warehouseId);
             threeRecommendations.add(recommendation);
         }
@@ -45,11 +43,11 @@ public class RecommendationProcessorImpl implements RecommendationProcessorServi
         Integer productAmount = 0;
         Fleet fleetWithMaxCbmCapacityWillUsed = topFleetWillUsed;
 
-        while(!helper.empty(productList)){
+        while(!Helper.empty(productList)){
             Pickup nextPickup = pickupProcessorService.getNextPickup(productList, topFleetWillUsed);
             if(nextPickup.getPickupTotalAmount() > 0) {
                 pickupList.add(nextPickup);
-                cbmTotal = helper.formatNormalFloat(cbmTotal+nextPickup.getPickupTotalCbm());
+                cbmTotal = Helper.formatNormalFloat(cbmTotal+nextPickup.getPickupTotalCbm());
                 productAmount += nextPickup.getPickupTotalAmount();
                 topFleetWillUsed = fleetWithMaxCbmCapacityWillUsed;
             } else {
