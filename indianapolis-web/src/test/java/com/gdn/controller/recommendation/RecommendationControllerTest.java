@@ -57,7 +57,9 @@ public class RecommendationControllerTest {
                 .andExpect(jsonPath("$.data.cbmTotal", equalTo(new BigDecimal(RecommendationResponseUtil.recommendationResponseCompleteAttribute.getCbmTotal()).setScale(3,BigDecimal.ROUND_HALF_UP).doubleValue())))
                 .andExpect(jsonPath("$.data.recommendationResultResponseList[0].id", equalTo(RecommendationResponseUtil.recommendationResponseCompleteAttribute.getRecommendationResultResponseList().get(0).getId())))
                 .andExpect(jsonPath("$.data.recommendationResultResponseList[0].fleetResponseList[0].fleetId", equalTo(RecommendationResponseUtil.recommendationResponseCompleteAttribute.getRecommendationResultResponseList().get(0).getFleetResponseList().get(0).getFleetId())))
-                .andExpect(jsonPath("$.data.recommendationResultResponseList[0].fleetResponseList[0].fleetName", equalTo(RecommendationResponseUtil.recommendationResponseCompleteAttribute.getRecommendationResultResponseList().get(0).getFleetResponseList().get(0).getFleetName())));
+                .andExpect(jsonPath("$.data.recommendationResultResponseList[0].fleetResponseList[0].fleetName", equalTo(RecommendationResponseUtil.recommendationResponseCompleteAttribute.getRecommendationResultResponseList().get(0).getFleetResponseList().get(0).getFleetName())))
+                .andExpect(jsonPath("$.data.recommendationResultResponseList[0].fleetResponseList[0].logisticVendorResponseList[0].id", equalTo(RecommendationResponseUtil.recommendationResponseCompleteAttribute.getRecommendationResultResponseList().get(0).getFleetResponseList().get(0).getLogisticVendorResponseList().get(0).getId())))
+                .andExpect(jsonPath("$.data.recommendationResultResponseList[0].fleetResponseList[0].logisticVendorResponseList[0].name", equalTo(RecommendationResponseUtil.recommendationResponseCompleteAttribute.getRecommendationResultResponseList().get(0).getFleetResponseList().get(0).getLogisticVendorResponseList().get(0).getName())));
         verify(recommendationService, times(1)).findAllRecommendationFleetResult(WarehouseUtil.warehouseMinusWarehouseCategoryList.getId());
     }
 

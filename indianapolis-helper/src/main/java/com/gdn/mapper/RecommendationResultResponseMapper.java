@@ -17,6 +17,10 @@ public class RecommendationResultResponseMapper {
             RecommendationResultFleetResponse fleet = RecommendationResultFleetResponse.builder()
                     .fleetId(recommendationFleet.getFleet().getId())
                     .fleetName(recommendationFleet.getFleet().getName())
+                    .logisticVendorResponseList(
+                            LogisticVendorResponseMapper.toLogisticVendorResponseList(
+                                    LogisticVendorMapper.toLogisticVendorList(recommendationFleet.getFleet().getLogisticVendorFleetList())
+                            ))
                     .build();
             fleetResponseList.add(fleet);
         }

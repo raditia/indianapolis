@@ -12,6 +12,7 @@ public class FleetUtil {
             .cbmCapacity(0.5f)
             .minCbm(0f)
             .price(0.0)
+            .logisticVendorFleetList(LogisticVendorFleetUtil.logisticVendorFleetListLogisticVendorOnly)
             .build();
     public static Fleet fleetVanCompleteAttribute = Fleet.builder()
             .id("2")
@@ -19,6 +20,7 @@ public class FleetUtil {
             .cbmCapacity(1.5f)
             .minCbm(0.51f)
             .price(0.0)
+            .logisticVendorFleetList(LogisticVendorFleetUtil.logisticVendorFleetListLogisticVendorOnly)
             .build();
     public static List<Fleet> fleetListMotorOnly = new ArrayList<Fleet>(){{
         add(fleetMotorCompleteAttribute);
