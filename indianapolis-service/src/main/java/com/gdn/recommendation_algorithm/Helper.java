@@ -10,7 +10,7 @@ import java.util.List;
 
 public class Helper {
 
-    public List<Product> migrateIntoProductList(List<DatabaseQueryResult> resultList){
+    public static List<Product> migrateIntoProductList(List<DatabaseQueryResult> resultList){
         List<Product> productList = new ArrayList<>();
         List<String> skuIdList = new ArrayList<>();
         String productId = null;
@@ -47,11 +47,11 @@ public class Helper {
         return productList;
     }
 
-    public float formatNormalFloat(float input){
+    public static float formatNormalFloat(float input){
         return new BigDecimal(input).setScale(3,BigDecimal.ROUND_HALF_UP).floatValue();
     }
 
-    public boolean empty(List<Product> productList) {
+    public static boolean empty(List<Product> productList) {
         for(Product product : productList){
             if(product.getQuantity() > 0){
                 return false;

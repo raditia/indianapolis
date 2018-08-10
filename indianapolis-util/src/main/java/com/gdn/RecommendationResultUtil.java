@@ -21,8 +21,8 @@ public class RecommendationResultUtil {
             .id("id")
             .warehouse(WarehouseUtil.warehouseMinusWarehouseCategoryList)
             .pickupDate(theDayAfterTomorrow())
-            .totalCbm(0.0f)
-            .totalSku(0)
+            .totalCbm(1.0f)
+            .totalSku(5)
             .recommendationFleetList(RecommendationFleetUtil.recommendationFleetListMinusRecommendationResult)
             .build();
     public static List<RecommendationResult> recommendationResultListCompleteAttribute = new ArrayList<RecommendationResult>(){{

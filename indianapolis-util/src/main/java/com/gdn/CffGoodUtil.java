@@ -20,7 +20,7 @@ public class CffGoodUtil {
             .id("2")
             .sku("sku2")
             .cbm(0.1f)
-            .quantity(10)
+            .quantity(2)
             .length(0.0f)
             .width(0.0f)
             .height(0.0f)

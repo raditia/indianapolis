@@ -1,6 +1,10 @@
 package com.gdn;
 
+import com.gdn.entity.Fleet;
 import com.gdn.recommendation.DatabaseQueryResult;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class DatabaseQueryResultUtil {
     public static DatabaseQueryResult databaseQueryResultCompleteAttribute = DatabaseQueryResult.builder()
@@ -11,4 +15,7 @@ public class DatabaseQueryResultUtil {
             .cffGoods(DatabaseQueryCffGoodsUtil.databaseQueryCffGoodsCompleteAttribute)
             .allowedVehicles(DatabaseQueryAllowedVehiclesUtil.databaseQueryAllowedVehiclesCompleteAttribute)
             .build();
+    public static List<DatabaseQueryResult> databaseQueryResultList = new ArrayList<DatabaseQueryResult>(){{
+        add(databaseQueryResultCompleteAttribute);
+    }};
 }
