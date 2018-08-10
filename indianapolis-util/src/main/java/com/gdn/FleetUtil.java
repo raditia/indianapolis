@@ -10,7 +10,6 @@ public class FleetUtil {
             .id("1")
             .name("motor")
             .cbmCapacity(0.5f)
-            .logisticVendor(LogisticVendorUtil.logisticVendorCompleteAttribute)
             .minCbm(0.0f)
             .price(0.0)
             .logisticVendorFleetList(LogisticVendorFleetUtil.logisticVendorFleetListLogisticVendorOnly)
