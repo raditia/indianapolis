@@ -12,7 +12,6 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class RecommendationResultFleetResponse {
-    private String recommendationFleetId;
     private String fleetId;
     private String fleetName;
     private List<LogisticVendorResponse> logisticVendorResponseList;
