@@ -7,8 +7,10 @@ import java.util.List;
 
 public class RecommendationResultFleetResponseUtil {
     public static RecommendationResultFleetResponse recommendationResultFleetResponse = RecommendationResultFleetResponse.builder()
+            .recommendationFleetId(RecommendationFleetUtil.recommendationFleetMinusRecommendationResult.getId())
             .fleetId(FleetUtil.fleetMotorCompleteAttribute.getId())
             .fleetName(FleetUtil.fleetMotorCompleteAttribute.getName())
+            .logisticVendorResponseList(LogisticVendorResponseUtil.logisticVendorResponseList)
             .build();
     public static List<RecommendationResultFleetResponse> recommendationResultFleetResponseList = new ArrayList<RecommendationResultFleetResponse>(){{
         add(recommendationResultFleetResponse);

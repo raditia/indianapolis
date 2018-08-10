@@ -15,8 +15,13 @@ public class RecommendationResultResponseMapper {
         for (RecommendationFleet recommendationFleet:recommendationResult.getRecommendationFleetList()
              ) {
             RecommendationResultFleetResponse fleet = RecommendationResultFleetResponse.builder()
+                    .recommendationFleetId(recommendationFleet.getId())
                     .fleetId(recommendationFleet.getFleet().getId())
                     .fleetName(recommendationFleet.getFleet().getName())
+                    .logisticVendorResponseList(
+                            LogisticVendorResponseMapper.toLogisticVendorResponseList(
+                                    LogisticVendorMapper.toLogisticVendorList(recommendationFleet.getFleet().getLogisticVendorFleetList())
+                            ))
                     .build();
             fleetResponseList.add(fleet);
         }
