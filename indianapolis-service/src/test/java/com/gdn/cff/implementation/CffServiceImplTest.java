@@ -197,7 +197,7 @@ public class CffServiceImplTest {
 
         for (AllowedVehicle allowedVehicle:uploadCff.getPickupPoint().getAllowedVehicleList()
                 ) {
-            allowedVehicle.setId("allowed_vehicle_" + UUID.randomUUID().toString());
+            allowedVehicle.setId(allowedVehicle.getId());
             allowedVehicle.setPickupPoint(uploadCff.getPickupPoint());
         }
 

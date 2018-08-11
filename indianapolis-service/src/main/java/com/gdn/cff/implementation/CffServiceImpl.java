@@ -59,12 +59,13 @@ public class CffServiceImpl implements CffService {
             cffGood.setCff(cff);
         }
 
-        cff.getPickupPoint().setId(getPickupPointId(cff.getPickupPoint()));
-
-        for (AllowedVehicle allowedVehicle:cff.getPickupPoint().getAllowedVehicleList()
-                ) {
-            allowedVehicle.setId("allowed_vehicle_" + UUID.randomUUID().toString());
-            allowedVehicle.setPickupPoint(cff.getPickupPoint());
+        PickupPoint pickupPointInDatabase = findPickupPointInDatabase(cff.getPickupPoint());
+        if(pickupPointInDatabase!=null){
+            cff.getPickupPoint().setId(pickupPointInDatabase.getId());
+            cff.getPickupPoint().setAllowedVehicleList(getExistingAllowedVehicleList(pickupPointInDatabase));
+        } else{
+            cff.getPickupPoint().setId("pickup_point_" + UUID.randomUUID().toString());
+            cff.getPickupPoint().setAllowedVehicleList(getNewAllowedVehicleList(cff.getPickupPoint()));
         }
 
         return WebResponse.OK(CffResponseMapper.toCffResponse(cffRepository.save(cff)));
@@ -78,16 +79,34 @@ public class CffServiceImpl implements CffService {
             return "merchant_" + UUID.randomUUID().toString();
     }
 
-    private String getPickupPointId(PickupPoint pickupPoint){
-        PickupPoint newPickupPoint = pickupPointRepository.findByPickupAddressOrLatitudeAndLongitude(
+    private PickupPoint findPickupPointInDatabase(PickupPoint pickupPoint){
+        return pickupPointRepository.findByPickupAddressOrLatitudeAndLongitude(
                 pickupPoint.getPickupAddress(),
                 pickupPoint.getLatitude(),
                 pickupPoint.getLongitude()
         );
-        if(newPickupPoint!=null)
-            return newPickupPoint.getId();
-        else
-            return "pickup_point_" + UUID.randomUUID().toString();
+    }
+
+    private List<AllowedVehicle> getNewAllowedVehicleList(PickupPoint pickupPoint){
+        List<AllowedVehicle> allowedVehicleList = new ArrayList<>();
+        for (AllowedVehicle allowedVehicle:pickupPoint.getAllowedVehicleList()
+                ) {
+            allowedVehicle.setId("allowed_vehicle_" + UUID.randomUUID().toString());
+            allowedVehicle.setPickupPoint(pickupPoint);
+            allowedVehicleList.add(allowedVehicle);
+        }
+        return allowedVehicleList;
+    }
+
+    private List<AllowedVehicle> getExistingAllowedVehicleList(PickupPoint pickupPoint){
+        List<AllowedVehicle> allowedVehicleList = new ArrayList<>();
+        for (AllowedVehicle allowedVehicle:pickupPoint.getAllowedVehicleList()
+                ) {
+            allowedVehicle.setId(allowedVehicle.getId());
+            allowedVehicle.setPickupPoint(pickupPoint);
+            allowedVehicleList.add(allowedVehicle);
+        }
+        return allowedVehicleList;
     }
 
     @Override
