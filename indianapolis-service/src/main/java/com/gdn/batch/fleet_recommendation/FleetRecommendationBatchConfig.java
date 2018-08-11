@@ -3,7 +3,6 @@ package com.gdn.batch.fleet_recommendation;
 import com.gdn.SchedulingStatus;
 import com.gdn.recommendation.DatabaseQueryResult;
 import com.gdn.recommendation.Recommendation;
-import com.gdn.helper.DateHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.batch.core.Job;
@@ -26,7 +25,6 @@ import org.springframework.jdbc.core.PreparedStatementSetter;
 import javax.sql.DataSource;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
-import java.sql.Timestamp;
 import java.sql.Types;
 import java.util.List;
 
@@ -63,9 +61,8 @@ public class FleetRecommendationBatchConfig {
 
     @Bean
     @JobScope
-    public ItemProcessor<DatabaseQueryResult, List<Recommendation>> dbQueryResultProcessor(@Value("#{jobParameters['warehouse']}") String warehouseId,
-                                                                                           @Value("#{jobParameters['rowCount']}") String rowCount){
-        return new FleetRecommendationProcessor(warehouseId, rowCount);
+    public ItemProcessor<DatabaseQueryResult, List<Recommendation>> dbQueryResultProcessor(){
+        return new FleetRecommendationProcessor();
     }
 
     @Bean

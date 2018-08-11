@@ -7,6 +7,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.batch.item.ItemProcessor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 
 import java.util.*;
 
@@ -20,14 +21,10 @@ public class FleetRecommendationProcessor implements ItemProcessor<DatabaseQuery
     @Autowired
     private RecommendationProcessorService recommendationProcessorService;
 
-    private int rowCount;
+    @Value("#{jobParameters['rowCount']}")
+    private Integer rowCount;
+    @Value("#{jobParameters['warehouse']}")
     private String warehouseId;
-
-    public FleetRecommendationProcessor(String warehouseId, String rowCount) {
-        this.warehouseId=warehouseId;
-        this.rowCount=Integer.parseInt(rowCount);
-        LOGGER.info("Row count : " + rowCount);
-    }
 
     @Override
     public List<Recommendation> process(DatabaseQueryResult databaseQueryResult) throws Exception {
@@ -39,7 +36,6 @@ public class FleetRecommendationProcessor implements ItemProcessor<DatabaseQuery
             for (DatabaseQueryResult item : resultList) {
                 cffService.updateSchedulingStatus(item.getCffId());
             }
-            resultList.clear();
         }
         return recommendationList;
     }
