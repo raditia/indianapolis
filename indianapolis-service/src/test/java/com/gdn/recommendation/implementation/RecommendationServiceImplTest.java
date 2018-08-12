@@ -2,6 +2,7 @@ package com.gdn.recommendation.implementation;
 
 import com.gdn.RecommendationResponseUtil;
 import com.gdn.RecommendationResultUtil;
+import com.gdn.WarehouseUtil;
 import com.gdn.entity.Warehouse;
 import com.gdn.pickup.PickupService;
 import com.gdn.repository.CffRepository;
@@ -16,7 +17,12 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.batch.core.Job;
+import org.springframework.batch.core.JobParameters;
+import org.springframework.batch.core.JobParametersBuilder;
 import org.springframework.batch.core.launch.JobLauncher;
+import org.springframework.beans.factory.annotation.Autowired;
+
+import java.util.UUID;
 
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.hamcrest.core.IsNull.notNullValue;
@@ -27,10 +33,6 @@ import static org.mockito.Mockito.verify;
 
 public class RecommendationServiceImplTest {
 
-    @Mock
-    private JobLauncher jobLauncher;
-    @Mock
-    private Job fleetRecommendationJob;
     @Mock
     private RecommendationRepository recommendationRepository;
     @Mock
@@ -43,9 +45,33 @@ public class RecommendationServiceImplTest {
     @InjectMocks
     private RecommendationServiceImpl recommendationService;
 
+    @Mock
+    private Job fleetRecommendationJob;
+    @Mock
+    private JobLauncher jobLauncher;
+
     @Before
     public void setUp() throws Exception {
         MockitoAnnotations.initMocks(this);
+    }
+
+    @Test
+    public void executeBatch_OK() throws Exception {
+        given(cffRepository.findDistinctWarehouse()).willReturn(WarehouseUtil.warehouseListMinusWarehouseCategoryList);
+        given(recommendationRepository.getRowCount(WarehouseUtil.warehouseMinusWarehouseCategoryList))
+                .willReturn(1);
+        JobParameters fleetRecommendationJobParameters = new JobParametersBuilder()
+                .addLong(UUID.randomUUID().toString(),System.currentTimeMillis())
+                .addString("warehouse", WarehouseUtil.warehouseMinusWarehouseCategoryList.getId())
+                .addString("rowCount", String.valueOf(1))
+                .toJobParameters();
+        jobLauncher.run(fleetRecommendationJob, fleetRecommendationJobParameters);
+
+        recommendationService.executeBatch();
+
+        verify(cffRepository, times(1)).findDistinctWarehouse();
+        verify(recommendationRepository, times(1)).getRowCount(WarehouseUtil.warehouseMinusWarehouseCategoryList);
+        verify(jobLauncher, times(1)).run(fleetRecommendationJob, fleetRecommendationJobParameters);
     }
 
     @Test

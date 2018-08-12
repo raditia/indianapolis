@@ -1,6 +1,5 @@
 package com.gdn.recommendation.implementation;
 
-import com.gdn.email.SendEmailService;
 import com.gdn.entity.*;
 import com.gdn.recommendation.RecommendationService;
 import com.gdn.repository.*;
@@ -36,27 +35,21 @@ public class RecommendationServiceImpl implements RecommendationService {
     private RecommendationResultRepository recommendationResultRepository;
     @Autowired
     private CffRepository cffRepository;
-    @Autowired
-    private SendEmailService sendEmailService;
 
     @Scheduled(cron = "${recommendation.cron}")
     @Override
-    public void executeBatch() {
+    public void executeBatch() throws JobParametersInvalidException, JobExecutionAlreadyRunningException, JobRestartException, JobInstanceAlreadyCompleteException {
         List<Warehouse> warehouseListOfCffPickedUpdTomorrow = cffRepository.findDistinctWarehouse();
         for (Warehouse warehouse:warehouseListOfCffPickedUpdTomorrow
              ) {
             int rowCount = recommendationRepository.getRowCount(warehouse);
             LOGGER.info("Warehouse ID listed on cff to be pickupFleet tomorrow : " + warehouse.getId());
-            try {
-                JobParameters fleetRecommendationJobParameters = new JobParametersBuilder()
-                        .addLong(UUID.randomUUID().toString(),System.currentTimeMillis())
-                        .addString("warehouse", warehouse.getId())
-                        .addString("rowCount", String.valueOf(rowCount))
-                        .toJobParameters();
-                jobLauncher.run(fleetRecommendationJob, fleetRecommendationJobParameters);
-            } catch (JobExecutionAlreadyRunningException | JobRestartException | JobInstanceAlreadyCompleteException | JobParametersInvalidException e) {
-                e.printStackTrace();
-            }
+            JobParameters fleetRecommendationJobParameters = new JobParametersBuilder()
+                    .addLong(UUID.randomUUID().toString(),System.currentTimeMillis())
+                    .addString("warehouse", warehouse.getId())
+                    .addString("rowCount", String.valueOf(rowCount))
+                    .toJobParameters();
+            jobLauncher.run(fleetRecommendationJob, fleetRecommendationJobParameters);
         }
     }
 

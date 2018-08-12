@@ -1,6 +1,7 @@
 package com.gdn.pickup.implementation;
 
 import com.gdn.*;
+import com.gdn.email.SendEmailService;
 import com.gdn.entity.PickupDetail;
 import com.gdn.entity.PickupFleet;
 import com.gdn.entity.Pickup;
@@ -34,6 +35,8 @@ public class PickupServiceImplTest {
     private RecommendationResultRepository recommendationResultRepository;
     @Mock
     private PickupRepository pickupRepository;
+    @Mock
+    private SendEmailService sendEmailService;
 
     @InjectMocks
     private PickupServiceImpl pickupService;
@@ -58,16 +61,18 @@ public class PickupServiceImplTest {
             }
         }
         given(pickupRepository.save(pickup)).willReturn(pickup);
+        sendEmailService.sendEmail(pickup);
         WebResponse<PickupChoiceResponse> expectedResponse = pickupService.savePickup(PickupChoiceRequestUtil.pickupChoiceRequestCompleteAttribute);
         recommendationResultRepository.deleteAllByWarehouse(RecommendationResultUtil.recommendationResultCompleteAttribute.getWarehouse());
 
         assertThat(expectedResponse, notNullValue());
         assertThat(expectedResponse, equalTo(WebResponse.OK(PickupChoiceResponseUtil.pickupChoiceResponseCompleteAttribute)));
 
-        InOrder inOrder = Mockito.inOrder(recommendationResultRepository, pickupRepository);
+        InOrder inOrder = Mockito.inOrder(recommendationResultRepository, pickupRepository, sendEmailService);
         inOrder.verify(recommendationResultRepository, times(1)).getOne(PickupChoiceRequestUtil.pickupChoiceRequestCompleteAttribute.getRecommendationResultId());
-        inOrder.verify(pickupRepository, times(1)).save(pickup);
         inOrder.verify(recommendationResultRepository, times(1)).deleteAllByWarehouse(RecommendationResultUtil.recommendationResultCompleteAttribute.getWarehouse());
+        inOrder.verify(pickupRepository, times(1)).save(pickup);
+        inOrder.verify(sendEmailService, times(1)).sendEmail(pickup);
     }
 
     @After
