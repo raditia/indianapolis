@@ -19,7 +19,7 @@
                         <td>Warehouse : <a th:text="${warehouseName}" style="font-weight: 600; color: #000000"></a></td>
                     </tr>
                     <tr>
-                        <td style="font-weight: 400; font-size: 14px; padding-top: 10px">Merchant goods delivery at <a th:text="${pickupDate}" style="font-weight: 600; color: #000000"></a> </td>
+                        <td style="font-weight: 400; font-size: 14px; padding-top: 10px">Merchant products delivery at <a th:text="${deliveryDate}" style="font-weight: 600; color: #000000"></a> </td>
                     </tr>
                     <tr>
                         <td style="padding-top: 10px">
@@ -27,20 +27,20 @@
                                 <th:block th:each="pickupFleet : ${pickupFleetList}">
                                     <tbody class="row">
                                         <tr>
-                                            <td style="font-weight: 500; font-size: 14px;">Logistic Vendor : <a th:text="${pickupFleet.fleet.logisticVendor.name}" style="font-weight: 600; color: #000000"></a> </td>
+                                            <td style="font-weight: 500; font-size: 14px;">Logistic Vendor : <a th:text="${pickupFleet.logisticVendor.name}" style="font-weight: 600; color: #000000"></a> </td>
                                         </tr>
                                         <tr>
-                                            <td style="font-weight: 500; font-size: 14px;">Fleet : <a th:text="${pickupFleet.fleet.name}" style="font-weight: 600; color: #000000"></a> </td>
+                                            <td style="font-weight: 500; padding-left: 16px; font-size: 14px;">Fleet : <a th:text="${pickupFleet.fleet.name}" style="font-weight: 600; color: #000000"></a> </td>
                                         </tr>
-                                        <th:block th:each="sku : ${pickupFleet.pickupDetailList}">
+                                        <th:block th:each="detail : ${pickupFleet.pickupDetailList}">
                                             <tr>
-                                                <td style="font-weight: 400; font-size: 12px; padding-left: 16px"> SKU : <a th:text="${sku.sku.sku}" style="font-weight: 600; color: #000000"></a></td>
+                                                <td style="font-weight: 400; font-size: 12px; padding-left: 18px"> SKU : <a th:text="${detail.cffGood.sku}" style="font-weight: 600; color: #000000"></a></td>
                                             </tr>
                                             <tr>
-                                                <td style="font-weight: 400; font-size: 12px; padding-left: 16px"> Quantity : <a th:text="${sku.skuPickupQuantity}"></a></td>
+                                                <td style="font-weight: 400; font-size: 12px; padding-left: 18px"> Quantity : <a th:text="${detail.skuPickupQuantity}"></a></td>
                                             </tr>
                                             <tr>
-                                                <td style="font-weight: 400; font-size: 12px; padding-left: 16px"> CBM : <a th:text="${sku.cbmPickupAmount}"></a></td>
+                                                <td style="font-weight: 400; font-size: 12px; padding-left: 18px"> CBM : <a th:text="${detail.cbmPickupAmount}"></a></td>
                                             </tr>
                                         </th:block>
                                         <hr/>

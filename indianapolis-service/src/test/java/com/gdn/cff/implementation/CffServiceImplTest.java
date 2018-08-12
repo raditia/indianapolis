@@ -135,7 +135,7 @@ public class CffServiceImplTest {
         }
 
         given(pickupPointRepository
-                .findByPickupAddressOrLatitudeAndLongitude(
+                .findByPickupAddressAndLatitudeAndLongitude(
                         PickupPointUtil.newPickupPointUploadCff.getPickupAddress(),
                         PickupPointUtil.newPickupPointUploadCff.getLatitude(),
                         PickupPointUtil.newPickupPointUploadCff.getLongitude()))
@@ -160,7 +160,7 @@ public class CffServiceImplTest {
         inOrder.verify(merchantRepository, times(1))
                 .findByEmailAddress(MerchantUtil.newMerchantUploadCff.getEmailAddress());
         inOrder.verify(pickupPointRepository, times(1))
-                .findByPickupAddressOrLatitudeAndLongitude(
+                .findByPickupAddressAndLatitudeAndLongitude(
                         PickupPointUtil.newPickupPointUploadCff.getPickupAddress(),
                         PickupPointUtil.newPickupPointUploadCff.getLatitude(),
                         PickupPointUtil.newPickupPointUploadCff.getLongitude());
@@ -188,7 +188,7 @@ public class CffServiceImplTest {
         }
 
         given(pickupPointRepository
-                .findByPickupAddressOrLatitudeAndLongitude(
+                .findByPickupAddressAndLatitudeAndLongitude(
                         PickupPointUtil.existingPickupPointUploadCff.getPickupAddress(),
                         PickupPointUtil.existingPickupPointUploadCff.getLatitude(),
                         PickupPointUtil.existingPickupPointUploadCff.getLongitude()))
@@ -212,7 +212,7 @@ public class CffServiceImplTest {
         inOrder.verify(merchantRepository, times(1))
                 .findByEmailAddress(MerchantUtil.existingMerchantUploadCff.getEmailAddress());
         inOrder.verify(pickupPointRepository, times(1))
-                .findByPickupAddressOrLatitudeAndLongitude(
+                .findByPickupAddressAndLatitudeAndLongitude(
                         PickupPointUtil.existingPickupPointUploadCff.getPickupAddress(),
                         PickupPointUtil.existingPickupPointUploadCff.getLatitude(),
                         PickupPointUtil.existingPickupPointUploadCff.getLongitude());

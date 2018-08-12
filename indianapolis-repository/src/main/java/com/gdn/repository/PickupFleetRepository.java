@@ -1,6 +1,7 @@
 package com.gdn.repository;
 
 import com.gdn.entity.LogisticVendor;
+import com.gdn.entity.Pickup;
 import com.gdn.entity.PickupFleet;
 import com.gdn.entity.Warehouse;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -10,6 +11,5 @@ import java.util.List;
 
 @Repository
 public interface PickupFleetRepository extends JpaRepository<PickupFleet, String> {
-    List<PickupFleet> findAllByPickupWarehouse(Warehouse warehouse);
-    List<PickupFleet> findAllByPickupWarehouseAndLogisticVendor(Warehouse warehouse, LogisticVendor logisticVendor);
+    List<PickupFleet> findAllByPickupAndLogisticVendor(Pickup pickup, LogisticVendor logisticVendor);
 }

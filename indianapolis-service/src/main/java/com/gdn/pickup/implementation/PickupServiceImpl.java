@@ -1,5 +1,6 @@
 package com.gdn.pickup.implementation;
 
+import com.gdn.email.SendEmailService;
 import com.gdn.entity.Pickup;
 import com.gdn.entity.PickupDetail;
 import com.gdn.entity.PickupFleet;
@@ -16,6 +17,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.mail.MessagingException;
+
 @Service
 public class PickupServiceImpl implements PickupService {
 
@@ -23,10 +26,12 @@ public class PickupServiceImpl implements PickupService {
     private RecommendationResultRepository recommendationResultRepository;
     @Autowired
     private PickupRepository pickupRepository;
+    @Autowired
+    private SendEmailService sendEmailService;
 
     @Override
     @Transactional
-    public WebResponse<PickupChoiceResponse> savePickup(PickupChoiceRequest pickupChoiceRequest) {
+    public WebResponse<PickupChoiceResponse> savePickup(PickupChoiceRequest pickupChoiceRequest) throws MessagingException {
         RecommendationResult chosenRecommendation = recommendationResultRepository.getOne(pickupChoiceRequest.getRecommendationResultId());
         Pickup pickup = PickupMapper.toPickup(chosenRecommendation, pickupChoiceRequest.getFleetChoiceRequestList());
         for (PickupFleet pickupFleet:pickup.getPickupFleetList()){
@@ -36,7 +41,9 @@ public class PickupServiceImpl implements PickupService {
             }
         }
         recommendationResultRepository.deleteAllByWarehouse(chosenRecommendation.getWarehouse());
-        return WebResponse.OK(PickupChoiceResponseMapper.toPickupChoiceResponse(pickupRepository.save(pickup)));
+        Pickup savedPickup = pickupRepository.save(pickup);
+        sendEmailService.sendEmail(savedPickup);
+        return WebResponse.OK(PickupChoiceResponseMapper.toPickupChoiceResponse(savedPickup));
     }
 
 }
