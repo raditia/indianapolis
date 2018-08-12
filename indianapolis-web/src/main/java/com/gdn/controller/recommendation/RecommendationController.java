@@ -5,13 +5,11 @@ import com.gdn.recommendation.RecommendationService;
 import com.gdn.request.PickupChoiceRequest;
 import com.gdn.response.*;
 import com.gdn.warehouse.WarehouseService;
-import com.itextpdf.text.DocumentException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
 import javax.mail.MessagingException;
-import java.io.IOException;
 import java.util.List;
 
 @RestController
