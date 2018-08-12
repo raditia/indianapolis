@@ -18,6 +18,8 @@ import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
+import javax.mail.MessagingException;
+
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.hamcrest.core.IsNull.notNullValue;
 import static org.junit.Assert.*;
@@ -43,7 +45,7 @@ public class PickupServiceImplTest {
     }
 
     @Test
-    public void savePickup() {
+    public void savePickup() throws MessagingException {
         given(recommendationResultRepository
                 .getOne(PickupChoiceRequestUtil.pickupChoiceRequestCompleteAttribute.getRecommendationResultId()))
                 .willReturn(RecommendationResultUtil.recommendationResultCompleteAttribute);

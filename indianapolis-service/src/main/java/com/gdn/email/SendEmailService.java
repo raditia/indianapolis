@@ -17,5 +17,5 @@ public interface SendEmailService {
 //    List<Context> getLogisticVendorEmailContent(Warehouse warehouse, LogisticVendor logisticVendor, String pickupDates);
 //    List<Context> getMerchantEmailContent(Warehouse warehouse, Merchant merchant);
 //    List<Context> getTpEmailContent(Warehouse warehouse, User tp);
-    void sendEmail(Pickup pickup);
+    void sendEmail(Pickup pickup) throws MessagingException;
 }

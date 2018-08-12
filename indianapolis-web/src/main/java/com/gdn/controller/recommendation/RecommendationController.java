@@ -48,7 +48,7 @@ public class RecommendationController {
             method = RequestMethod.POST,
             produces = MediaType.APPLICATION_JSON_VALUE
     )
-    public WebResponse<PickupChoiceResponse> chooseRecommendationAndInsertToDatabase(@RequestBody PickupChoiceRequest pickupChoiceRequest){
+    public WebResponse<PickupChoiceResponse> chooseRecommendationAndInsertToDatabase(@RequestBody PickupChoiceRequest pickupChoiceRequest) throws MessagingException {
         return pickupService.savePickup(pickupChoiceRequest);
     }
 

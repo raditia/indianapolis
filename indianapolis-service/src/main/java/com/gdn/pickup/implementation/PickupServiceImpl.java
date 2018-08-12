@@ -17,6 +17,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.mail.MessagingException;
+
 @Service
 public class PickupServiceImpl implements PickupService {
 
@@ -29,7 +31,7 @@ public class PickupServiceImpl implements PickupService {
 
     @Override
     @Transactional
-    public WebResponse<PickupChoiceResponse> savePickup(PickupChoiceRequest pickupChoiceRequest) {
+    public WebResponse<PickupChoiceResponse> savePickup(PickupChoiceRequest pickupChoiceRequest) throws MessagingException {
         RecommendationResult chosenRecommendation = recommendationResultRepository.getOne(pickupChoiceRequest.getRecommendationResultId());
         Pickup pickup = PickupMapper.toPickup(chosenRecommendation, pickupChoiceRequest.getFleetChoiceRequestList());
         for (PickupFleet pickupFleet:pickup.getPickupFleetList()){
