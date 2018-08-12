@@ -1,5 +1,6 @@
 package com.gdn.pickup.implementation;
 
+import com.gdn.email.SendEmailService;
 import com.gdn.entity.Pickup;
 import com.gdn.entity.PickupDetail;
 import com.gdn.entity.PickupFleet;
@@ -23,6 +24,8 @@ public class PickupServiceImpl implements PickupService {
     private RecommendationResultRepository recommendationResultRepository;
     @Autowired
     private PickupRepository pickupRepository;
+    @Autowired
+    private SendEmailService sendEmailService;
 
     @Override
     @Transactional
@@ -36,7 +39,9 @@ public class PickupServiceImpl implements PickupService {
             }
         }
         recommendationResultRepository.deleteAllByWarehouse(chosenRecommendation.getWarehouse());
-        return WebResponse.OK(PickupChoiceResponseMapper.toPickupChoiceResponse(pickupRepository.save(pickup)));
+        Pickup savedPickup = pickupRepository.save(pickup);
+        sendEmailService.sendEmail(savedPickup);
+        return WebResponse.OK(PickupChoiceResponseMapper.toPickupChoiceResponse(savedPickup));
     }
 
 }

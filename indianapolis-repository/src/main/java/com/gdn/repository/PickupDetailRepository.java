@@ -8,6 +8,6 @@ import java.util.List;
 
 @Repository
 public interface PickupDetailRepository extends JpaRepository<PickupDetail, String> {
-    List<PickupDetail> findAllByPickupFleetAndMerchant(PickupFleet pickupFleet, Merchant merchant);
-    List<PickupDetail> findAllByPickupFleetAndCffGoodCff(PickupFleet pickupFleet, Cff cff);
+    List<PickupDetail> findAllByPickupFleetPickupAndMerchant(Pickup pickup, Merchant merchant);
+    List<PickupDetail> findAllByPickupFleetPickupAndCffGoodCffTpId(Pickup pickup, String tpId);
 }

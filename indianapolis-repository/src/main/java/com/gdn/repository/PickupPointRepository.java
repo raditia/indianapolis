@@ -6,5 +6,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface PickupPointRepository extends JpaRepository<PickupPoint, String> {
-    PickupPoint findByPickupAddressOrLatitudeAndLongitude(String pickupAddress, Double latitude, Double longitude);
+    PickupPoint findByPickupAddressAndLatitudeAndLongitude(String pickupAddress, Double latitude, Double longitude);
 }

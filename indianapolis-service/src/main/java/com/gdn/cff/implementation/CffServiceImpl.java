@@ -13,7 +13,6 @@ import com.gdn.response.WebResponse;
 import com.gdn.mapper.CffResponseMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityNotFoundException;
 import java.util.*;
@@ -80,7 +79,7 @@ public class CffServiceImpl implements CffService {
     }
 
     private PickupPoint findPickupPointInDatabase(PickupPoint pickupPoint){
-        return pickupPointRepository.findByPickupAddressOrLatitudeAndLongitude(
+        return pickupPointRepository.findByPickupAddressAndLatitudeAndLongitude(
                 pickupPoint.getPickupAddress(),
                 pickupPoint.getLatitude(),
                 pickupPoint.getLongitude()
