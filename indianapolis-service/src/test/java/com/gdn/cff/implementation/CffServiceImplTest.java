@@ -2,6 +2,7 @@ package com.gdn.cff.implementation;
 
 import com.gdn.*;
 import com.gdn.entity.*;
+import com.gdn.helper.DateHelper;
 import com.gdn.mapper.CffMapper;
 import com.gdn.mapper.CffResponseMapper;
 import com.gdn.repository.CffRepository;
@@ -53,7 +54,7 @@ public class CffServiceImplTest {
 
     @Test
     public void getAllCffExists() {
-        given(cffRepository.findAllByOrderByWarehouseAsc()).willReturn(CffUtil.cffListCompleteAttribute);
+        given(cffRepository.findAllByUploadedDateBetweenOrderByWarehouseAsc(DateHelper.setTime(1), DateHelper.setTime(16))).willReturn(CffUtil.cffListCompleteAttribute);
 
         WebResponse<List<CffResponse>> expectedResponse = cffService.getAllCff();
 
@@ -64,7 +65,7 @@ public class CffServiceImplTest {
         assertThat(expectedResponse.getStatus(), equalTo("OK"));
         assertThat(expectedResponse.getMessage(), equalTo("OK"));
 
-        verify(cffRepository, times(1)).findAllByOrderByWarehouseAsc();
+        verify(cffRepository, times(1)).findAllByUploadedDateBetweenOrderByWarehouseAsc(DateHelper.setTime(1), DateHelper.setTime(16));
     }
 
     @Test
