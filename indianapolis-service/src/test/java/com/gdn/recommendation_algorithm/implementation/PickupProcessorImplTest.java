@@ -34,7 +34,7 @@ public class PickupProcessorImplTest {
     }
 
     @Test
-    public void getNextPickup(){
+    public void getNextPickupFalse(){
         given(fleetProcessorService.getNextFleetWillUsed(ProductUtil.productList,FleetUtil.fleetVanCompleteAttribute)).willReturn(FleetUtil.fleetMotorCompleteAttribute);
 
         Pickup pickup = pickupProcessor.getNextPickup(ProductUtil.productList,FleetUtil.fleetVanCompleteAttribute);
@@ -43,5 +43,17 @@ public class PickupProcessorImplTest {
         assertThat(pickup, equalTo(PickupUtil.pickup));
 
         verify(fleetProcessorService, times(1)).getNextFleetWillUsed(ProductUtil.productList,FleetUtil.fleetVanCompleteAttribute);
+    }
+
+    @Test
+    public void getNextPickupTrue(){
+        given(fleetProcessorService.getNextFleetWillUsed(ProductUtil.productList2,FleetUtil.fleetMotorCompleteAttribute)).willReturn(FleetUtil.fleetMotorCompleteAttribute);
+
+        Pickup pickup = pickupProcessor.getNextPickup(ProductUtil.productList2,FleetUtil.fleetMotorCompleteAttribute);
+
+        assertThat(pickup, notNullValue());
+        assertThat(pickup, equalTo(PickupUtil.pickup1));
+
+        verify(fleetProcessorService, times(1)).getNextFleetWillUsed(ProductUtil.productList2,FleetUtil.fleetMotorCompleteAttribute);
     }
 }

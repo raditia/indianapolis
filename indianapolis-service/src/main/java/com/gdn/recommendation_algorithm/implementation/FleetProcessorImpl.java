@@ -45,12 +45,14 @@ public class FleetProcessorImpl implements FleetProcessorService {
     public Fleet getNextFleetWillUsed(List<Product> productList, Fleet topFleetWillUsed){
         List<Fleet> fleetOnDBList = fleetService.findAllByOrderByCbmCapacityDesc();
         Fleet nextFleetWillUsed = new Fleet();
+        Float cbmCanBePickupByFleetName = 0.0f;
 
         boolean getNextFleet = false;
 
         for(Fleet fleetOnDB : fleetOnDBList){
             if(fleetOnDB.getCbmCapacity() <= topFleetWillUsed.getCbmCapacity()){
-                if(getCbmCanBePickupByFleetName(fleetOnDB, productList) >= fleetOnDB.getMinCbm()){
+                cbmCanBePickupByFleetName = getCbmCanBePickupByFleetName(fleetOnDB, productList);
+                if( cbmCanBePickupByFleetName > 0 && cbmCanBePickupByFleetName >= fleetOnDB.getMinCbm()){
                     nextFleetWillUsed = fleetOnDB;
                     getNextFleet = true;
                     break;
@@ -96,7 +98,7 @@ public class FleetProcessorImpl implements FleetProcessorService {
 
         for(Product product : productList){
             for(Vehicle allowedVehicle : product.getVehicleList()){
-                if(fleet.getName().equals(allowedVehicle.getName())){
+                if(fleet.getName().equals(allowedVehicle.getName()) && product.getCbm() <= fleet.getCbmCapacity()){
                     cbmCanBePickup += Helper.formatNormalFloat(product.getCbm() * product.getQuantity());
                 }
             }

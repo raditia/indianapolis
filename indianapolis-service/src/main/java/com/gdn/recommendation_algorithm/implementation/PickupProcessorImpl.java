@@ -73,7 +73,7 @@ public class PickupProcessorImpl implements PickupProcessorService {
         Integer productQuantityCanBePickup = 0;
         double restCbmDividedProductCbm = restCbmCapacityOnFleet / product.getCbm();
         for(Vehicle allowedVehicle : product.getVehicleList()){
-            if(allowedVehicle.getCbmCapacity() >= fleetWillUsed.getCbmCapacity()){
+            if(allowedVehicle.getCbmCapacity() >= fleetWillUsed.getCbmCapacity() && product.getCbm() <= allowedVehicle.getCbmCapacity()){
                 productQuantityCanBePickup =  (int) restCbmDividedProductCbm;
                 break;
             }

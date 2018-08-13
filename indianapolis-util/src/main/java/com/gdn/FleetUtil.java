@@ -22,14 +22,14 @@ public class FleetUtil {
             .price(0.0)
             .logisticVendorFleetList(LogisticVendorFleetUtil.logisticVendorFleetListLogisticVendorOnly)
             .build();
-    private static Fleet fleetDouble = Fleet.builder()
+    public static Fleet fleetDouble = Fleet.builder()
             .id("3")
             .name("double")
             .cbmCapacity(10.0f)
             .minCbm(5.0f)
             .price(0.0)
             .build();
-    private static Fleet fleetEngkel = Fleet.builder()
+    public static Fleet fleetEngkel = Fleet.builder()
             .id("4")
             .name("engkel")
             .cbmCapacity(4.0f)
@@ -43,18 +43,22 @@ public class FleetUtil {
         add(fleetVanCompleteAttribute);
         add(fleetMotorCompleteAttribute);
     }};
+    public static List<Fleet> descendingFleetListCompleteAttribute1 = new ArrayList<Fleet>(){{
+        add(fleetDouble);
+        add(fleetEngkel);
+        add(fleetVanCompleteAttribute);
+        add(fleetMotorCompleteAttribute);
+    }};
     public static List<Fleet> ascendingFleetListCompleteAttribute = new ArrayList<Fleet>(){{
         add(fleetMotorCompleteAttribute);
         add(fleetVanCompleteAttribute);
     }};
-    public static List<Fleet> topThreeFleetsWillUsed = new ArrayList<Fleet>(){{
-        add(fleetVanCompleteAttribute);
-        add(fleetEngkel);
-        add(fleetDouble);
-    }};
     public static List<Fleet> topFleetsWillUsed = new ArrayList<Fleet>(){{
         add(fleetMotorCompleteAttribute);
     }};
-    public static Float restCbmCanBeUsed = fleetMotorCompleteAttribute.getCbmCapacity();
-    public static Float restCbmCanBeUsedAfterUpdate = 0.1f;
+    public static List<Fleet> topFleetsWillUsed1 = new ArrayList<Fleet>(){{
+        add(fleetDouble);
+        add(fleetEngkel);
+        add(fleetVanCompleteAttribute);
+    }};
 }

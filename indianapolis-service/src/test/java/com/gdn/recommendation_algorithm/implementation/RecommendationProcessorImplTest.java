@@ -33,7 +33,6 @@ public class RecommendationProcessorImplTest {
     @Mock
     private FleetProcessorService fleetProcessorService;
     @Mock
-//    @InjectMocks
     private PickupProcessorService pickupProcessorService;
 
     @InjectMocks
@@ -67,6 +66,32 @@ public class RecommendationProcessorImplTest {
         verify(fleetProcessorService, times(1)).getTopThreeFleetsWillUsed(DatabaseQueryResultUtil.databaseQueryResultList);
         verify(pickupProcessorService, times(1)).getNextPickup(ProductUtil.productList,FleetUtil.fleetMotorCompleteAttribute);
 
+    }
+
+    @Test
+    public void getThreeRecommendation2(){
+        given(fleetProcessorService.getTopThreeFleetsWillUsed(DatabaseQueryResultUtil.databaseQueryResultList)).willReturn(FleetUtil.topFleetsWillUsed);
+        given(Helper.migrateIntoProductList(DatabaseQueryResultUtil.databaseQueryResultList)).willReturn(ProductUtil.productList);
+        given(fleetProcessorService.getFleetWithMoreCbmCapacity(FleetUtil.fleetMotorCompleteAttribute)).willReturn(FleetUtil.fleetVanCompleteAttribute);
+
+        given(Helper.empty(ProductUtil.productList)).willReturn(false).willReturn(false).willReturn(true);
+        given(pickupProcessorService.getNextPickup(ProductUtil.productList, FleetUtil.fleetMotorCompleteAttribute)).willReturn(PickupUtil.pickup2);
+
+        given(pickupProcessorService.getNextPickup(ProductUtil.productList, FleetUtil.fleetVanCompleteAttribute)).willReturn(PickupUtil.pickup1);
+
+        List<Recommendation> threeRecommendations = recommendationProcessorService.getThreeRecommendation(DatabaseQueryResultUtil.databaseQueryResultList,WarehouseUtil.warehouseMinusWarehouseCategoryList.getId());
+
+        assertThat(threeRecommendations, notNullValue());
+        assertThat(threeRecommendations.isEmpty(), equalTo(false));
+
+        for (Recommendation recommendation:threeRecommendations){
+            assertThat(recommendation.getCbmTotal(), equalTo(RecommendationUtil.recommendation.getCbmTotal()));
+            assertThat(recommendation.getPickupList(), equalTo(PickupUtil.pickupList1));
+            assertThat(recommendation.getProductAmount(), equalTo(RecommendationUtil.recommendation.getProductAmount()));
+            assertThat(recommendation.getWarehouseId(), equalTo(RecommendationUtil.recommendation.getWarehouseId()));
+        }
+        verify(fleetProcessorService, times(1)).getTopThreeFleetsWillUsed(DatabaseQueryResultUtil.databaseQueryResultList);
+        verify(pickupProcessorService, times(1)).getNextPickup(ProductUtil.productList,FleetUtil.fleetMotorCompleteAttribute);
     }
 
 }
