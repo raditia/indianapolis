@@ -24,7 +24,7 @@ public class PickupProcessorImpl implements PickupProcessorService {
     @Override
     public Pickup getNextPickup(List<Product> productList, Fleet topFleetWillUsed) {
         Fleet fleetWillUsed = fleetProcessorService.getNextFleetWillUsed(productList, topFleetWillUsed);
-        List<DetailPickup> detailPickupList = getDetailPickupList(productList,fleetWillUsed);
+        List<DetailPickup> detailPickupList = this.getDetailPickupList(productList,fleetWillUsed);
 
         return Pickup.builder()
                 .fleetIdNumber(fleetWillUsed.getId())
@@ -41,7 +41,7 @@ public class PickupProcessorImpl implements PickupProcessorService {
         Float restCbmCapacityOnFleet = fleetWillUsed.getCbmCapacity();
         for(Product product : productList){
             if (product.getQuantity() > 0) {
-                productQuantityCanBePickup = getProductQuantityCanBePickup(product, fleetWillUsed, restCbmCapacityOnFleet);
+                productQuantityCanBePickup = this.getProductQuantityCanBePickup(product, fleetWillUsed, restCbmCapacityOnFleet);
                 if (productQuantityCanBePickup > 0) {
                     DetailPickup detailPickup = DetailPickup.builder()
                             .product(product)
@@ -49,7 +49,7 @@ public class PickupProcessorImpl implements PickupProcessorService {
                             .pickupCbm(productQuantityCanBePickup * product.getCbm())
                             .build();
                     detailPickupList.add(detailPickup);
-                    updateProductList(productList, product, productQuantityCanBePickup);
+                    this.updateProductList(productList, product, productQuantityCanBePickup);
                     restCbmCapacityOnFleet = updateRestCbmCapacity(restCbmCapacityOnFleet, productQuantityCanBePickup, product.getCbm());
                 }
             }
@@ -65,6 +65,7 @@ public class PickupProcessorImpl implements PickupProcessorService {
         for (Product productOnList : productList){
             if(productOnList.getId().equals(product.getId()) && product.getQuantity()>0){
                 productOnList.setQuantity(productOnList.getQuantity() - productQuantityCanBePickup);
+                break;
             }
         }
     }
@@ -73,7 +74,7 @@ public class PickupProcessorImpl implements PickupProcessorService {
         Integer productQuantityCanBePickup = 0;
         double restCbmDividedProductCbm = restCbmCapacityOnFleet / product.getCbm();
         for(Vehicle allowedVehicle : product.getVehicleList()){
-            if(allowedVehicle.getCbmCapacity() >= fleetWillUsed.getCbmCapacity()){
+            if(allowedVehicle.getCbmCapacity() >= fleetWillUsed.getCbmCapacity() && product.getCbm() <= allowedVehicle.getCbmCapacity()){
                 productQuantityCanBePickup =  (int) restCbmDividedProductCbm;
                 break;
             }

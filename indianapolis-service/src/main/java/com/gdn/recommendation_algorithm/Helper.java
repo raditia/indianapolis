@@ -56,7 +56,8 @@ public class Helper {
             if(product.getQuantity() > 0){
                 return false;
             }
-        }return true;
+        }
+        return true;
     }
 
 }

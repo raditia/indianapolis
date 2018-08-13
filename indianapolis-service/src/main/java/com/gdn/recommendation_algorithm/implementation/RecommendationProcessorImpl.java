@@ -45,13 +45,13 @@ public class RecommendationProcessorImpl implements RecommendationProcessorServi
 
         while(!Helper.empty(productList)){
             Pickup nextPickup = pickupProcessorService.getNextPickup(productList, topFleetWillUsed);
-            if(nextPickup.getPickupTotalAmount() > 0) {
+            if(nextPickup.getPickupTotalAmount() == 0) {
+                topFleetWillUsed = fleetProcessorService.getFleetWithMoreCbmCapacity(topFleetWillUsed);
+            } else {
                 pickupList.add(nextPickup);
                 cbmTotal = Helper.formatNormalFloat(cbmTotal+nextPickup.getPickupTotalCbm());
                 productAmount += nextPickup.getPickupTotalAmount();
                 topFleetWillUsed = fleetWithMaxCbmCapacityWillUsed;
-            } else {
-                topFleetWillUsed = fleetProcessorService.getFleetWithMoreCbmCapacity(topFleetWillUsed);
             }
         }
 
