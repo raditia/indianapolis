@@ -30,7 +30,7 @@ public class CffServiceImpl implements CffService {
 
     @Override
     public WebResponse<List<CffResponse>> getAllCff() {
-        return WebResponse.OK(CffResponseMapper.toCffListResponse(cffRepository.findAllByUploadedDateBetweenOrderByWarehouseAsc(DateHelper.setTime(1), DateHelper.setTime(16))));
+        return WebResponse.OK(CffResponseMapper.toCffListResponse(cffRepository.findAllByUploadedDateBetweenOrderByWarehouseAsc(DateHelper.setTime(1), DateHelper.setTime(18))));
     }
 
     @Override

@@ -18,10 +18,6 @@
             <groupId>com.gdn</groupId>
             <artifactId>indianapolis-model</artifactId>
         </dependency>
-        <dependency>
-            <groupId>com.gdn</groupId>
-            <artifactId>indianapolis-helper</artifactId>
-        </dependency>
     </dependencies>
 
 </project>
