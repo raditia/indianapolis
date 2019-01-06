@@ -1,10 +1,10 @@
 package com.gdn.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.Cascade;
 
 import javax.persistence.*;
 
@@ -17,21 +17,33 @@ import javax.persistence.*;
 public class CffGood {
 
     @Id
-    @GeneratedValue
     @Column(name = "id")
-    private Long goods_id;
-
-    @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "cff_id")
-    private Cff cff;
+    private String id;
 
     @Column(name = "sku")
     private String sku;
 
+    @Column(name = "length")
+    private Float length;
+
+    @Column(name = "width")
+    private Float width;
+
+    @Column(name = "height")
+    private Float height;
+
+    @Column(name = "weight")
+    private Float weight;
+
     @Column(name = "cbm")
-    private double cbm;
+    private Float cbm;
 
     @Column(name = "quantity")
     private int quantity;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "cff_id")
+    @JsonBackReference
+    private Cff cff;
 
 }

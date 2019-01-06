@@ -1,0 +1,79 @@
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <style>
+        @page {
+            size: A5 portrait;
+        }
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+        }
+        .all-border-but-no-bottom-border {
+            border-style: solid solid none solid
+        }
+        .all-border-but-no-right-border {
+            border-style: solid none solid solid
+        }
+        .all-border-but-no-bottom-and-right-border {
+            border-style: solid none none solid
+        }
+    </style>
+</head>
+<body>
+<div class="col-md-6 col-md-offset-3">
+    <div style="font-weight: 400; font-size: 22px; padding-top: 10px; padding-bottom: 20px;">Pickup at <a th:text="${pickupDate}" style="font-weight: 600; color: #000000"></a></div>
+    <th:block th:each="pickupDetail : ${pickupDetailList}">
+        <table align="center" cellpadding="0" cellspacing="0" width="100%">
+            <tr>
+                <td bgcolor="#ffffff" style="height: 60px; color: black; font-size: 32px; padding: 10px 0 10px 10px; border-style: solid">KOLI LABEL</td>
+            </tr>
+        </table>
+        <table align="center" cellpadding="0" cellspacing="0" width="100%" style="margin-top: 8px">
+            <tr>
+                <td class="all-border-but-no-bottom-border" bgcolor="#ffffff" style="height: 24px; color: black; font-size: 16px;">Nomor Consignment Form</td>
+            </tr>
+            <tr>
+                <td bgcolor="#ffffff" style="height: 64px; color: black; font-size: 18px; padding: 10px 0 10px 10px; border-style: solid"><a th:text="${pickupDetail.cffGood.cff.id}" style="font-weight: 600; color: #000000"></a></td>
+            </tr>
+        </table>
+        <table align="center" cellpadding="0" cellspacing="0" width="100%" style="margin-top: 8px">
+            <tr>
+                <td class="all-border-but-no-bottom-and-right-border" bgcolor="#ffffff" style="height: 24px; color: black; font-size: 16px; width: 480px">Nomor Koli</td>
+                <td class="all-border-but-no-bottom-border" bgcolor="#ffffff" style="height: 24px; color: black; font-size: 16px;">Total Koli</td>
+            </tr>
+            <tr>
+                <td class="all-border-but-no-right-border" bgcolor="#ffffff" style="height: 60px; color: black; font-size: 18px; padding: 10px 0 10px 10px;"><a th:text="${pickupDetail.cffGood.sku}" style="font-weight: 600; color: #000000"></a></td>
+                <td bgcolor="#ffffff" style="height: 60px; color: black; font-size: 18px; padding: 10px 0 10px 10px; border-style: solid"><a th:text="${pickupDetail.skuPickupQuantity}" style="font-weight: 600; color: #000000"></a></td>
+            </tr>
+        </table>
+        <table align="center" cellpadding="0" cellspacing="0" width="100%" style="margin-top: 8px">
+            <tr>
+                <td class="all-border-but-no-bottom-border" bgcolor="#ffffff" style="height: 24px; color: black; font-size: 16px;">Nama merchant</td>
+            </tr>
+            <tr>
+                <td bgcolor="#ffffff" style="height: 64px; color: black; font-size: 18px; padding: 10px 0 10px 10px; border-style: solid"><a th:text="${pickupDetail.merchant.name}" style="font-weight: 600; color: #000000"></a></td>
+            </tr>
+        </table>
+        <table align="center" cellpadding="0" cellspacing="0" width="100%" style="margin-top: 8px">
+            <tr>
+                <td class="all-border-but-no-bottom-border" bgcolor="#ffffff" style="height: 24px; color: black; font-size: 16px;">Dimensi koli</td>
+            </tr>
+        </table>
+        <table align="center" cellpadding="0" cellspacing="0" width="100%">
+            <tr>
+                <td class="all-border-but-no-bottom-and-right-border" bgcolor="#ffffff" style="height: 24px; color: black; font-size: 16px;">Panjang (cm)</td>
+                <td class="all-border-but-no-bottom-and-right-border" bgcolor="#ffffff" style="height: 24px; color: black; font-size: 16px;">Lebar (cm)</td>
+                <td class="all-border-but-no-bottom-and-right-border" bgcolor="#ffffff" style="height: 24px; color: black; font-size: 16px;">Tinggi (cm)</td>
+                <td class="all-border-but-no-bottom-border" bgcolor="#ffffff" style="height: 24px; color: black; font-size: 16px;">Berat (kg)</td>
+            </tr>
+            <tr>
+                <td class="all-border-but-no-right-border" bgcolor="#ffffff" style="height: 60px; color: black; font-size: 18px; padding: 10px 0 10px 10px;"><a th:text="${pickupDetail.cffGood.length}" style="font-weight: 600; color: #000000"></a></td>
+                <td class="all-border-but-no-right-border" bgcolor="#ffffff" style="height: 60px; color: black; font-size: 18px; padding: 10px 0 10px 10px;"><a th:text="${pickupDetail.cffGood.width}" style="font-weight: 600; color: #000000"></a></td>
+                <td class="all-border-but-no-right-border" bgcolor="#ffffff" style="height: 60px; color: black; font-size: 18px; padding: 10px 0 10px 10px;"><a th:text="${pickupDetail.cffGood.height}" style="font-weight: 600; color: #000000"></a></td>
+                <td bgcolor="#ffffff" style="height: 60px; color: black; font-size: 18px; padding: 10px 0 10px 10px; border-style: solid"><a th:text="${pickupDetail.cffGood.weight}" style="font-weight: 600; color: #000000"></a></td>
+            </tr>
+        </table>
+        <hr/>
+    </th:block>
+</div>
+</body>
+</html>
