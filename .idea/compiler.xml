@@ -26,4 +26,14 @@
       <module name="indianapolis-web" target="1.8" />
     </bytecodeTargetLevel>
   </component>
+  <component name="JavacSettings">
+    <option name="ADDITIONAL_OPTIONS_OVERRIDE">
+      <module name="indianapolis-helper" options="-parameters" />
+      <module name="indianapolis-model" options="-parameters" />
+      <module name="indianapolis-repository" options="-parameters" />
+      <module name="indianapolis-service" options="-parameters" />
+      <module name="indianapolis-util" options="-parameters" />
+      <module name="indianapolis-web" options="-parameters" />
+    </option>
+  </component>
 </project>

@@ -32,6 +32,18 @@ public class Fleet {
     @Column(name = "min_cbm_capacity")
     private Float minCbm;
 
+    @Column(name = "width")
+    private double width;
+
+    @Column(name = "length")
+    private double length;
+
+    @Column(name = "height")
+    private double height;
+
+    @Column(name = "weight")
+    private double weight;
+
     @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE}, mappedBy = "fleet")
     private List<LogisticVendorFleet> logisticVendorFleetList;
 

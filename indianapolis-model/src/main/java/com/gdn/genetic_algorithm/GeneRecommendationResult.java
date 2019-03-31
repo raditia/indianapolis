@@ -8,4 +8,5 @@ import lombok.Data;
 public class GeneRecommendationResult {
     private double cbm;
     private String sku;
+    private double length;
 }

@@ -12,5 +12,9 @@ import lombok.NoArgsConstructor;
 public class DatabaseQueryCffGoods {
     private String id, sku;
     private Float cbm;
+    private double width;
+    private double length;
+    private double height;
+    private double weight;
     private int quantity;
 }

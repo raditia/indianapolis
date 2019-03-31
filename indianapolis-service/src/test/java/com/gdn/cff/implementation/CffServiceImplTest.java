@@ -54,7 +54,7 @@ public class CffServiceImplTest {
 
     @Test
     public void getAllCffExists() {
-        given(cffRepository.findAllByUploadedDateBetweenOrderByWarehouseAsc(DateHelper.setTime(1), DateHelper.setTime(16))).willReturn(CffUtil.cffListCompleteAttribute);
+        given(cffRepository.findAllByUploadedDateBetweenOrderByWarehouseAscCffGoodListDesc(DateHelper.setTime(1), DateHelper.setTime(16))).willReturn(CffUtil.cffListCompleteAttribute);
 
         WebResponse<List<CffResponse>> expectedResponse = cffService.getAllCff();
 
@@ -65,7 +65,7 @@ public class CffServiceImplTest {
         assertThat(expectedResponse.getStatus(), equalTo("OK"));
         assertThat(expectedResponse.getMessage(), equalTo("OK"));
 
-        verify(cffRepository, times(1)).findAllByUploadedDateBetweenOrderByWarehouseAsc(DateHelper.setTime(1), DateHelper.setTime(16));
+        verify(cffRepository, times(1)).findAllByUploadedDateBetweenOrderByWarehouseAscCffGoodListDesc(DateHelper.setTime(1), DateHelper.setTime(16));
     }
 
     @Test

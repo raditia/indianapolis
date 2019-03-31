@@ -30,7 +30,10 @@ public class CffServiceImpl implements CffService {
 
     @Override
     public WebResponse<List<CffResponse>> getAllCff() {
-        return WebResponse.OK(CffResponseMapper.toCffListResponse(cffRepository.findAllByUploadedDateBetweenOrderByWarehouseAsc(DateHelper.setTime(1), DateHelper.setTime(18))));
+        return WebResponse.OK(CffResponseMapper
+                .toCffListResponse(cffRepository
+                        .findAllByUploadedDateBetweenOrderByWarehouseAscCffGoodListDesc(
+                                DateHelper.setTime(1), DateHelper.setTime(18))));
     }
 
     @Override
@@ -61,11 +64,15 @@ public class CffServiceImpl implements CffService {
 
         PickupPoint pickupPointInDatabase = findPickupPointInDatabase(cff.getPickupPoint());
         if(pickupPointInDatabase!=null){
-            cff.getPickupPoint().setId(pickupPointInDatabase.getId());
-            cff.getPickupPoint().setAllowedVehicleList(getExistingAllowedVehicleList(pickupPointInDatabase));
+            cff.getPickupPoint()
+                    .setId(pickupPointInDatabase.getId());
+            cff.getPickupPoint()
+                    .setAllowedVehicleList(getExistingAllowedVehicleList(pickupPointInDatabase));
         } else{
-            cff.getPickupPoint().setId("pickup_point_" + UUID.randomUUID().toString());
-            cff.getPickupPoint().setAllowedVehicleList(getNewAllowedVehicleList(cff.getPickupPoint()));
+            cff.getPickupPoint()
+                    .setId("pickup_point_" + UUID.randomUUID().toString());
+            cff.getPickupPoint()
+                    .setAllowedVehicleList(getNewAllowedVehicleList(cff.getPickupPoint()));
         }
 
         return WebResponse.OK(CffResponseMapper.toCffResponse(cffRepository.save(cff)));
