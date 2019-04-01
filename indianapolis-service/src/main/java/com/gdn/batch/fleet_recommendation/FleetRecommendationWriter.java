@@ -2,13 +2,14 @@ package com.gdn.batch.fleet_recommendation;
 
 import com.gdn.entity.*;
 import com.gdn.helper.DateHelper;
-import com.gdn.laff.*;
+import com.gdn.laff.Box;
+import com.gdn.laff.BoxItem;
+import com.gdn.laff.Container;
+import com.gdn.laff.LargestAreaFitFirstPackager;
 import com.gdn.recommendation.DetailPickup;
 import com.gdn.recommendation.Pickup;
 import com.gdn.recommendation.Recommendation;
 import com.gdn.repository.RecommendationResultRepository;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.batch.item.ItemWriter;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -18,12 +19,10 @@ import java.util.List;
 import java.util.UUID;
 
 public class FleetRecommendationWriter implements ItemWriter<List<Recommendation>> {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(FleetRecommendationWriter.class);
-
-    private static final int maxContainers = 1000;  // maximum number of containers which can be used
-    // limit search using 5 seconds deadline
-    private static final double deadline = System.currentTimeMillis() + 50000;
+    // maximum number of containers which can be used
+    private static final int MAX_CONTAINERS = 1000;
+    // limit search using 50 seconds deadline
+    private static final double DEADLINE = System.currentTimeMillis() + 50000;
 
     private DecimalFormat decimalFormat = new DecimalFormat("#.##");
 
@@ -35,68 +34,36 @@ public class FleetRecommendationWriter implements ItemWriter<List<Recommendation
 
     @Override
     public void write(List<? extends List<Recommendation>> items) throws Exception {
-        List<Container> containers = new ArrayList<Container>();
-        List<BoxItem> products = new ArrayList<BoxItem>();
-        List<String> fleetList = new ArrayList<>();
-        List<String> skuList = new ArrayList<>();
-
         for (List<Recommendation> recommendationList : items) {
             for (Recommendation recommendation : recommendationList) {
-                List<RecommendationFleet> recommendationFleetList = populateRecommendationFleetList(recommendation);
-                RecommendationResult recommendationResult = buildRecommendationResult(recommendation, recommendationFleetList);
-                for (RecommendationFleet recommendationFleet : recommendationResult.getRecommendationFleetList()) {
-                    if (!fleetList.contains(recommendationFleet.getFleet().getId())) {
-                        fleetList.add(recommendationFleet.getFleet().getId());
-                        // nambahin tipe kendaraan beserta ukurannya
-                        Container container = new Container(
-                                recommendationFleet.getFleet().getName(),
-                                recommendationFleet.getFleet().getWidth(),
-                                recommendationFleet.getFleet().getLength(),
-                                recommendationFleet.getFleet().getHeight(),
-                                recommendationFleet.getFleet().getWeight());
-                        containers.add(container);
-                        System.out.println(
-                                container.getName() + " " +
-                                        container.getWidth() + " " +
-                                        container.getDepth() + " " +
-                                        container.getHeight() + " " +
-                                        container.getWeight()
-                        );
-                    }
-
-                    recommendationFleet.setRecommendationResult(recommendationResult);
-
-                    for (RecommendationDetail recommendationDetail : recommendationFleet.getRecommendationDetailList()) {
-                        if (!skuList.contains(recommendationDetail.getCffGood().getSku())) {
-                            skuList.add(recommendationDetail.getCffGood().getSku());
-                            // nambahin item list yang perlu dibawa
-                            BoxItem boxItem = new BoxItem(new Box(
-                                    recommendationDetail.getCffGood().getSku(),
-                                    Double.parseDouble(decimalFormat.format(recommendationDetail.getCffGood().getWidth())),
-                                    Double.parseDouble(decimalFormat.format(recommendationDetail.getCffGood().getLength())),
-                                    Double.parseDouble(decimalFormat.format(recommendationDetail.getCffGood().getHeight())),
-                                    Double.parseDouble(decimalFormat.format(recommendationDetail.getCffGood().getWeight()))), recommendationDetail.getCffGood().getQuantity());
-                            products.add(boxItem);
-                            System.out.println(
-                                    boxItem.getBox().getName() + " " +
-                                            boxItem.getBox().getWidth() + " " +
-                                            boxItem.getBox().getDepth() + " " +
-                                            boxItem.getBox().getHeight() + " " +
-                                            boxItem.getBox().getWeight() + " " + boxItem.getCount());
-                        }
-
-                        recommendationDetail.setRecommendationFleet(recommendationFleet);
-                    }
-                    recommendationResultRepository.save(recommendationResult);
-                }
+                saveRecommendationResultToDatabase(recommendation);
             }
         }
-//        Packager packager = new LargestAreaFitFirstPackager(containers);
-        largestAreaFitFirstPackager.setShits(containers, true, true);
-        // match multiple containers
-        List<Container> fits = largestAreaFitFirstPackager.packList(products, maxContainers, deadline);
+    }
 
-        System.out.println("Hasil: \n" + fits);
+    private void saveRecommendationResultToDatabase(Recommendation recommendation) {
+        List<Container> containers = new ArrayList<>();
+        List<BoxItem> products = new ArrayList<>();
+
+        List<RecommendationFleet> recommendationFleetList = populateRecommendationFleetList(recommendation);
+        RecommendationResult recommendationResult = buildRecommendationResult(recommendation, recommendationFleetList);
+        for (RecommendationFleet recommendationFleet : recommendationResult.getRecommendationFleetList()) {
+            containers.clear();
+            products.clear();
+            Container container = buildContainer(recommendationFleet.getFleet());
+            containers.add(container);
+
+            recommendationFleet.setRecommendationResult(recommendationResult);
+
+            for (RecommendationDetail recommendationDetail : recommendationFleet.getRecommendationDetailList()) {
+                BoxItem boxItem = buildBoxItem(recommendationDetail.getCffGood(), recommendationDetail.getSkuPickupQty());
+                products.add(boxItem);
+
+                recommendationDetail.setRecommendationFleet(recommendationFleet);
+            }
+            executeLaffAlgorithm(containers, products, recommendationFleet.getFleet());
+            recommendationResultRepository.save(recommendationResult);
+        }
     }
 
     // kendaraannya apa dan dia ambil apa aja
@@ -168,4 +135,38 @@ public class FleetRecommendationWriter implements ItemWriter<List<Recommendation
                 .build();
     }
 
+    private Container buildContainer(Fleet fleet) {
+        return new Container(
+                fleet.getName(),
+                fleet.getWidth(),
+                fleet.getLength(),
+                fleet.getHeight(),
+                fleet.getWeight());
+    }
+
+    private BoxItem buildBoxItem(CffGood cffGood, int cffGoodPickupQuantity) {
+        return new BoxItem(buildBox(cffGood), cffGoodPickupQuantity);
+    }
+
+    private Box buildBox(CffGood cffGood) {
+        return new Box(
+                cffGood.getSku(),
+                Double.parseDouble(decimalFormat.format(cffGood.getWidth())),
+                Double.parseDouble(decimalFormat.format(cffGood.getLength())),
+                Double.parseDouble(decimalFormat.format(cffGood.getHeight())),
+                Double.parseDouble(decimalFormat.format(cffGood.getWeight())));
+    }
+
+    private void executeLaffAlgorithm(List<Container> containers,
+                                      List<BoxItem> products,
+                                      Fleet fleet) {
+        largestAreaFitFirstPackager.setShits(containers, true, true);
+        List<Container> fits = largestAreaFitFirstPackager.packList(products, MAX_CONTAINERS, DEADLINE);
+        printLaffAlgorithmExecutionResult(fits, fleet);
+    }
+
+    private void printLaffAlgorithmExecutionResult(List<Container> fits,
+                                                   Fleet fleet) {
+        System.out.println("Result for : " + fleet.getName() + " : \n" + fits);
+    }
 }
