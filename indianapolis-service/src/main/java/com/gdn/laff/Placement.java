@@ -34,8 +34,12 @@ public class Placement {
 
 	@Override
 	public String toString() {
-		return "Placement [" + space.getX() + "x" + space.getY() + "x" + space.getZ() + ", width=" + box.getWidth() + ", depth=" + box.getDepth() + ", height="
-				+ box.getHeight() + "]";
+		return "Placement [" +
+				space.getX() + "x" + space.getY() + "x" + space.getZ() + ", " +
+				"name=" + box.getName() + ", " +
+				"width=" + box.getWidth() + ", " +
+				"depth=" + box.getDepth() + ", " +
+				"height=" + box.getHeight() + "]";
 	}
 
 	double getCenterX() {
