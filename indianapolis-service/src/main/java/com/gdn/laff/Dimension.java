@@ -27,7 +27,7 @@ public class Dimension {
 	protected double height; // z
 	double volume;
 
-	protected final String name;
+	public final String name;
 
 	public Dimension(String name) {
 		this.name = name;

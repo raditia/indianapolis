@@ -34,7 +34,7 @@ public class Placement {
 
 	@Override
 	public String toString() {
-		return "Placement [" +
+		return "\n\t\t\tPlacement [" +
 				space.getX() + "x" + space.getY() + "x" + space.getZ() + ", " +
 				"name=" + box.getName() + ", " +
 				"width=" + box.getWidth() + ", " +

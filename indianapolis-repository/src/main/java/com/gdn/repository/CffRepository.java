@@ -11,7 +11,7 @@ import java.util.List;
 
 @Repository
 public interface CffRepository extends JpaRepository<Cff, String>{
-    List<Cff> findAllByUploadedDateBetweenOrderByWarehouseAscCffGoodListDesc(Date startTime, Date endTime);
+    List<Cff> findAllByUploadedDateBetweenOrderByWarehouseAsc(Date startTime, Date endTime);
     @Query("SELECT DISTINCT c.warehouse from Cff c where c.schedulingStatus='PENDING'")
     List<Warehouse> findDistinctWarehouse();
 }

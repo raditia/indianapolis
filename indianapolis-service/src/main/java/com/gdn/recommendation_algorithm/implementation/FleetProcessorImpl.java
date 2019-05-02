@@ -38,6 +38,9 @@ public class FleetProcessorImpl implements FleetProcessorService {
                 fleetCounter-=1;
             }
         }
+        for (Fleet fleet : topThreeFleetsWillUsed) {
+            System.out.println("Top three fleets will used:" + fleet);
+        }
         return topThreeFleetsWillUsed;
     }
 

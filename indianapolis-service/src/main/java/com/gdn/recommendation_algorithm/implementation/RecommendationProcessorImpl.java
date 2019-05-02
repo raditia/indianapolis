@@ -1,7 +1,10 @@
 package com.gdn.recommendation_algorithm.implementation;
 
 import com.gdn.entity.Fleet;
-import com.gdn.recommendation.*;
+import com.gdn.recommendation.DatabaseQueryResult;
+import com.gdn.recommendation.Pickup;
+import com.gdn.recommendation.Product;
+import com.gdn.recommendation.Recommendation;
 import com.gdn.recommendation_algorithm.FleetProcessorService;
 import com.gdn.recommendation_algorithm.Helper;
 import com.gdn.recommendation_algorithm.PickupProcessorService;
@@ -9,7 +12,6 @@ import com.gdn.recommendation_algorithm.RecommendationProcessorService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.xml.soap.Detail;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -34,6 +36,9 @@ public class RecommendationProcessorImpl implements RecommendationProcessorServi
             threeRecommendations.add(recommendation);
         }
 
+        for (Recommendation threeRecommendation : threeRecommendations) {
+            System.out.println("Recommendations: " + threeRecommendation.getPickupList());
+        }
         return threeRecommendations;
     }
 

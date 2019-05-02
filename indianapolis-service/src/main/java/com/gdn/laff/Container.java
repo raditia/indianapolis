@@ -1,5 +1,6 @@
 package com.gdn.laff;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -12,6 +13,8 @@ public class Container extends Box {
 	private int stackWeight = 0;
 	private int stackHeight = 0;
 	private ArrayList<Level> levels = new ArrayList<>();
+
+	private DecimalFormat decimalFormat = new DecimalFormat("#.##");
 
 	public Container(Container container) {
 		super(container.getName(), container.getWidth(), container.getDepth(), container.getHeight(), container.getWeight());
@@ -212,9 +215,11 @@ public class Container extends Box {
 
 	@Override
 	public String toString() {
-		return "Container [stackWeight=" + stackWeight + ", stackHeight=" + stackHeight + ", levels=" + levels
-				+ ", weight=" + weight + ", width=" + width + ", depth=" + depth + ", height=" + height + ", volume="
-				+ volume + ", name=" + name + "]";
+		return "\n\tContainer [\n\t\tstackWeight=" + stackWeight + ",\n\t\tstackHeight=" + stackHeight + ",\n\t\tlevels=\n\t\t\t" + levels
+				+ "\n\t\tweight=" + weight + ", width=" + width + ", depth=" + depth + ", height=" + height + ", volume="
+				+ volume + "\n\t\tname=" + name + ",\n\t\tused space=" + getUsedSpace() +
+				"\n\t\tfree weight=" + Double.parseDouble(decimalFormat.format(getFreeWeight())) +
+				",\n\t\tused percentage=" + Double.parseDouble(decimalFormat.format(getUsedSpace().volume / volume * 100)) + "%" + "]";
 	}
 
 
@@ -252,6 +257,8 @@ public class Container extends Box {
 				max(b1.getHeight(), b2.getHeight()));
 
 	}
+
+
 
 	public Container clone() {
 		// shallow clone

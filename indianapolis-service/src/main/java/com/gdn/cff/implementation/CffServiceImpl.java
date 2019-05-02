@@ -32,7 +32,7 @@ public class CffServiceImpl implements CffService {
     public WebResponse<List<CffResponse>> getAllCff() {
         return WebResponse.OK(CffResponseMapper
                 .toCffListResponse(cffRepository
-                        .findAllByUploadedDateBetweenOrderByWarehouseAscCffGoodListDesc(
+                        .findAllByUploadedDateBetweenOrderByWarehouseAsc(
                                 DateHelper.setTime(1), DateHelper.setTime(18))));
     }
 

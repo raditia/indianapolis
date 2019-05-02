@@ -9,6 +9,7 @@ import com.gdn.laff.LargestAreaFitFirstPackager;
 import com.gdn.recommendation.DetailPickup;
 import com.gdn.recommendation.Pickup;
 import com.gdn.recommendation.Recommendation;
+import com.gdn.repository.FleetRepository;
 import com.gdn.repository.RecommendationResultRepository;
 import org.springframework.batch.item.ItemWriter;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,9 +23,12 @@ public class FleetRecommendationWriter implements ItemWriter<List<Recommendation
     // maximum number of containers which can be used
     private static final int MAX_CONTAINERS = 1000;
     // limit search using 50 seconds deadline
-    private static final double DEADLINE = System.currentTimeMillis() + 50000;
+    private static final double DEADLINE = System.currentTimeMillis() + 500000;
 
     private DecimalFormat decimalFormat = new DecimalFormat("#.##");
+
+    @Autowired
+    private FleetRepository fleetRepository;
 
     @Autowired
     private RecommendationResultRepository recommendationResultRepository;
@@ -50,6 +54,11 @@ public class FleetRecommendationWriter implements ItemWriter<List<Recommendation
         for (RecommendationFleet recommendationFleet : recommendationResult.getRecommendationFleetList()) {
             containers.clear();
             products.clear();
+            List<Fleet> fleetWithLowerCbmCapacityList = fleetRepository.findAllByCbmCapacityLessThanOrderByCbmCapacityAsc(recommendationFleet.getFleet().getCbmCapacity());
+            for (Fleet fleet : fleetWithLowerCbmCapacityList) {
+                Container containerWithLowerCbmCapacity = buildContainer(fleet);
+                containers.add(containerWithLowerCbmCapacity);
+            }
             Container container = buildContainer(recommendationFleet.getFleet());
             containers.add(container);
 
@@ -157,16 +166,22 @@ public class FleetRecommendationWriter implements ItemWriter<List<Recommendation
                 Double.parseDouble(decimalFormat.format(cffGood.getWeight())));
     }
 
-    private void executeLaffAlgorithm(List<Container> containers,
+    private List<Container> executeLaffAlgorithm(List<Container> containers,
                                       List<BoxItem> products,
                                       Fleet fleet) {
-        largestAreaFitFirstPackager.setShits(containers, true, true);
+        largestAreaFitFirstPackager.setContainer(containers, true, true);
         List<Container> fits = largestAreaFitFirstPackager.packList(products, MAX_CONTAINERS, DEADLINE);
         printLaffAlgorithmExecutionResult(fits, fleet);
+
+        return  fits;
     }
 
     private void printLaffAlgorithmExecutionResult(List<Container> fits,
                                                    Fleet fleet) {
         System.out.println("Result for : " + fleet.getName() + " : \n" + fits);
+    }
+
+    private void printLaffAlgorithm(Container match, Fleet fleet) {
+        System.out.println("Result for : " + fleet.getName() + " : \n" + match);
     }
 }

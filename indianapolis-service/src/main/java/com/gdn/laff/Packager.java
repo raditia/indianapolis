@@ -47,7 +47,7 @@ public abstract class Packager {
 
 	}
 
-	public void setShits(List<Container> containers, boolean rotate3D, boolean binarySearch) {
+	public void setContainer(List<Container> containers, boolean rotate3D, boolean binarySearch) {
 		this.containers = containers.toArray(new Container[0]);
 		this.rotate3D = rotate3D;
 		this.binarySearch = binarySearch;

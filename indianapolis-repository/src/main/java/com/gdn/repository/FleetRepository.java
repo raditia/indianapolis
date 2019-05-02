@@ -15,4 +15,6 @@ public interface FleetRepository extends JpaRepository<Fleet, String> {
     List<Fleet> findDistinctByNameOrderByCbmCapacityDesc();
 
     List<Fleet> findAllByOrderByCbmCapacityAsc();
+
+    List<Fleet> findAllByCbmCapacityLessThanOrderByCbmCapacityAsc(Float cbmCapacity);
 }
