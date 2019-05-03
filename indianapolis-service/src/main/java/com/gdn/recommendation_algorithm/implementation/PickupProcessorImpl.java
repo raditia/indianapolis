@@ -23,12 +23,11 @@ public class PickupProcessorImpl implements PickupProcessorService {
 
     @Override
     public Pickup getNextPickup(List<Product> productList, Fleet topFleetWillUsed) {
-        Fleet fleetWillUsed = fleetProcessorService.getNextFleetWillUsed(productList, topFleetWillUsed);
-        List<DetailPickup> detailPickupList = this.getDetailPickupList(productList,fleetWillUsed);
+        List<DetailPickup> detailPickupList = getDetailPickupList(productList, topFleetWillUsed);
 
         return Pickup.builder()
-                .fleetIdNumber(fleetWillUsed.getId())
-                .fleet(fleetWillUsed)
+                .fleetIdNumber(topFleetWillUsed.getId())
+                .fleet(topFleetWillUsed)
                 .pickupTotalCbm(getPickupTotalCbm(detailPickupList))
                 .pickupTotalAmount(getPickupTotalAmount(detailPickupList))
                 .detailPickupList(detailPickupList)
@@ -37,11 +36,11 @@ public class PickupProcessorImpl implements PickupProcessorService {
 
     private List<DetailPickup> getDetailPickupList(List<Product> productList, Fleet fleetWillUsed) {
         List<DetailPickup> detailPickupList = new ArrayList<>();
-        Integer productQuantityCanBePickup;
+        int productQuantityCanBePickup;
         Float restCbmCapacityOnFleet = fleetWillUsed.getCbmCapacity();
         for(Product product : productList){
             if (product.getQuantity() > 0) {
-                productQuantityCanBePickup = this.getProductQuantityCanBePickup(product, fleetWillUsed, restCbmCapacityOnFleet);
+                productQuantityCanBePickup = getProductQuantityCanBePickup(product, fleetWillUsed, restCbmCapacityOnFleet);
                 if (productQuantityCanBePickup > 0) {
                     DetailPickup detailPickup = DetailPickup.builder()
                             .product(product)
@@ -49,7 +48,7 @@ public class PickupProcessorImpl implements PickupProcessorService {
                             .pickupCbm(productQuantityCanBePickup * product.getCbm())
                             .build();
                     detailPickupList.add(detailPickup);
-                    this.updateProductList(productList, product, productQuantityCanBePickup);
+                    updateProductList(productList, product, productQuantityCanBePickup);
                     restCbmCapacityOnFleet = updateRestCbmCapacity(restCbmCapacityOnFleet, productQuantityCanBePickup, product.getCbm());
                 }
             }
