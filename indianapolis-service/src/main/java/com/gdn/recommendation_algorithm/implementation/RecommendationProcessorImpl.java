@@ -2,12 +2,10 @@ package com.gdn.recommendation_algorithm.implementation;
 
 import com.gdn.entity.Fleet;
 import com.gdn.recommendation.DatabaseQueryResult;
-import com.gdn.recommendation.Pickup;
 import com.gdn.recommendation.Product;
 import com.gdn.recommendation.Recommendation;
 import com.gdn.recommendation_algorithm.FleetProcessorService;
 import com.gdn.recommendation_algorithm.Helper;
-import com.gdn.recommendation_algorithm.PickupProcessorService;
 import com.gdn.recommendation_algorithm.RecommendationProcessorService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -21,49 +19,38 @@ public class RecommendationProcessorImpl implements RecommendationProcessorServi
 
     @Autowired
     private FleetProcessorService fleetProcessorService;
-    @Autowired
-    private PickupProcessorService pickupProcessorService;
 
     @Override
-    public List<Recommendation> getThreeRecommendation(List<DatabaseQueryResult> productResultList, String warehouseId){
+    public List<Recommendation> getThreeRecommendation(List<DatabaseQueryResult> productResultList, String warehouseId) {
         List<Recommendation> threeRecommendations = new ArrayList<>();
         List<Product> productList;
 
-        List<Fleet> topThreeFleetsWillUsed = fleetProcessorService.getTopThreeFleetsWillUsed(productResultList);
-        for(Fleet topFleetWillUsed : topThreeFleetsWillUsed){
-            productList = Helper.migrateIntoProductList(productResultList);
-            Recommendation recommendation = getRecommendationByTopFleet(productList, topFleetWillUsed, warehouseId);
-            threeRecommendations.add(recommendation);
-        }
+        List<Fleet> topThreeFleets = fleetProcessorService.getTopThreeFleetsWillUsed(productResultList);
+        productList = Helper.migrateIntoProductList(productResultList);
+        Recommendation recommendation = buildRecommendation(productList, topThreeFleets, warehouseId);
+        threeRecommendations.add(recommendation);
 
         for (Recommendation threeRecommendation : threeRecommendations) {
-            System.out.println("Recommendations: " + threeRecommendation.getPickupList());
+            System.out.println(threeRecommendation);
         }
         return threeRecommendations;
     }
 
-    private Recommendation getRecommendationByTopFleet(List<Product> productList, Fleet topFleetWillUsed, String warehouseId){
-        List<Pickup> pickupList = new ArrayList<>();
+    private Recommendation buildRecommendation(List<Product> productList, List<Fleet> topThreeFleets, String warehouseId) {
         Float cbmTotal = 0.0f;
-        Integer productAmount = 0;
-        Fleet fleetWithMaxCbmCapacityWillUsed = topFleetWillUsed;
+        int productAmount = 0;
 
-        while(!Helper.empty(productList)){
-            Pickup nextPickup = pickupProcessorService.getNextPickup(productList, topFleetWillUsed);
-            if(nextPickup.getPickupTotalAmount() == 0) {
-                topFleetWillUsed = fleetProcessorService.getFleetWithMoreCbmCapacity(topFleetWillUsed);
-            } else {
-                pickupList.add(nextPickup);
-                cbmTotal = Helper.formatNormalFloat(cbmTotal+nextPickup.getPickupTotalCbm());
-                productAmount += nextPickup.getPickupTotalAmount();
-                topFleetWillUsed = fleetWithMaxCbmCapacityWillUsed;
-            }
+        for (Product product : productList) {
+            System.out.println(product);
+            cbmTotal = Helper.formatNormalFloat(cbmTotal + product.getCbm());
+            productAmount += product.getQuantity();
         }
 
         return Recommendation.builder()
                 .id("recommendation_result_" + UUID.randomUUID().toString())
-                .pickupList(pickupList)
+                .topThreeFleets(topThreeFleets)
                 .cbmTotal(cbmTotal)
+                .productList(productList)
                 .productAmount(productAmount)
                 .warehouseId(warehouseId)
                 .build();
