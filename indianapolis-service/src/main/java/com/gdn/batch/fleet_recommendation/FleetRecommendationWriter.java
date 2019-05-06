@@ -44,7 +44,8 @@ public class FleetRecommendationWriter implements ItemWriter<List<Recommendation
                     containers.clear();
                     products.clear();
 
-                    List<Fleet> fleetWithLowerCbmCapacityList = fleetRepository.findAllByCbmCapacityLessThanOrderByCbmCapacityAsc(topFleet.getCbmCapacity());
+                    List<Fleet> fleetWithLowerCbmCapacityList = fleetRepository
+                            .findAllByCbmCapacityLessThanOrderByCbmCapacityAsc(topFleet.getCbmCapacity());
                     for (Fleet fleet : fleetWithLowerCbmCapacityList) {
                         Container containerWithLowerCbmCapacity = buildContainer(fleet);
                         containers.add(containerWithLowerCbmCapacity);

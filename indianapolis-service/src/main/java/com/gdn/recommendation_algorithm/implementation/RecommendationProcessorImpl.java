@@ -29,6 +29,10 @@ public class RecommendationProcessorImpl implements RecommendationProcessorServi
         productList = Helper.migrateIntoProductList(productResultList);
         Recommendation recommendation = buildRecommendation(productList, topThreeFleets, warehouseId);
         threeRecommendations.add(recommendation);
+
+        for (Recommendation threeRecommendation : threeRecommendations) {
+            System.out.println(threeRecommendation);
+        }
         return threeRecommendations;
     }
 
@@ -37,6 +41,7 @@ public class RecommendationProcessorImpl implements RecommendationProcessorServi
         int productAmount = 0;
 
         for (Product product : productList) {
+            System.out.println(product);
             cbmTotal = Helper.formatNormalFloat(cbmTotal + product.getCbm());
             productAmount += product.getQuantity();
         }
@@ -45,6 +50,7 @@ public class RecommendationProcessorImpl implements RecommendationProcessorServi
                 .id("recommendation_result_" + UUID.randomUUID().toString())
                 .topThreeFleets(topThreeFleets)
                 .cbmTotal(cbmTotal)
+                .productList(productList)
                 .productAmount(productAmount)
                 .warehouseId(warehouseId)
                 .build();

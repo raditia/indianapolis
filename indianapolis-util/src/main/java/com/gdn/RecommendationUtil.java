@@ -9,7 +9,7 @@ public class RecommendationUtil {
 
     public static Recommendation recommendation = Recommendation.builder()
             .id("rec1")
-            .pickupList(PickupUtil.pickupList)
+//            .pickupList(PickupUtil.pickupList)
             .productAmount(2)
             .cbmTotal(0.0f)
             .warehouseId(WarehouseUtil.warehouseMinusWarehouseCategoryList.getId())
